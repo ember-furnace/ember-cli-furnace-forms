@@ -5,7 +5,7 @@ import Component from 'furnace-forms/components/input';
 export default Control.extend({
 	_component : Component,
 	
-	caption : '',
+	caption : null,
 	
 	extendHash: function(hash) {
 		var ret=this._super(hash);
