@@ -2,5 +2,9 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-cli-furnace-forms'
+	
+	name: 'furnace-forms',
+	isDevelopingAddon: function() {
+		return true;
+	}
 };

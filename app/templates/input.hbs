@@ -1,0 +1,15 @@
+<label  {{bind-attr for=inputId}}>{{caption}}</label>
+{{input name=name class=name value=value didInsertElement=inputInsert}}
+{{#if controlMessages}}
+<ul>
+	{{#each message in controlErrors}}
+		<li>{{message}}</li>
+	{{/each}}
+	{{#each messages in controlWarnings}}
+		<li>{{message}}</li>
+ 	{{/each}}
+ 	{{#each message in controlNotices}}
+		<li>{{message}}</li>
+	{{/each}}
+</ul>
+{{/if}}
