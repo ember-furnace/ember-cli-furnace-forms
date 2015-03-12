@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import Control from './abstract';
-import translate from 'furnace-forms/utils/i18n';
 
 export default Control.extend({
 	tagName: 'div',
@@ -35,9 +34,10 @@ export default Control.extend({
 
 		this.set('value',this.get('property'));
 		this.set('_orgValue',this.get('property'));
-		if(this.caption===null) {
+		if(this.get('caption')===null) {
 			var name=this.get('_panel._modelName')+'.'+this.get('_name');
-			this.set('caption',translate(name));			
+			this.set('caption',name);
+			
 		}
 	},
 	
@@ -69,4 +69,5 @@ export default Control.extend({
 	inputInsert:function() {
 		this.set('targetObject.inputId',this.elementId);
 	},
+	
 });

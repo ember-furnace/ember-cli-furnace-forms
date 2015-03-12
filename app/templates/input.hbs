@@ -1,15 +1,15 @@
-<label  {{bind-attr for=inputId}}>{{caption}}</label>
+<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
 {{input name=name class=name value=value didInsertElement=inputInsert}}
 {{#if controlMessages}}
 <ul>
 	{{#each message in controlErrors}}
-		<li>{{message}}</li>
+		<li>{{i18n message attributes=message.attributes}}</li>
 	{{/each}}
 	{{#each messages in controlWarnings}}
-		<li>{{message}}</li>
+		<li>{{i18n message attributes=message.attributes}}</li>
  	{{/each}}
  	{{#each message in controlNotices}}
-		<li>{{message}}</li>
+		<li>{{i18n message attributes=message.attributes}}</li>
 	{{/each}}
 </ul>
 {{/if}}

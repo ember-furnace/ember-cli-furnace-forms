@@ -92,7 +92,6 @@ export default Panel.extend({
 			this._observer = this.get('_validator').observe(this,'for',function(result) {
 				form.set('_valid',result.isValid());
 				form.set('_messages', result.getMessages());
-				
 			},this.get('_path') || this.get('_modelName'));
 		}
 	},
