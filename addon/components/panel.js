@@ -12,6 +12,10 @@ export default Control.extend({
 	
 	init: function() {
 		this._super();
+		if(this._panel && this['for']===this._panel['for']) {
+			this.set('_path',this.get('_panel._path'));
+		}		
+
 		this._controls={};
 	},
 	
@@ -30,7 +34,10 @@ export default Control.extend({
 	didApply: null,
 	
 	_modelName : function() {
-		if(this.get('for')) {
+		if(this.get('for')===this.get('_form.for')) {
+			return this.get('_form._modelName');
+		}
+		else if(this.get('for')) {
 			return getName(this.get('for'));
 		}
 		else {
@@ -50,6 +57,11 @@ export default Control.extend({
 	isDirty:function() {
 		return this.get('controls').filterBy('isDirty', true).get('length')>0;
 	}.property('inputControls.@each.isDirty'),
+	
+	isValid:function() {
+		console.log('change?');
+		return this.get('controls').filterBy('isValid',true ).get('length')===this.get('controls.length');
+	}.property('inputControls.@each.isValid'),
 	
 	controls: Ember.computed(function() {
 		var ret = Ember.A();

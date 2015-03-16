@@ -5,7 +5,6 @@ export default Control.extend({
 	tagName: 'div',
 	
 	
-	
 	_orgValue : null,
 	
 	isDirty: function() {
@@ -28,12 +27,20 @@ export default Control.extend({
 	
 	init:function() {
 		this._super();
+		
 		this.reopen({
 			property:Ember.computed.alias('_panel.for.'+this.get('_name'))
 		});
 
+		if(this.get('_form._validator')) {
+			this.set('isValid',false);
+		} else {
+			this.set('isValid',true);
+		}
+
 		this.set('value',this.get('property'));
 		this.set('_orgValue',this.get('property'));
+		
 		if(this.get('caption')===null) {
 			var name=this.get('_panel._modelName')+'.'+this.get('_name');
 			this.set('caption',name);
@@ -41,7 +48,7 @@ export default Control.extend({
 		}
 	},
 	
-	_syncFromSourceObserver:function(value) {
+	_propertyObserver:function(value) {
 		if(this.get('_form._syncFromSource')) {
 			this.set('value',this.get('property'));
 		}
@@ -52,7 +59,20 @@ export default Control.extend({
 		}
 	}.observes('property'),
 	
-	_syncToSourceObserver:function() {
+	_errorObserver:function() {
+		Ember.debug(this);
+		if(this.get('controlErrors').length) {
+			this.set('isValid',false);
+		} else {
+			this.set('isValid',true);
+		}
+		
+	}.observes('controlErrors'),
+	
+	_valueObserver:function() {
+		if(this.isValid!==null) {
+			this.set('isValid',false);
+		}
 		if(this.get('_form._syncToSource')) {
 			this._apply();
 		}

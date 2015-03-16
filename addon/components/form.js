@@ -62,8 +62,8 @@ export default Panel.extend({
 		if(this._form && this._form.get("_validator."+this._path)) {			
 			return this._form.get("_validator."+this._path);
 		}
-		return this._modelName;
-	}.property('_modelName'),
+		return getName(this['for']);
+	}.property('for'),
 	
 	_validator: function() {
 		var validator=this.get('validator');

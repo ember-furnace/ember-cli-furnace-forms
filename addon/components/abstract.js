@@ -4,13 +4,15 @@ import Control from 'furnace-forms/controls/abstract';
 export default Ember.Component.extend({
 	tagName: 'control',
 	
+	isValid: null,
+	
 	classNameBindings: ['_name','_controlClasses'],
 	
 	_controlClasses : function() {
 		var classes=[];
 		if(this.get('controlErrors').length) {
 			classes.push('error');
-		}
+		} 
 		if(this.get('controlWarnings').length) {
 			classes.push('warning');
 		}

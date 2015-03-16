@@ -6,7 +6,6 @@ import I18nDummyHelper from 'furnace-forms/helpers/i18n';
 import CompatInputHelper from 'furnace-forms/compat/helpers/input';
 import Ember from 'ember';
 
-
 export function initialize(container, application) {
 	application.register('form:lookup',Lookup, {instantiate:false});
 	application.inject('route','formFor','form:lookup');
