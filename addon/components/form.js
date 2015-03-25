@@ -13,9 +13,9 @@ export default Panel.extend({
 	
 	_observer : null,
 	
-	_valid : null,
-	
 	_messages : Ember.A(),
+
+	_validations : Ember.A(),
 	
 	_name: Ember.computed.alias('_modelName'),
 	
@@ -34,7 +34,7 @@ export default Panel.extend({
 				this.get('_observer').run(function(result) {
 					if(result.isValid()) {
 						form._submit();
-						form.send(action,this);				
+						form.send(action,form);				
 						form.sendAction('didSubmit');
 					}
 				});
@@ -62,7 +62,7 @@ export default Panel.extend({
 		if(this._form && this._form.get("_validator."+this._path)) {			
 			return this._form.get("_validator."+this._path);
 		}
-		return getName(this['for']);
+		return this.constructor.typeKey;
 	}.property('for'),
 	
 	_validator: function() {
@@ -85,14 +85,34 @@ export default Panel.extend({
 		
 		var validator=this.get('_validator');
 		
+		// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
 		if(validator && (!this._form || !this._form.get("_validator."+this._path))) {
 			var form=this;
-			this.set('_valid',false);
 			
-			this._observer = this.get('_validator').observe(this,'for',function(result) {
-				form.set('_valid',result.isValid());
+			
+			this._observer = validator.observe(this,'for',function(result) {
+				// Code for settings validations and messages is triggering too many observer event atm.
+				form.set('_validations',result.getValidations());				
 				form.set('_messages', result.getMessages());
 			},this.get('_path') || this.get('_modelName'));
+
+			// We do an initial validator run to prime the validation state (some fields may be initially valid)
+			this._observer.run(function(result) {
+				form.set('_validations',result.getValidations());
+				// However, we do not want to bug users with immediate errors. A reset will discard all generated messages.
+				result.reset();
+			},false);
+			
+			this.addObserver('for',this,function() {
+				// If our target changes, reset result messages, this will probably fail when async validations finish later
+				// Judging on the code above, we might want to be able to set different root and children validation callback,
+				// or the observer should not trigger validation at all when the root object changes, but should be destructed
+				// and we might want to create a new observer... 
+				// Probably this should also be configureable
+				var result=this._observer.getResult();
+				result.reset();
+				this.set('_messages', result.getMessages());
+			});
 		}
 	},
 	
@@ -108,9 +128,9 @@ export default Panel.extend({
 		if(!this.get('container')) {
 			return null;
 		}
-		var name='forms/'+getName(this.get('targetObject')).replace(/\./g,'/');
+		var name='forms/'+getName(this.get('targetObject'),true).replace(/\./g,'/');
 		if(!this.get('container').lookup('template:'+name)) {
-			if(getName(this.get('for'))) {
+			if(getName(this.get('for'),true)) {
 				name='forms/'+getName(this.get('for')).replace(/\./g,'/');
 			}
 			if(!name || !this.get('container').lookup('template:'+name)) {

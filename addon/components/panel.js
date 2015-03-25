@@ -12,7 +12,7 @@ export default Control.extend({
 	
 	init: function() {
 		this._super();
-		if(this._panel && this['for']===this._panel['for']) {
+		if(this._panel && this.get('for')===this._panel['for']) {
 			this.set('_path',this.get('_panel._path'));
 		}		
 
@@ -59,7 +59,6 @@ export default Control.extend({
 	}.property('inputControls.@each.isDirty'),
 	
 	isValid:function() {
-		console.log('change?');
 		return this.get('controls').filterBy('isValid',true ).get('length')===this.get('controls.length');
 	}.property('inputControls.@each.isValid'),
 	

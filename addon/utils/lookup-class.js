@@ -3,24 +3,33 @@ import getName from './get-name';
 import Form from 'furnace-forms/components/form';
 var Cache={classes : {},instances:{}};
 
-var getClass=function(container,name) {
-	var Class=Cache.classes[name];
+var getClass=function(container,type,name) {
+	if(type===undefined)
+		type='form';
+		
+	var Class=Cache.classes[type+":"+name];
 	if(!Class) {
-		Class = container.lookupFactory('form:'+name);
+		Class = container.lookupFactory(type+':'+name);
+		Ember.assert('No '+type+' defined for name "'+name+'"',Class);
+		Class.typeKey=name;
 		
-		Ember.assert('No form defined for name "'+name+'"',Class);
-		
-		Cache.classes[name]=Class;
+		Cache.classes[type+':'+name]=Class;
 	}
 	return Class;
 };
 
 
-export default function(object,options) {
-	if(object===undefined || object===null)
-		object=this;
+export default function(object,type) {	
+	var name=null;	
+	if(typeof object==='string') {
+		name=object;
+	}
+	else {
+		if(object===undefined || object===null)
+			object=this;
+		name=getName(object);
+	}
 	var container=this.get('container');
-	var name=getName(object);
-	return getClass(container,name);
+	return getClass(container,type,name);
 }
 	

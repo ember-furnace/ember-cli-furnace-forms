@@ -15,8 +15,9 @@ export default Control.extend({
 		if(!this.get('container')) {
 			return null;
 		}
-		var name="input";
-		return name ;
+		if(this.constructor.typeKey)
+			return this.constructor.typeKey.replace(/\./g,'/')+'/input';
+		return 'input' ;
 	}.property(),
 	
 	inputId: null,
@@ -31,12 +32,6 @@ export default Control.extend({
 		this.reopen({
 			property:Ember.computed.alias('_panel.for.'+this.get('_name'))
 		});
-
-		if(this.get('_form._validator')) {
-			this.set('isValid',false);
-		} else {
-			this.set('isValid',true);
-		}
 
 		this.set('value',this.get('property'));
 		this.set('_orgValue',this.get('property'));
@@ -59,20 +54,7 @@ export default Control.extend({
 		}
 	}.observes('property'),
 	
-	_errorObserver:function() {
-		Ember.debug(this);
-		if(this.get('controlErrors').length) {
-			this.set('isValid',false);
-		} else {
-			this.set('isValid',true);
-		}
-		
-	}.observes('controlErrors'),
-	
-	_valueObserver:function() {
-		if(this.isValid!==null) {
-			this.set('isValid',false);
-		}
+	_valueObserver:function() {		
 		if(this.get('_form._syncToSource')) {
 			this._apply();
 		}

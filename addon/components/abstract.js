@@ -4,9 +4,46 @@ import Control from 'furnace-forms/controls/abstract';
 export default Ember.Component.extend({
 	tagName: 'control',
 	
-	isValid: null,
+	classNameBindings: ['_validClass','_enabledClass','_name','_controlClasses'],
+		
+	_validClass : function() {
+		if(this.get('isValid')===false) {
+			return 'invalid';
+		}
+		return 'valid';
+	}.property('isValid'),
 	
-	classNameBindings: ['_name','_controlClasses'],
+	_enabledClass : function() {
+		if(this.get('isEnabled')===false) {
+			return 'disabled';
+		}
+		return 'enabled';
+	}.property('isEnabled'),
+	
+	isEnabled : true,
+	
+	isValid: function() {
+		if(!this._form) {
+			return null;
+		}
+		var validations=this._form.get('_validations');
+		if(!validations){
+			return true;
+		}
+		var name=this.get('_form._modelName')+'.'+this._getPath();
+		if(validations[name]===undefined) {
+			return true;
+		}
+		else {
+			return validations[name];
+		}
+	}.property('_form._validations'),
+	
+	_getPath: function() {
+		if(this._form) {
+			return (this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name');
+		}
+	},
 	
 	_controlClasses : function() {
 		var classes=[];
@@ -56,14 +93,14 @@ export default Ember.Component.extend({
 			this.set('targetObject.'+this._name+'.content',this);
 		}
 		if(this._form) {
-			this.set('_path',(this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name'));
+			this.set('_path',this._getPath());
 		}
 	},
 	
 	layoutName: function() {
 		if(!this.get('container')) {
 			return null;
-		}
+		}		
 		var name=this.get('tagName');
 		return name ;
 	}.property(),

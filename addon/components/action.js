@@ -3,9 +3,18 @@ import Control from './abstract';
 export default Control.extend({
 	tagName: 'button',
 	
-	caption: '',
+	caption: null,
 	
 	submit: false,
+	
+	init:function() {
+		this._super();
+		if(this.get('caption')===null) {
+			var name=this.get('_panel._modelName')+'.'+this.get('_name');
+			this.set('caption',name);
+			
+		}
+	},
 	
 	layoutName: function() {
 		if(!this.get('container')) {

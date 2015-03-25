@@ -1,5 +1,6 @@
 import Control from './abstract';
 import Component from 'furnace-forms/components/panel';
+import Ember from 'ember';
 
 export default Control.extend().reopenClass({
 	_component : Component,
@@ -7,9 +8,10 @@ export default Control.extend().reopenClass({
 	generate : function(options) {
 		options=options || {};	
 		
-		options['for']=options._panel['for'];
-		if(options['for'].get(options._name)) {
-			options['for']=options['for'].get(options._name);
+		if(options._panel['for'].get(options._name)) {
+			options['for']=Ember.computed.alias('_panel.for.'+options._name);
+		} else {
+			options['for']=Ember.computed.alias('_panel.for');
 		}
 		var _options={
 			_name: options._name,

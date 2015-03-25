@@ -4,7 +4,28 @@ import Ember from 'ember';
 export default Panel.extend({
 	_condition : false,	
 	
+	_rendered : false,
+//	isVisible: Ember.computed.alias('_condition'),
+	
 	value : Ember.computed.alias('_condition'),
+	
+//	render : function(buffer) {
+//		if(this.get('_condition')) {			
+//			this._rendered=true;
+//			this._super(buffer);
+//		} else {
+//			this._rendered=false;
+//		}
+//	},
+//	
+//	shouldRerender: function() {
+//		if(this.get('_condition') && !this._rendered) {
+//			this.rerender();
+//		}
+//		else if(!this.get('_condition') && this._rendered) {
+//			this.rerender();
+//		}
+//	}.observes('_condition')
 	
 	layoutName: function() {
 		if(!this.get('container')) {

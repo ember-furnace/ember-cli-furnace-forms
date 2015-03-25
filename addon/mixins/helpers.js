@@ -7,6 +7,7 @@ import Condition from 'furnace-forms/controls/condition';
 import PanelComponent from 'furnace-forms/components/panel';
 import FormComponent from 'furnace-forms/components/form';
 import ConditionComponent from 'furnace-forms/components/condition'; 
+import InputComponent from 'furnace-forms/components/input'; 
 
 var getMeta=function(options) {
 	return {
@@ -44,7 +45,20 @@ var getControl=function(type,options) {
 };
 
 var Helpers= Ember.Mixin.create({
-	input : function(options) {		
+	input : function(type,options) {
+		if(arguments.length===0) {
+			options={};
+			type=InputComponent;
+		}
+		else if(arguments.length===1) {
+			if(typeof arguments[0]==='string') {
+				options={};
+			} else { 
+				options=arguments[0];
+				type=InputComponent;
+			}
+		}		
+		options._component = type;
 		return getControl(Input,options);
 	},
 	

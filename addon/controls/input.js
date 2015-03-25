@@ -8,7 +8,7 @@ export default Control.extend({
 	caption : null,
 	
 	extendHash: function(hash) {
-		var ret=this._super(hash);
+		var ret=this._super(hash);	
 		ret.caption=this.caption;
 		return ret;
 	}
