@@ -1,6 +1,20 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
 
+/**
+ * Abstract control component proxy 
+ * 
+ * @class Abstract
+ * @namespace Furnace.Forms.Controls
+ * @extends Ember.ObjectProxy
+ * @private
+ */
 export default Ember.ObjectProxy.extend({
 	
 	_name: null,

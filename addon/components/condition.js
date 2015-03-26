@@ -1,6 +1,19 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Panel from './panel';
 import Ember from 'ember';
 
+/**
+ * Conditional panel component
+ * 
+ * @class Condition
+ * @namespace Furnace.Forms.Components
+ * @extends Furnace.Forms.Components.Panel
+ */
 export default Panel.extend({
 	_condition : false,	
 	

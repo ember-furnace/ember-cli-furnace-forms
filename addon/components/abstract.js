@@ -1,6 +1,19 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Ember from 'ember';
 import Control from 'furnace-forms/controls/abstract';
 
+/**
+ * Abstract control component 
+ * 
+ * @class Abstract
+ * @namespace Furnace.Forms.Components
+ * @extends Ember.Component
+ */
 export default Ember.Component.extend({
 	tagName: 'control',
 	

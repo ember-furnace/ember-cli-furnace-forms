@@ -1,6 +1,20 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Control from './abstract';
 import Component from 'furnace-forms/components/form';
 
+/**
+ * Form control component proxy 
+ * 
+ * @class Form
+ * @namespace Furnace.Forms.Controls
+ * @extends Furnace.Forms.Controls.Abstract
+ * @protected
+ */
 export default Control.extend().reopenClass({
 	_component: null,
 	

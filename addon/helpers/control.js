@@ -1,6 +1,17 @@
+/**
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Ember from "ember";
 import getName from 'furnace-forms/utils/get-name';
 
+/**
+ * @method f-control
+ * @for Furnace.Forms.helpers
+ * @param {Furnace.Forms.Control.Abstract} ControlProxy
+ * @param {Hash} options
+ * @return {String} HTML string  
+ */
 export default function controlHelper(params, hash, options, env) {
 	Ember.assert('You need to specify a control from your form',params[0]);
 	

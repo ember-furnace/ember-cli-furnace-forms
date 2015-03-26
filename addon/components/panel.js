@@ -1,8 +1,21 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Control from './abstract';
 import Action from 'furnace-forms/controls/action';
 import Ember from 'ember';
 import getName from 'furnace-forms/utils/get-name';
 
+/**
+ * Panel component
+ * 
+ * @class Panel
+ * @namespace Furnace.Forms.Components
+ * @extends Furnace.Forms.Components.Abstract
+ */
 export default Control.extend({
 	tagName : 'panel',
 	

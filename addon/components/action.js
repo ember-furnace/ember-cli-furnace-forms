@@ -1,5 +1,18 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Control from './abstract';
 
+/**
+ * Action control component
+ * 
+ * @class Action
+ * @namespace Furnace.Forms.Components
+ * @extends Furnace.Forms.Components.Abstract
+ */
 export default Control.extend({
 	tagName: 'button',
 	

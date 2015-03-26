@@ -1,7 +1,20 @@
+/**
+ * Provides Form and input features.
+ *
+ * @module furnace
+ * @submodule furnace-forms
+ */
 import Ember from 'ember';
 import Panel from './panel';
 import getName from 'furnace-forms/utils/get-name';
 
+/**
+ * Form component
+ * 
+ * @class Form
+ * @namespace Furnace.Forms.Components
+ * @extends Furnace.Forms.Components.Panel
+ */
 export default Panel.extend({
 	tagName: 'form',
 	
