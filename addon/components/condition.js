@@ -44,7 +44,7 @@ export default Panel.extend({
 		if(!this.get('container')) {
 			return null;
 		}
-		var name="condition";
+		var name="forms/condition";
 		return name ;
 	}.property(),
 });

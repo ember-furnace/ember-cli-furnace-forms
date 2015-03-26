@@ -15,8 +15,17 @@ import Control from './abstract';
  * @extends Furnace.Forms.Components.Abstract
  */
 export default Control.extend({
-	tagName: 'div',
 	
+	actions: {
+		focus:function() {
+			this.set('_focus',true);
+		},
+		
+		blur:function() {
+			this.set('_focus',false);
+		},
+		
+	},
 	
 	_orgValue : null,
 	
@@ -30,7 +39,7 @@ export default Control.extend({
 		}
 		if(this.constructor.typeKey)
 			return this.constructor.typeKey.replace(/\./g,'/')+'/input';
-		return 'input' ;
+		return 'forms/input' ;
 	}.property(),
 	
 	inputId: null,
@@ -38,6 +47,10 @@ export default Control.extend({
 	caption : null,
 	
 	value:null,
+	
+	_focus:false,
+	
+	hasFocus:Ember.computed.alias('_focus'),
 	
 	init:function() {
 		this._super();
@@ -83,6 +96,9 @@ export default Control.extend({
 	
 	inputInsert:function() {
 		this.set('targetObject.inputId',this.elementId);
-	},
+	}
+	
+	
+	
 	
 });

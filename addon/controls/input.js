@@ -6,7 +6,7 @@
  */
 import Ember from 'ember';
 import Control from './abstract';
-import Component from 'furnace-forms/components/input';
+import Component from 'furnace-forms/components/text';
 
 /**
  * Input control component proxy 

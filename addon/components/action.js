@@ -14,11 +14,21 @@ import Control from './abstract';
  * @extends Furnace.Forms.Components.Abstract
  */
 export default Control.extend({
-	tagName: 'button',
 	
 	caption: null,
 	
 	submit: false,
+	
+	actions : {
+		click:  function() {
+			if(this.submit===true) {
+				this.get('targetObject').send('submit',this._name);
+			}
+			else {
+				this.get('targetObject').send(this._name,this._panel);
+			}
+		}
+	},
 	
 	init:function() {
 		this._super();
@@ -33,16 +43,9 @@ export default Control.extend({
 		if(!this.get('container')) {
 			return null;
 		}
-		var name="action";
-		return name ;
+		if(this.constructor.typeKey)
+			return this.constructor.typeKey.replace(/\./g,'/')+'/input';
+		return 'forms/action' ;
 	}.property(),
 	
-	click: function() {
-		if(this.submit===true) {
-			this.get('targetObject').send('submit',this._name);
-		}
-		else {
-			this.get('targetObject').send(this._name,this._panel);
-		}
-	}
 });

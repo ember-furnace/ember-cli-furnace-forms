@@ -18,24 +18,83 @@ export default Ember.Component.extend({
 	tagName: 'control',
 	
 	classNameBindings: ['_validClass','_enabledClass','_name','_controlClasses'],
-		
+	
+	/**
+	 * The name for the control
+	 * @property _name
+	 * @type String
+	 * @private
+	 */
+	_name : null,
+	
+	/**
+	 * The form to which the control belongs
+	 * @property _form
+	 * @type Furnace.Validation.Components.Form
+	 * @private
+	 */
+	_form : null,
+	
+	/**
+	 * The panel to which the control belongs
+	 * @property _panel
+	 * @type Furnace.Validation.Components.Panel
+	 * @private
+	 */
+	_panel : null,
+	
+	/**
+	 * The path for the control
+	 * @property _path
+	 * @type String
+	 * @private
+	 */
+	_path : null,
+	
+	/**
+	 * CSS class for validity
+	 * @property _validClass
+	 * @type String
+	 * @private
+	 */
 	_validClass : function() {
-		if(this.get('isValid')===false) {
+		if(this.get('_valid')===false) {
 			return 'invalid';
 		}
 		return 'valid';
-	}.property('isValid'),
+	}.property('_valid'),
 	
+	/**
+	 * CSS class for enabled
+	 * @property _enabledClass
+	 * @type String
+	 * @private
+	 */
 	_enabledClass : function() {
-		if(this.get('isEnabled')===false) {
+		if(this.get('_enabled')===false) {
 			return 'disabled';
 		}
 		return 'enabled';
-	}.property('isEnabled'),
+	}.property('_enabled'),
 	
-	isEnabled : true,
+	/**
+	 * Whether the input is enabled
+	 * @property _enabled
+	 * @type Boolean
+	 * @default true
+	 * @private
+	 */
+	_enabled : true,
 	
-	isValid: function() {
+	
+	/**
+	 * Whether the input is value
+	 * @property _valid
+	 * @type Boolean
+	 * @default: null
+	 * @private
+	 */
+	_valid: function() {
 		if(!this._form) {
 			return null;
 		}
@@ -52,12 +111,40 @@ export default Ember.Component.extend({
 		}
 	}.property('_form._validations'),
 	
+	/**
+	 * Whether the control is enabled or not (alias for private property _enabled)
+	 * @property isEnabled
+	 * @type Boolean
+	 * @default true
+	 */
+	isEnabled: Ember.computed.alias('_enabled'),
+	
+	/**
+	 * Whether the control is valid or not (alias for private property _valid)
+	 * @property isValid
+	 * @type Boolean
+	 * @default null
+	 */
+	isValid: Ember.computed.alias('_valid'),
+	
+	/**
+	 * Get the path for the component
+	 * @method _getPath
+	 * @type String
+	 * @private
+	 */
 	_getPath: function() {
 		if(this._form) {
 			return (this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name');
 		}
 	},
 	
+	/**
+	 * CSS classes determined by validation errors, warnings and notices
+	 * @property _controlClasses
+	 * @type String
+	 * @private
+	 */
 	_controlClasses : function() {
 		var classes=[];
 		if(this.get('controlErrors').length) {
@@ -91,13 +178,7 @@ export default Ember.Component.extend({
 		return this.get('controlMessages').filterBy('type','notices');
 	}.property('controlMessages'),
 	
-	_name : null,
 	
-	_form : null,
-	
-	_panel : null,
-	
-	_path : null,
 	
 	init:function() {
 		this._super();		
@@ -114,7 +195,7 @@ export default Ember.Component.extend({
 		if(!this.get('container')) {
 			return null;
 		}		
-		var name=this.get('tagName');
+		var name='forms/'+this.get('tagName');
 		return name ;
 	}.property(),
 	
@@ -125,5 +206,6 @@ export default Ember.Component.extend({
 	_reset: function() {
 		
 	},
+	
 	
 });

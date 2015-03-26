@@ -103,29 +103,34 @@ export default Panel.extend({
 			var form=this;
 			
 			
-			this._observer = validator.observe(this,'for',function(result) {
+			this._observer = validator.observe(this,'for',function(result,sender,key) {
 				// Code for settings validations and messages is triggering too many observer event atm.
-				form.set('_validations',result.getValidations());				
+				form.set('_validations',result.getValidations());
+				if(sender===null || sender===form) {
+					result.reset();
+				}
 				form.set('_messages', result.getMessages());
 			},this.get('_path') || this.get('_modelName'));
-
-			// We do an initial validator run to prime the validation state (some fields may be initially valid)
-			this._observer.run(function(result) {
-				form.set('_validations',result.getValidations());
-				// However, we do not want to bug users with immediate errors. A reset will discard all generated messages.
-				result.reset();
-			},false);
 			
-			this.addObserver('for',this,function() {
-				// If our target changes, reset result messages, this will probably fail when async validations finish later
-				// Judging on the code above, we might want to be able to set different root and children validation callback,
-				// or the observer should not trigger validation at all when the root object changes, but should be destructed
-				// and we might want to create a new observer... 
-				// Probably this should also be configureable
-				var result=this._observer.getResult();
-				result.reset();
-				this.set('_messages', result.getMessages());
-			});
+			this._observer.run();
+			
+			// We do an initial validator run to prime the validation state (some fields may be initially valid)
+//			this._observer.run(function(result) {
+//				form.set('_validations',result.getValidations());
+//				// However, we do not want to bug users with immediate errors. A reset will discard all generated messages.
+//				result.reset();
+//			},false);
+			
+//			this.addObserver('for',this,function() {
+//				// If our target changes, reset result messages, this will probably fail when async validations finish later
+//				// Judging on the code above, we might want to be able to set different root and children validation callback,
+//				// or the observer should not trigger validation at all when the root object changes, but should be destructed
+//				// and we might want to create a new observer... 
+//				// Probably this should also be configureable
+//				var result=this._observer.getResult();
+//				result.reset();
+//				this.set('_messages', result.getMessages());
+//			});
 		}
 	},
 	
@@ -147,7 +152,7 @@ export default Panel.extend({
 				name='forms/'+getName(this.get('for')).replace(/\./g,'/');
 			}
 			if(!name || !this.get('container').lookup('template:'+name)) {
-				name='form';
+				name='forms/form';
 			}
 		}
 		return name ;

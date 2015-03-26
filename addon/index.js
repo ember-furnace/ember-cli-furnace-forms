@@ -7,6 +7,7 @@
 import Ember from 'ember';
 import Form from './components/form';
 import Input from './components/input';
+import Action from './components/action';
 import Helpers from './mixins/helpers';
 /**
  * @class Forms
@@ -27,5 +28,12 @@ export default Ember.Namespace.extend(Helpers, {
 	 * @type Furnace.Forms.Components.Input
 	 */
 	Input : Input,
+	
+	/**
+	 * Action component
+	 * @property Action
+	 * @type Furnace.Forms.Components.Action
+	 */
+	Action : Action,
 	
 }).create();

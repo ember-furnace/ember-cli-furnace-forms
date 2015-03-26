@@ -82,7 +82,7 @@ var Helpers= Ember.Mixin.create({
 		var _props=props.split(',');
 		var length=_props.length;
 		for(var i =0;i<length;i++) {
-			_props.push('_form.'+_props[i]+'.isValid');
+			_props.push('_form.'+_props[i]+'._valid');
 			_props[i]='_form.'+_props[i]+'.value';			
 		}
 		if(arguments.length===2) {
