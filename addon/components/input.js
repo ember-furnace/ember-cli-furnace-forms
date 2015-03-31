@@ -16,22 +16,15 @@ import Control from './abstract';
  */
 export default Control.extend({
 	
-	actions: {
-		focus:function() {
-			this.set('_focus',true);
-		},
-		
-		blur:function() {
-			this.set('_focus',false);
-		},
-		
-	},
+	
 	
 	_orgValue : null,
 	
-	isDirty: function() {
+	_dirty: function() {
 		return this.get('value')!=this.get('_orgValue');
 	}.property('value'),
+	
+	isDirty: Ember.computed.alias('_dirty'),
 	
 	layoutName: function() {
 		if(!this.get('container')) {
@@ -47,20 +40,19 @@ export default Control.extend({
 	caption : null,
 	
 	value:null,
-	
-	_focus:false,
-	
-	hasFocus:Ember.computed.alias('_focus'),
-	
+
 	init:function() {
 		this._super();
 		
-		this.reopen({
-			property:Ember.computed.alias('_panel.for.'+this.get('_name'))
-		});
-
-		this.set('value',this.get('property'));
-		this.set('_orgValue',this.get('property'));
+		// If we do not have a name, we're an anonymous option without a counterpart in 
+		if(this.get('_name')) {
+			this.reopen({
+				property:Ember.computed.alias('_panel.for.'+this.get('_name'))
+			});
+			
+			this.set('value',this.get('property'));
+			this.set('_orgValue',this.get('property'));
+		}
 		
 		if(this.get('caption')===null) {
 			var name=this.get('_panel._modelName')+'.'+this.get('_name');
@@ -70,7 +62,7 @@ export default Control.extend({
 	},
 	
 	_propertyObserver:function(value) {
-		if(this.get('_form._syncFromSource')) {
+		if(this.get('_name') && this.get('_form._syncFromSource')) {
 			this.set('value',this.get('property'));
 		}
 		// If we sync to the source, do not update the _orgValue so we keep a reliable dirty flag
@@ -81,7 +73,7 @@ export default Control.extend({
 	}.observes('property'),
 	
 	_valueObserver:function() {		
-		if(this.get('_form._syncToSource')) {
+		if(this.get('_name') && this.get('_form._syncToSource')) {
 			this._apply();
 		}
 	}.observes('value'),

@@ -20,9 +20,9 @@ export default Control.extend({
 	submit: false,
 	
 	actions : {
-		click:  function() {
-			if(this.submit===true) {
-				this.get('targetObject').send('submit',this._name);
+		click:  function() {			
+			if(this.get('submit')===true) {
+				this.get('targetObject').send('_submit',this._name);
 			}
 			else {
 				this.get('targetObject').send(this._name,this._panel);

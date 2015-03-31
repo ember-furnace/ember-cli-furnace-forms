@@ -67,13 +67,25 @@ export default Control.extend({
 		}
 	}.property('targetObject'),
 	
-	isDirty:function() {
+	_dirty:function() {
 		return this.get('controls').filterBy('isDirty', true).get('length')>0;
 	}.property('inputControls.@each.isDirty'),
 	
-	isValid:function() {
+	_dirtyObserver:function() {
+		this.set('isDirty',this.get('_dirty'));
+	}.observes('inputControls.@each.isDirty'),
+	
+	isDirty: false,
+	
+	_valid:function() {
 		return this.get('controls').filterBy('isValid',true ).get('length')===this.get('controls.length');
 	}.property('inputControls.@each.isValid'),
+	
+	_validObserver:function() {
+		this.set('isValid',this.get('_valid'));
+	}.observes('inputControls.@each.isValid'),
+	
+	isValid : null,
 	
 	controls: Ember.computed(function() {
 		var ret = Ember.A();

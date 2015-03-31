@@ -15,14 +15,11 @@ import Control from './abstract';
  * @extends Furnace.Forms.Controls.Abstract
  * @protected
  */
-export default Control.extend({
-	_component : 'text',
+export default Ember.CoreObject.extend({
 	
-	caption : null,
+	value : null,
 	
-	extendHash: function(hash) {
-		var ret=this._super(hash);	
-		ret.caption=this.caption;
-		return ret;
-	}
+	selected : false,
+	
+	caption : ''
 });

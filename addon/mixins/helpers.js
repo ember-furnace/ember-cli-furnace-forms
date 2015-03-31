@@ -7,8 +7,9 @@ import Condition from 'furnace-forms/controls/condition';
 import PanelComponent from 'furnace-forms/components/panel';
 import FormComponent from 'furnace-forms/components/form';
 import ConditionComponent from 'furnace-forms/components/condition'; 
-import InputComponent from 'furnace-forms/components/input'; 
+import InputComponent from 'furnace-forms/components/input';
 
+import Option from 'furnace-forms/controls/option';
 var getMeta=function(options) {
 	return {
 		type: 'form-control',
@@ -21,6 +22,9 @@ var getControl=function(type,options) {
 	var meta=getMeta(options);
 	return Ember.computed(function(key) {
 		Ember.assert("You have assigned a control to something thats not a Panel or Form",this instanceof PanelComponent);
+		if(!this._controls) {
+			this._controls=Ember.A();
+		}
 		if(!this._controls[key]) {
 			this._controls[key]=null;
 			var meta = this.constructor.metaForProperty(key);
@@ -120,6 +124,32 @@ var Helpers= Ember.Mixin.create({
 			Ember.assert('The form helper accepts either 1 or 2 arguments');
 		}
 		return FormComponent.extend(options);
+	},
+	
+	attr: function(key) {
+		var meta={
+				type: 'form-attr',
+				key:key
+			};
+		return  Ember.computed(function(key,value) {
+			var meta = this.constructor.metaForProperty(key);
+			
+			if(this.get(meta.key)===undefined) {
+				var _key=key;
+				this.addObserver(meta.key,this,function(sender,key){
+					this.notifyPropertyChange(_key);
+				});
+				return value;
+			}
+			if(value!==undefined) {
+				this.set(meta.key,value);
+			}
+			return this.get(meta.key);
+		}).meta(meta);
+	},
+	
+	option: function(value,caption) {
+		return Option.create({value:value,caption:caption});
 	}
 });
 

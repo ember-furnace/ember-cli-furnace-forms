@@ -19,6 +19,21 @@ export default Ember.Component.extend({
 	
 	classNameBindings: ['_validClass','_enabledClass','_name','_controlClasses'],
 	
+	actions: {
+		focus:function() {
+			this.set('_focus',true);
+		},
+		
+		blur:function() {
+			this.set('_focus',false);
+		},
+		
+	},
+	
+	_focus:false,
+	
+	hasFocus:Ember.computed.alias('_focus'),
+	
 	/**
 	 * The name for the control
 	 * @property _name

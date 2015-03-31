@@ -1,3 +1,7 @@
+{{#if caption}}
+	<h2 class="form-caption">{{i18n caption}}</h2>
+{{/if}}
+
 {{#each control in inputControls}}
 {{f-control control}}
 {{/each}}
@@ -6,4 +10,4 @@
 {{f-control control}}
 {{/each}}
 
-
+{{view "messages"}}

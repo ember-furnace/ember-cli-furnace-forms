@@ -40,20 +40,22 @@ export default Panel.extend({
 	}.property('_messages'),
 	
 	actions : {
-		submit: function(action) {			
+		_submit: function(action) {
 			this.sendAction('willSubmit',this);
 			if(this.get('_observer')) {
 				var form=this;
 				this.get('_observer').run(function(result) {
+					form.set('_validations',result.getValidations());
+					form.set('_messages', result.getMessages());
 					if(result.isValid()) {
-						form._submit();
+						form.__submit();
 						form.send(action,form);				
 						form.sendAction('didSubmit');
 					}
-				});
+				},false);
 			}	
 			else {
-				this._submit();
+				this.__submit();
 				this.send(action,this);				
 				this.sendAction('didSubmit');	
 			}
@@ -138,7 +140,7 @@ export default Panel.extend({
 	
 	didSubmit : null,
 	
-	_submit : function() {
+	__submit : function() {
 		this._apply();
 	},
 
