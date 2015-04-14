@@ -1,0 +1,5 @@
+<input {{bind-attr id=inputId}} type="radio" {{bind-attr name=name}} value="1"> 
+<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
+{{#if showForm}}
+	{{form form for=value}}
+{{/if}}

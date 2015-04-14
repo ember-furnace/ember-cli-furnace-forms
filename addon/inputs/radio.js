@@ -5,7 +5,8 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Control from 'furnace-forms/components/option';
+import Control from 'furnace-forms/components/list/radio';
+
 /**
  * Text input control component
  * 
@@ -15,15 +16,4 @@ import Control from 'furnace-forms/components/option';
  */
 export default Control.extend({
 	
-	tagName : 'radio-option',
-	
-	inputId: null,
-
-	inputInsert:function() {
-		this.set('targetObject.inputId',this.elementId);
-	},
-	
-	layoutName: function() {			
-		return 'forms/radio/option' ;
-	}.property(),
 });

@@ -5,19 +5,23 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Control from 'furnace-forms/components/input';
+import Input from 'furnace-forms/components/input';
+
+import Options from 'furnace-forms/mixins/options';
 
 /**
  * Text input control component
  * 
- * @class Text
+ * @class Radio
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default Control.extend({
+export default Input.extend(Options,{
+	
+		
 	layoutName: function() {		
-		if(this.constructor.typeKey!=='text')
+		if(this.constructor.typeKey!=='select')
 			return this._super();
-		return 'forms/text/input' ;
+		return 'forms/select/input' ;
 	}.property(),
 });

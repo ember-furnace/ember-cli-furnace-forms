@@ -12,13 +12,25 @@ import Lookup from 'furnace-forms/utils/lookup-class';
  * @param {Hash} options
  * @return {String} HTML string  
  */
-export default function formHelper(params, hash, options, env) {	
+export default function formHelper(params, hash, options, env) {
+	Ember.assert("The for attribute of a form expects a object reference, not a string literal",hash['for']===undefined || (typeof hash['for']==='object' && hash['for'].isStream===true));
 	var contextObject=hash['for'] ? hash['for'].value() : null;
 	Ember.assert("You are required to specify a form or the 'for' attribute",params[0] || contextObject);
+	var view = env.data.view;
 	if(!contextObject) {
 		contextObject=params[0];
-		hash['for']=this;
+		hash['for']=view;
 	}
-	var component=Lookup.call(this,params[0] ? params[0] :contextObject);
+	var named=null;
+	if(params[0]) {
+		if(typeof params[0]==='string') {
+			named=params[0];
+		}else if(params[0].isStream===true) {
+			named=params[0].value();
+		}
+	} else {
+		named=view.get('renderedName');
+	}
+	var component=Lookup.call(view,named ? named :contextObject);
 	return env.helpers.view.helperFunction.call(this,[component],hash,options,env);
 }

@@ -1,0 +1,7 @@
+<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
+<radio-options>
+	{{#each control in controls}}
+		{{f-control control}}
+	{{/each}}
+</radio-options>
+{{view "forms/messages" isVisible=showMessages}}

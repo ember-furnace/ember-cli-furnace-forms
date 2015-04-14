@@ -46,7 +46,34 @@ export default Control.extend({
 	
 	didApply: null,
 	
-	_modelName : function() {
+	layoutName: function() {
+		if(!this.get('container')) {
+			return null;
+		}
+		if(this.constructor.typeKey) {
+			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+			if(layoutName===this.constructor.typeKey) {
+				return 'forms/'+layoutName;
+			}
+			return layoutName+'/panel';
+		}
+		console.log(this);
+		return 'forms/panel' ;
+	}.property(),
+	
+	setEnabled: function(enabled) {
+		if(enabled!=this._enabled) {
+			this.set('_enabled',enabled);
+			for(var index in this._controls) {
+				this._controls[index].setEnabled(enabled);
+			}
+		}
+	},
+	
+	_modelName : Ember.computed('for',function(key,value) {
+		if(value)  {
+			return value;
+		}	
 		if(this.get('for')===this.get('_form.for')) {
 			return this.get('_form._modelName');
 		}
@@ -56,7 +83,7 @@ export default Control.extend({
 		else {
 			return null;
 		}
-	}.property('for'),
+	}),
 	
 	_targetName : function() {
 		if(this.get('targetObject')) {
@@ -77,15 +104,9 @@ export default Control.extend({
 	
 	isDirty: false,
 	
-	_valid:function() {
-		return this.get('controls').filterBy('isValid',true ).get('length')===this.get('controls.length');
-	}.property('inputControls.@each.isValid'),
-	
 	_validObserver:function() {
-		this.set('isValid',this.get('_valid'));
+		this.setValid(this.get('controls').filterBy('isValid',false ).get('length')===0);
 	}.observes('inputControls.@each.isValid'),
-	
-	isValid : null,
 	
 	controls: Ember.computed(function() {
 		var ret = Ember.A();
@@ -125,6 +146,7 @@ export default Control.extend({
 	},
 	
 	_reset:function() {
+		this._super();
 		this.get('inputControls').invoke('_reset');
 	},
 });

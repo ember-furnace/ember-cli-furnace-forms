@@ -26,27 +26,73 @@ export default Panel.extend({
 	
 	_observer : null,
 	
-	_messages : Ember.A(),
-
-	_validations : Ember.A(),
+//	_messages : Ember.computed(function(key,value) {
+//		if(value) {
+//			for(var name in value) {
+//				if(this._controlsByPath[name]!==undefined) {
+//					this._controlsByPath[name].setMessages(value[name]);
+//				}
+//			}
+//			return value;
+//		}
+//	}),
+//
+//	_validations : Ember.computed(function(key,value) {
+//		if(value) {
+//			for(var name in value) {
+//				if(this._controlsByPath[name]!==undefined) {
+//					this._controlsByPath[name].setValid(value[name]);
+//				}
+//			}
+//			return value;
+//		}
+//	}),
 	
-	_name: Ember.computed.alias('_modelName'),
-	
-	controlMessages: function() {
-		if(!this.get('_messages')) {
-			return Ember.A();
+	_setValidations : function(result,silent) {
+		var validations=result.get('validations');
+		var messages=result.get('messages');
+		for(var name in validations) {
+			if(this._controlsByPath[name]!==undefined) {
+				this._controlsByPath[name].setValid(validations[name]);
+				if(!silent && messages[name]!==undefined) {
+					this._controlsByPath[name].setMessages(messages[name]);
+				} else {
+					this._controlsByPath[name].setMessages(null);
+				}
+			}
 		}
-		return this.get('_messages').filterBy('name',this._modelName);		
-	}.property('_messages'),
+	},
+	
+	_name: Ember.computed.oneWay('_modelName'),
+	
+	_controlsByPath: null,
 	
 	actions : {
+		validate : function(path) {
+			var form=this._form || this;
+			var target=this.get('for');			
+			var modelName=this.get('_modelName');
+			var validator=this.get('_validator');
+			if(!validator)
+				return;
+			if(path) {
+				target=target.get(path);
+				validator=validator.get(path);
+				modelName=modelName+'.'+path;
+			}
+			
+			validator.validate(target,modelName).then(function(result){
+				form._setValidations(result);
+			});
+
+		},
+		
 		_submit: function(action) {
 			this.sendAction('willSubmit',this);
 			if(this.get('_observer')) {
 				var form=this;
 				this.get('_observer').run(function(result) {
-					form.set('_validations',result.getValidations());
-					form.set('_messages', result.getMessages());
+					form._setValidations(result);
 					if(result.isValid()) {
 						form.__submit();
 						form.send(action,form);				
@@ -63,6 +109,20 @@ export default Panel.extend({
 		}
 	},
 	
+	_registerControl: function(control) {
+		var name=this._modelName;
+		if(control._path)
+			name+='.'+control._path;
+		this._controlsByPath[name]=control;
+	},
+	
+	_unregisterControl: function(control) {
+		var name=this._modelName;
+		if(control._path)
+			name+='.'+control._path;
+		delete this._controlsByPath[name];
+	},
+	
 	_proxy : function() {
 		var properties={}
 		this.get('inputControls').forEach(function(control) {
@@ -74,9 +134,9 @@ export default Panel.extend({
 	}.property('for'),
 	
 	validator : function() {
-		if(this._form && this._form.get("_validator."+this._path)) {			
+		if(this._form && this._form.get("_validator."+this._path)) {
 			return this._form.get("_validator."+this._path);
-		}
+		}		
 		return this.constructor.typeKey;
 	}.property('for'),
 	
@@ -88,51 +148,35 @@ export default Panel.extend({
 		else {
 			var fn=this.container.lookup('validator:lookup');
 			if(fn) {
-				return fn.call(this,validator);
+				try {
+					return fn.call(this,validator);
+				}
+				catch(e) {				
+					Ember.warn('A form tried to resolve a validator for "'+validator+'" but got the following error: '+e.message);
+					return null;
+				}
 			}
 			return null;
 		}
 	}.property('validator'),
 	
 	init : function() {
+		this._controlsByPath={};
 		this._super();
 		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
-		
 		var validator=this.get('_validator');
-		
 		// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
 		if(validator && (!this._form || !this._form.get("_validator."+this._path))) {
-			var form=this;
-			
+			var form=this._form || this;
 			
 			this._observer = validator.observe(this,'for',function(result,sender,key) {
 				// Code for settings validations and messages is triggering too many observer event atm.
-				form.set('_validations',result.getValidations());
-				if(sender===null || sender===form) {
-					result.reset();
-				}
-				form.set('_messages', result.getMessages());
+				var silent=sender===null || sender===form
+				form._setValidations(result,silent);
 			},this.get('_path') || this.get('_modelName'));
 			
 			this._observer.run();
-			
-			// We do an initial validator run to prime the validation state (some fields may be initially valid)
-//			this._observer.run(function(result) {
-//				form.set('_validations',result.getValidations());
-//				// However, we do not want to bug users with immediate errors. A reset will discard all generated messages.
-//				result.reset();
-//			},false);
-			
-//			this.addObserver('for',this,function() {
-//				// If our target changes, reset result messages, this will probably fail when async validations finish later
-//				// Judging on the code above, we might want to be able to set different root and children validation callback,
-//				// or the observer should not trigger validation at all when the root object changes, but should be destructed
-//				// and we might want to create a new observer... 
-//				// Probably this should also be configureable
-//				var result=this._observer.getResult();
-//				result.reset();
-//				this.set('_messages', result.getMessages());
-//			});
+		
 		}
 	},
 	
@@ -148,7 +192,9 @@ export default Panel.extend({
 		if(!this.get('container')) {
 			return null;
 		}
-		var name='forms/'+getName(this.get('targetObject'),true).replace(/\./g,'/');
+		var name='forms/'+getName(this.get('targetObject'),true);
+		if(name!==null)
+			name=name.replace(/\./g,'/');
 		if(!this.get('container').lookup('template:'+name)) {
 			if(getName(this.get('for'),true)) {
 				name='forms/'+getName(this.get('for')).replace(/\./g,'/');

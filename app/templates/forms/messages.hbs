@@ -1,15 +1,13 @@
-{{#unless hasFocus}}	
-	{{#if controlMessages}}
-		<ul>
-			{{#each message in controlErrors}}
-				<li>{{i18n message attributes=message.attributes}}</li>
-			{{/each}}
-			{{#each messages in controlWarnings}}
-				<li>{{i18n message attributes=message.attributes}}</li>
-		 	{{/each}}
-		 	{{#each message in controlNotices}}
-				<li>{{i18n message attributes=message.attributes}}</li>
-			{{/each}}
-		</ul>
-	{{/if}}
-{{/unless}}
+
+{{#if showErrors}}
+	{{#each message in controlErrors}}
+		<message class="error">{{i18n message attributes=message.attributes}}</message>
+	{{/each}}
+{{/if}}
+{{#each message in controlWarnings}}
+	<message class="warning">{{i18n message attributes=message.attributes}}</message>
+{{/each}}
+{{#each message in controlNotices}}
+	<message class="notice">{{i18n message attributes=message.attributes}}</message>
+{{/each}}
+

@@ -4,7 +4,7 @@
  * @module furnace
  * @submodule furnace-forms
  */
-import Control from './abstract';
+import Input from 'furnace-forms/components/input';
 
 /**
  * Action control component
@@ -13,14 +13,16 @@ import Control from './abstract';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Abstract
  */
-export default Control.extend({
+export default Input.extend({
 	
 	caption: null,
 	
 	submit: false,
 	
 	actions : {
-		click:  function() {			
+		click:  function() {	
+			if(!this.get('isEnabled'))
+				return;
 			if(this.get('submit')===true) {
 				this.get('targetObject').send('_submit',this._name);
 			}
@@ -38,14 +40,5 @@ export default Control.extend({
 			
 		}
 	},
-	
-	layoutName: function() {
-		if(!this.get('container')) {
-			return null;
-		}
-		if(this.constructor.typeKey)
-			return this.constructor.typeKey.replace(/\./g,'/')+'/input';
-		return 'forms/action' ;
-	}.property(),
 	
 });

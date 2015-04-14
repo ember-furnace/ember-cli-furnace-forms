@@ -1,8 +1,0 @@
-<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
-
-<radio-options>
-	{{#each option in options}}
-		{{view optionClass name=name value=option.index caption=option.caption}}
-	{{/each}}
-</radio-options>
-{{view "messages"}}

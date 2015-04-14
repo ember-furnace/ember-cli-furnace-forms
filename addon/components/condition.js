@@ -6,7 +6,7 @@
  */
 import Panel from './panel';
 import Ember from 'ember';
-
+import Conditional from 'furnace-forms/mixins/conditional';
 /**
  * Conditional panel component
  * 
@@ -14,10 +14,10 @@ import Ember from 'ember';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Panel
  */
-export default Panel.extend({
-	_condition : false,	
+export default Panel.extend(Conditional,{
 	
-	_rendered : false,
+	
+//	_rendered : false,
 //	isVisible: Ember.computed.alias('_condition'),
 	
 	value : Ember.computed.alias('_condition'),
@@ -40,11 +40,11 @@ export default Panel.extend({
 //		}
 //	}.observes('_condition')
 	
-	layoutName: function() {
-		if(!this.get('container')) {
-			return null;
-		}
-		var name="forms/condition";
-		return name ;
-	}.property(),
+//	layoutName: function() {
+//		if(!this.get('container')) {
+//			return null;
+//		}
+//		var name="forms/condition";
+//		return name ;
+//	}.property(),
 });

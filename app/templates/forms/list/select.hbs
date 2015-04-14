@@ -1,0 +1,7 @@
+<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
+{{view "select"
+       content=options
+       optionValuePath="content.index"
+       optionLabelPath="content.caption"
+       value=selectedIndex}}
+{{view "forms/messages" show=showMessages}}

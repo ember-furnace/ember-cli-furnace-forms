@@ -1,0 +1,5 @@
+{{input type="radio" name=name class=name value="1" didInsertElement=inputInsert checked=selected focus-in="focus" focus-out="blur"}}
+<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
+{{#if showForm}}
+	{{form form for=value}}
+{{/if}}

@@ -5,7 +5,7 @@ module.exports = function(environment) {
     modulePrefix: 'dummy',
     environment: environment,
     baseURL: '/',
-    locationType: 'auto',
+    locationType: 'hash',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -16,6 +16,7 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    	defaultLocale: 'en'
     }
   };
 
@@ -25,11 +26,12 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+	  ENV.baseURL = '/eric/ember-cli-furnace-forms/dist';
   }
 
   if (environment === 'test') {
     // Testem prefers this...
-    ENV.baseURL = '/';
+    ENV.baseURL = '//';
     ENV.locationType = 'none';
 
     // keep test console output quieter

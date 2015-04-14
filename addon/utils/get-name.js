@@ -13,16 +13,16 @@ export default function(object,silent) {
 		var index=tmpName.indexOf(':');
 		objectName=tmpName.substring(index+1,tmpName.indexOf(':',index+1)).replace(/\//g,'.');	
 	} else if(object instanceof PanelComponent) {
-		console.log(object.constructor);
-		Ember.debug(object.constructor);
 		objectName=object.get('layoutName');
 	} else if(object instanceof Ember.Component) {		
 		objectName=object.get('layoutName');
 	} else if(object instanceof Ember.Object) {
 		objectName=object.constructor.typeKey;
-	} else {
-		Ember.warn('Can not determine form for type '+(typeof object));
-	}
+	} 
+//	else {
+//		Ember.warn('Can not determine form for type '+(typeof object));
+//		console.trace();
+//	}
 
 	if(!silent)
 		Ember.warn('Unable to determine form for type '+(typeof object),objectName);

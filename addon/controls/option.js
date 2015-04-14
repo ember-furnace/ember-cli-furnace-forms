@@ -21,5 +21,7 @@ export default Ember.CoreObject.extend({
 	
 	selected : false,
 	
-	caption : ''
+	caption : '',
+		
+	form : ''
 });

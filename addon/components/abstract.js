@@ -7,6 +7,11 @@
 import Ember from 'ember';
 import Control from 'furnace-forms/controls/abstract';
 
+
+function messageFilter(item) {
+	
+}
+
 /**
  * Abstract control component 
  * 
@@ -17,7 +22,7 @@ import Control from 'furnace-forms/controls/abstract';
 export default Ember.Component.extend({
 	tagName: 'control',
 	
-	classNameBindings: ['_validClass','_enabledClass','_name','_controlClasses'],
+	classNameBindings: ['_validClass','_focusClass','_enabledClass','_name','_controlClasses','_typeClass'],
 	
 	actions: {
 		focus:function() {
@@ -28,7 +33,18 @@ export default Ember.Component.extend({
 			this.set('_focus',false);
 		},
 		
+		reset : function(action) {
+			this._reset();
+			this.send('validate');
+		},
 	},
+	
+	_focusClass : function() {
+		if(this.get('_focus')===true) {
+			return 'focus';
+		}
+		return null;
+	}.property('_focus'),
 	
 	_focus:false,
 	
@@ -73,10 +89,13 @@ export default Ember.Component.extend({
 	 * @private
 	 */
 	_validClass : function() {
-		if(this.get('_valid')===false) {
+		var valid=this.get('_valid');
+		if(valid===false) {
 			return 'invalid';
 		}
-		return 'valid';
+		else if(valid===true) {
+			return 'valid';
+		}
 	}.property('_valid'),
 	
 	/**
@@ -89,8 +108,9 @@ export default Ember.Component.extend({
 		if(this.get('_enabled')===false) {
 			return 'disabled';
 		}
-		return 'enabled';
+		return null;
 	}.property('_enabled'),
+	
 	
 	/**
 	 * Whether the input is enabled
@@ -101,31 +121,6 @@ export default Ember.Component.extend({
 	 */
 	_enabled : true,
 	
-	
-	/**
-	 * Whether the input is value
-	 * @property _valid
-	 * @type Boolean
-	 * @default: null
-	 * @private
-	 */
-	_valid: function() {
-		if(!this._form) {
-			return null;
-		}
-		var validations=this._form.get('_validations');
-		if(!validations){
-			return true;
-		}
-		var name=this.get('_form._modelName')+'.'+this._getPath();
-		if(validations[name]===undefined) {
-			return true;
-		}
-		else {
-			return validations[name];
-		}
-	}.property('_form._validations'),
-	
 	/**
 	 * Whether the control is enabled or not (alias for private property _enabled)
 	 * @property isEnabled
@@ -133,6 +128,29 @@ export default Ember.Component.extend({
 	 * @default true
 	 */
 	isEnabled: Ember.computed.alias('_enabled'),
+	
+	setEnabled: function(enabled) {		
+		if(enabled!=this._enabled)
+			this.set('_enabled',enabled);
+	},
+			
+	/**
+	 * Whether the input is valid
+	 * @property _valid
+	 * @type Boolean
+	 * @default: null
+	 * @private
+	 */
+	_valid: null,
+
+	setValid: function(valid) {
+		if(valid!=this._valid) {
+			this.set('_valid',valid);
+			if(this._panel)
+				this._panel.propertyDidChange(this._name);
+		}
+	},
+	
 	
 	/**
 	 * Whether the control is valid or not (alias for private property _valid)
@@ -154,6 +172,26 @@ export default Ember.Component.extend({
 		}
 	},
 	
+	getFor : function() {
+		if(this['for'])
+			return this['for'];			
+		return this.getForm()['for'];
+	},
+	
+	getTarget : function() {
+		if(this._form)
+			return this.getForm().get('targetObject');
+		return this.get('targetObject');
+	},
+	
+	getPanel : function() {
+		return this._panel;
+	},
+	
+	getForm : function() {
+		return this._form;
+	},
+	
 	/**
 	 * CSS classes determined by validation errors, warnings and notices
 	 * @property _controlClasses
@@ -162,41 +200,85 @@ export default Ember.Component.extend({
 	 */
 	_controlClasses : function() {
 		var classes=[];
-		if(this.get('controlErrors').length) {
+		if(this.get('hasError') && this.get('showErrors')) {
 			classes.push('error');
 		} 
-		if(this.get('controlWarnings').length) {
+		if(this.get('hasWarning')) {
 			classes.push('warning');
 		}
-		if(this.get('controlNotices').length) {
+		if(this.get('hasNotice')) {
 			classes.push('notice');
 		}		
 		return classes.join(" ");
-	}.property('controlMessages'),
+	}.property('_controlMessages,showErrors'),
 	
-	controlMessages: function() {
-		if(!this._form || !this._form.get('_messages')){
-			return Ember.A();
+	hasError:Ember.computed('_errors.length',function(){
+		var errors=this.get('_errors.length')>0;
+		return errors;
+	}).volatile(),
+	
+	hasWarning:Ember.computed('_warnings',function() {
+		var warnings=this.get('_warnings.length')>0;
+		return warnings;
+	}).volatile(),
+	
+	hasNotice:Ember.computed('_notices',function() {
+		var notices=this.get('_notices.length')>0;
+		return notices;
+	}).volatile(),
+	
+	__controlMessages : null,
+	
+	_controlMessages : null,
+	
+	_controlMessageObserver : function() {
+		var messages=null;
+		if(this.__controlMessages) {			
+			var focus=this.get('_focus');
+			if(!focus) {
+				messages= this.__controlMessages.filter(function(message) {
+					if(message.display==="focus")
+						return false;
+					return true;
+				});
+			} else {
+				var showDelayed=this.get('_showDelayedMessages');
+				messages= this.__controlMessages.filter(function(message) {
+					if(message.display==="immediate")
+						return true;
+					if(showDelayed && message.display==='delayed') 
+						return true;
+					if(focus && message.display==='focus') 
+						return true;
+					return false;
+				});
+			}
 		}
-		return this._form.get('_messages').filterBy('path',this.get('_form._modelName')+'.'+this._path);
-	}.property('_form._messages'),
+		this.set('_controlMessages',messages);
+	}.observes('__controlMessages,_focus,_showDelayedMessages'),
 	
-	controlErrors: function() {
-		return this.get('controlMessages').filterBy('type','error');
-	}.property('controlMessages'),
-	
-	controlWarnings: function() {
-		return this.get('controlMessages').filterBy('type','warning');
-	}.property('controlMessages'),
-	
-	controlNotices: function() {
-		return this.get('controlMessages').filterBy('type','notices');
-	}.property('controlMessages'),
+	setMessages: function(messages) {
+		this.set('showErrors',true);
+		this.set('__controlMessages',messages);
+	},
 	
 	
+	_errors : Ember.computed.filterBy('_controlMessages','type','error').volatile(),
 	
-	init:function() {
-		this._super();		
+	_warnings : Ember.computed.filterBy('_controlMessages','type','warning').volatile(),
+
+	_notices : Ember.computed.filterBy('_controlMessages','type','notice').volatile(),
+
+	controlErrors: Ember.computed.oneWay('_errors'),
+	
+	controlWarnings: Ember.computed.oneWay('_warnings'),
+	
+	controlNotices: Ember.computed.oneWay('_notices'),
+	
+	_showDelayedMessages : true,
+	
+	init:function() {		
+		this._super();	
 		this.set('target',this.get('targetObject'));
 		if(this.get('targetObject.'+this._name) instanceof Control) {
 			this.set('targetObject.'+this._name+'.content',this);
@@ -204,6 +286,13 @@ export default Ember.Component.extend({
 		if(this._form) {
 			this.set('_path',this._getPath());
 		}
+		if(this.get('caption')===null) {
+			var name=this.get('_panel._modelName')+'.'+this.get('_name');
+			this.set('caption',name);
+			
+		}
+		var form=this._form || this;
+		form._registerControl(this);
 	},
 	
 	layoutName: function() {
@@ -214,13 +303,37 @@ export default Ember.Component.extend({
 		return name ;
 	}.property(),
 	
+	showErrors : true,
+	
+	showMessages : Ember.computed('_controlMessages,showErrors',function(){
+		if((this.get('hasError') && this.get('showErrors')) || this.get('hasWarning') || this.get('hasNotice'))
+			return true;
+		return false;
+	}),
+	
+	_focusObserver : function(sender,key) {		
+//		if(this._focus) {
+//			this.set('showErrors',false);
+//		} else {
+//			this.set('showErrors',true);
+//		}
+		this.set('_showDelayedMessages',false);
+	}.observes('_focus'),
+	
 	_apply: function() {
 
 	},
 	
 	_reset: function() {
-		
+		this.setValid(null);
 	},
 	
+	willDestroy : function() {
+		if(this.get('targetObject.'+this._name) instanceof Control) {
+			this.set('targetObject.'+this._name+'.content',null);
+		}
+		var form=this._form || this;
+		form._unregisterControl(this);
+	}
 	
 });

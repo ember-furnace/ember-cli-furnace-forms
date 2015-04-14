@@ -7,8 +7,17 @@
 import Ember from 'ember';
 import Form from './components/form';
 import Input from './components/input';
-import Action from './components/action';
+import Panel from './components/panel';
+import Condition from './components/condition';
+import Action from './inputs/action';
+import Submit from './inputs/submit';
+import Text from './inputs/text';
+import Textarea from './inputs/textarea';
+import Password from './inputs/password';
+import Select from './inputs/select';
 import Helpers from './mixins/helpers';
+import Conditional from './mixins/conditional';
+
 /**
  * @class Forms
  * @namespace Furnace
@@ -35,5 +44,22 @@ export default Ember.Namespace.extend(Helpers, {
 	 * @type Furnace.Forms.Components.Action
 	 */
 	Action : Action,
+
+	Submit : Submit,
+	
+	Panel : Panel,
+	
+	Condition : Condition,
+	
+	Text : Text,
+	
+	Textarea : Textarea,
+	
+	Password : Password,
+	
+	Select : Select,
+	
+	Conditional: Conditional,
+	
 	
 }).create();

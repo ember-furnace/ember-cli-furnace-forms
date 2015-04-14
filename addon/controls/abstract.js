@@ -25,11 +25,51 @@ export default Ember.ObjectProxy.extend({
 	
 	_component: null,
 	
-	getComponentClass : function(context,contextName) {
-		if(typeof this._component ==="string") {
-			return Lookup.call(context,this._component,'input');
+	_valid: null,
+	
+	_enabled: null,
+	
+	// For additional computed properties on the component
+	_extend: null,
+	
+	getComponentClass : function(context,contextName) {	
+		var component=this._component
+		if(typeof component ==="string") {
+			component = Lookup.call(context,this._component,'input');
 		}
-		return this._component;
+		if(this._extend) {
+			var typeKey=component.typeKey;
+			component= component.extend(this._extend);
+			component.typeKey=typeKey;
+		}		
+
+		return component;
+		
+	},
+	
+	setEnabled : function(enabled) {
+		if(this.content)
+			this.content.setEnabled(enabled);
+		else 
+			this._enabled=enabled;
+	},
+	
+	setValid : function(valid) {
+		if(this.content)
+			this.content.setValid(valid);
+		else 
+			this._valid=valid;
+	},
+	
+	_contentObserver : function() {
+		if(this._valid!==null)
+			this.content.setValid(this._valid);
+		if(this._enabled!==null)
+			this.content.setEnabled(this._enabled);
+	}.observes('content'),
+	
+	getComponent : function(hash) {
+		hash=this.extendHash(hash);
 		
 	},
 	
@@ -37,7 +77,8 @@ export default Ember.ObjectProxy.extend({
 		var ret=hash || {};
 		var keys=Ember.keys(this);
 		for(var key in keys) {
-			if(typeof keys[key] ==='string') {
+			// The toString method has type "string" but should not be copied. Caused one hell of a headache.
+			if(typeof keys[key] ==='string' && keys[key]!=='toString') {
 				ret[keys[key]]=this[keys[key]];
 			}
 		}
@@ -54,5 +95,12 @@ export default Ember.ObjectProxy.extend({
 		if(this.content) {
 			return this.content._reset();
 		}
+	},
+	
+	send: function() { 
+		if(this.content) {
+			return this.content.send.apply(this.content,arguments);
+		}
 	}
+	
 });

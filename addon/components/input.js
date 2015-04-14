@@ -16,7 +16,7 @@ import Control from './abstract';
  */
 export default Control.extend({
 	
-	
+	attributeBindings: ['type'],
 	
 	_orgValue : null,
 	
@@ -30,8 +30,13 @@ export default Control.extend({
 		if(!this.get('container')) {
 			return null;
 		}
-		if(this.constructor.typeKey)
-			return this.constructor.typeKey.replace(/\./g,'/')+'/input';
+		if(this.constructor.typeKey) {
+			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+			if(layoutName===this.constructor.typeKey) {
+				return 'forms/'+layoutName;
+			}
+			return layoutName+'/input';
+		}
 		return 'forms/input' ;
 	}.property(),
 	
@@ -43,9 +48,9 @@ export default Control.extend({
 
 	init:function() {
 		this._super();
-		
 		// If we do not have a name, we're an anonymous option without a counterpart in 
 		if(this.get('_name')) {
+			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);			
 			this.reopen({
 				property:Ember.computed.alias('_panel.for.'+this.get('_name'))
 			});
@@ -54,11 +59,10 @@ export default Control.extend({
 			this.set('_orgValue',this.get('property'));
 		}
 		
-		if(this.get('caption')===null) {
-			var name=this.get('_panel._modelName')+'.'+this.get('_name');
-			this.set('caption',name);
-			
+		if(!this.get('_panel.isEnabled')) {
+			this.setEnabled(false);
 		}
+		
 	},
 	
 	_propertyObserver:function(value) {
@@ -76,6 +80,7 @@ export default Control.extend({
 		if(this.get('_name') && this.get('_form._syncToSource')) {
 			this._apply();
 		}
+		this._panel.propertyDidChange(this._name);
 	}.observes('value'),
 	
 	_apply: function() {
@@ -88,9 +93,14 @@ export default Control.extend({
 	
 	inputInsert:function() {
 		this.set('targetObject.inputId',this.elementId);
-	}
+	},
 	
+	disabledAttr:function() {
+		return this.get('isEnabled') ? null : 'disabled';
+	}.property('isEnabled'),
+
 	
-	
-	
+	type : Ember.computed(function() {
+		return Ember.String.camelize(this.constructor.typeKey);
+	}),
 });
