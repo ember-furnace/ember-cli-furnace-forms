@@ -7,6 +7,7 @@
 import Control from './abstract';
 import Action from 'furnace-forms/controls/action';
 import Ember from 'ember';
+import ControlSupport from 'furnace-forms/mixins/control-support';
 import getName from 'furnace-forms/utils/get-name';
 
 /**
@@ -16,20 +17,18 @@ import getName from 'furnace-forms/utils/get-name';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Abstract
  */
-export default Control.extend({
+export default Control.extend(ControlSupport,{
 	tagName : 'panel',
 	
 	'for': null,
 	
-	_controls : null,
+	modelName: Ember.computed.alias('_modelName'),
 	
 	init: function() {
-		this._super();
-		if(this._panel && this.get('for')===this._panel['for']) {
+		this._super();		
+		if(this._panel && this.get('for')===this.get('_panel.for')) {
 			this.set('_path',this.get('_panel._path'));
 		}		
-
-		this._controls={};
 	},
 	
 	actions: {
@@ -46,36 +45,28 @@ export default Control.extend({
 	
 	didApply: null,
 	
-	layoutName: function() {
-		if(!this.get('container')) {
-			return null;
-		}
-		if(this.constructor.typeKey) {
-			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
-			if(layoutName===this.constructor.typeKey) {
-				return 'forms/'+layoutName;
-			}
-			return layoutName+'/panel';
-		}
-		console.log(this);
-		return 'forms/panel' ;
-	}.property(),
+//	layoutName: function() {
+//		if(!this.get('container')) {
+//			return null;
+//		}
+//		if(this.constructor.typeKey) {
+//			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+//			if(layoutName===this.constructor.typeKey) {
+//				return 'forms/'+layoutName;
+//			}
+//			return layoutName+'/panel';
+//		}
+//		return 'forms/panel' ;
+//	}.property(),
 	
-	setEnabled: function(enabled) {
-		if(enabled!=this._enabled) {
-			this.set('_enabled',enabled);
-			for(var index in this._controls) {
-				this._controls[index].setEnabled(enabled);
-			}
-		}
-	},
+	_staticModelName : null,
 	
 	_modelName : Ember.computed('for',function(key,value) {
 		if(value)  {
 			return value;
 		}	
-		if(this.get('for')===this.get('_form.for')) {
-			return this.get('_form._modelName');
+		if(this.get('for')===this.get('_panel.for')) {
+			return this.get('_panel._modelName');
 		}
 		else if(this.get('for')) {
 			return getName(this.get('for'));
@@ -94,30 +85,7 @@ export default Control.extend({
 		}
 	}.property('targetObject'),
 	
-	_dirty:function() {
-		return this.get('controls').filterBy('isDirty', true).get('length')>0;
-	}.property('inputControls.@each.isDirty'),
-	
-	_dirtyObserver:function() {
-		this.set('isDirty',this.get('_dirty'));
-	}.observes('inputControls.@each.isDirty'),
-	
-	isDirty: false,
-	
-	_validObserver:function() {
-		this.setValid(this.get('controls').filterBy('isValid',false ).get('length')===0);
-	}.observes('inputControls.@each.isValid'),
-	
-	controls: Ember.computed(function() {
-		var ret = Ember.A();
-		var self = this;
-		this.constructor.eachComputedProperty(function(name, meta) {
-			if (meta.type==='form-control') {
-				ret.pushObject(self.get(name));
-			}
-		});
-		return ret;
-	}).readOnly(),
+	caption : null,
 	
 	inputControls: Ember.computed(function() {
 		var ret = Ember.A();

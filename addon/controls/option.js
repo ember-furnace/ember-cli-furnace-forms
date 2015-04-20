@@ -6,7 +6,8 @@
  */
 import Ember from 'ember';
 import Control from './abstract';
-
+import ControlSupport from 'furnace-forms/mixins/control-support';
+import I18n from 'furnace-i18n';
 /**
  * Input control component proxy 
  * 
@@ -15,13 +16,23 @@ import Control from './abstract';
  * @extends Furnace.Forms.Controls.Abstract
  * @protected
  */
-export default Ember.CoreObject.extend({
+export default Ember.Object.extend(ControlSupport,{
 	
 	value : null,
 	
 	selected : false,
 	
-	caption : '',
+	caption : I18n.computed(null),
 		
-	form : ''
+	control : null,
+	
+	input : null,
+	
+	init: function() {
+		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
+			this.set('caption',this.value);
+		}
+	},
+		
+	'for' : Ember.computed.alias('value')
 });

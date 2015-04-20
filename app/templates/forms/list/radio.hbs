@@ -1,7 +1,10 @@
-<label  {{bind-attr for=inputId}}>{{i18n caption}}</label>
-<radio-options>
+<label  {{bind-attr for=inputId}}>{{caption}}</label>
+<options>
 	{{#each control in controls}}
 		{{f-control control}}
 	{{/each}}
-</radio-options>
-{{view "forms/messages" isVisible=showMessages}}
+</options>
+{{#if showControl}}
+	{{f-control control dynamic=true}}
+{{/if}}
+{{f-messages}}

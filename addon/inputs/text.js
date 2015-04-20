@@ -6,7 +6,7 @@
  */
 import Ember from 'ember';
 import Control from 'furnace-forms/components/input';
-import I18n from 'furnace-i18n';
+import Placeholder from 'furnace-forms/mixins/placeholder';
 
 /**
  * Text input control component
@@ -15,7 +15,7 @@ import I18n from 'furnace-i18n';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default Control.extend({
+export default Control.extend(Placeholder,{
 	_showDelayedMessages : false,
 	
 	_delayedMessageTimer : null,
@@ -34,13 +34,10 @@ export default Control.extend({
 		}
 	}.observes('value,hasFocus'),
 	
-	placeholder:I18n.computed(''),
-	
-	init : function() {
-		var caption=this.caption;
+	_reset:function() {
 		this._super();
-		if(this.caption && caption===null && this.placeholder instanceof Ember.ComputedProperty) {
-			this.set('placeholder',this.caption+".placeholder");
+		if(this._delayedMessageTimer) {
+			Ember.run.cancel(this._delayedMessageTimer);
 		}
 	},
 	

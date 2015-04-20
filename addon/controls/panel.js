@@ -23,8 +23,8 @@ export default Control.extend({
 }).reopenClass({
 	
 	generate : function(options) {
-		var extend=options || {};	
-		if(options._panel['for'].get(options._name)) {
+		var extend=options || {};
+		if(options._panel.get('for.'+options._name)) {
 			extend['for']=Ember.computed.alias('_panel.for.'+options._name);
 		} else {
 			extend['for']=Ember.computed.alias('_panel.for');						

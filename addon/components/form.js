@@ -26,37 +26,22 @@ export default Panel.extend({
 	
 	_observer : null,
 	
-//	_messages : Ember.computed(function(key,value) {
-//		if(value) {
-//			for(var name in value) {
-//				if(this._controlsByPath[name]!==undefined) {
-//					this._controlsByPath[name].setMessages(value[name]);
-//				}
-//			}
-//			return value;
-//		}
-//	}),
-//
-//	_validations : Ember.computed(function(key,value) {
-//		if(value) {
-//			for(var name in value) {
-//				if(this._controlsByPath[name]!==undefined) {
-//					this._controlsByPath[name].setValid(value[name]);
-//				}
-//			}
-//			return value;
-//		}
-//	}),
+	_validationCache : null,
+	
+	_messageCache : null,
 	
 	_setValidations : function(result,silent) {
 		var validations=result.get('validations');
 		var messages=result.get('messages');
+		this._validationCache=validations;
+		this._messageCache=messages;				
 		for(var name in validations) {
-			if(this._controlsByPath[name]!==undefined) {
+			if(this._controlsByPath[name]!==undefined) {				
 				this._controlsByPath[name].setValid(validations[name]);
-				if(!silent && messages[name]!==undefined) {
-					this._controlsByPath[name].setMessages(messages[name]);
-				} else {
+				if(messages[name]!==undefined) {
+					this._controlsByPath[name].setMessages(messages[name],silent);
+				}
+				else { 
 					this._controlsByPath[name].setMessages(null);
 				}
 			}
@@ -68,40 +53,72 @@ export default Panel.extend({
 	_controlsByPath: null,
 	
 	actions : {
-		validate : function(path) {
-			var form=this._form || this;
+		validate : function(paths) {
+			var form=this;
 			var target=this.get('for');			
 			var modelName=this.get('_modelName');
 			var validator=this.get('_validator');
+			var promisses=Ember.A();
 			if(!validator)
 				return;
-			if(path) {
-				target=target.get(path);
-				validator=validator.get(path);
-				modelName=modelName+'.'+path;
+			if(paths) {				
+				if(typeof paths==='string'){
+					paths=Ember.A(paths);
+				}
+				paths.forEach(function(path) {
+					path=path.replace(/^_form\./,'');
+					path=form.get(path+'._path');
+					target=target.get(path);
+					validator=validator.get(path);
+					modelName=modelName+'.'+path;
+					promisses.pushObject(validator.validate(target,modelName))
+				})
 			}
-			
-			validator.validate(target,modelName).then(function(result){
-				form._setValidations(result);
+			else {
+				promisses.pushObject(validator.validate(target,modelName));
+			}
+			Ember.RSVP.all(promisses).then(function(result){
+				result.forEach(function(result) {
+					form._setValidations(result);
+					if(result.hasFinished())
+						result.reset();
+				});
+				
 			});
 
 		},
 		
+		reset : function(action) {
+			this._reset();
+			if(this._observer)
+				this._observer.run();
+			if(action)
+				this.send(action,form);
+		},
+		
 		_submit: function(action) {
 			this.sendAction('willSubmit',this);
+			action=action || 'submit';
 			if(this.get('_observer')) {
 				var form=this;
 				this.get('_observer').run(function(result) {
 					form._setValidations(result);
+					if(result.hasFinished()) {
+						result.reset();
+					}
+					else {
+						Ember.warn('There are still validations being performed in submit callback, submit cancelled!');
+						return;
+					} 
 					if(result.isValid()) {
-						form.__submit();
+						form._submit();						
 						form.send(action,form);				
 						form.sendAction('didSubmit');
 					}
 				},false);
 			}	
 			else {
-				this.__submit();
+				this._submit();
 				this.send(action,this);				
 				this.sendAction('didSubmit');	
 			}
@@ -109,18 +126,32 @@ export default Panel.extend({
 		}
 	},
 	
-	_registerControl: function(control) {
-		var name=this._modelName;
-		if(control._path)
-			name+='.'+control._path;
+	_registerControl: function(control,prefix) {
+		var name=(prefix ? prefix : this._modelName);
+		// We should register ourself nameless. If there is a parent it should register with our name.
+		if(control!==this && control._path)
+			name+='.'+control._path;		
 		this._controlsByPath[name]=control;
+		
+		if(this._validationCache[name]!==undefined)
+			control.setValid(this._validationCache[name]);
+		if(this._messageCache[name]!==undefined) 
+			control.setMessages(this._messageCache[name],true);
+		
+		if(this._form && control!==this) {
+			this._form._registerControl(control,this._modelName);
+		}
 	},
 	
-	_unregisterControl: function(control) {
-		var name=this._modelName;
-		if(control._path)
-			name+='.'+control._path;
+	_unregisterControl: function(control,prefix) {
+		var name=(prefix ? prefix : this._modelName);
+		if(control!==this && control._getPath())
+			name+='.'+control._getPath();
 		delete this._controlsByPath[name];
+		
+		if(this._form && control!==this) {
+			this._form._unregisterControl(control,this._modelName);
+		}
 	},
 	
 	_proxy : function() {
@@ -139,6 +170,12 @@ export default Panel.extend({
 		}		
 		return this.constructor.typeKey;
 	}.property('for'),
+	
+	_reset:function() {
+		this._validationCache={};
+		this._messageCache={};
+		this._super();
+	},
 	
 	_validator: function() {
 		var validator=this.get('validator');
@@ -162,17 +199,29 @@ export default Panel.extend({
 	
 	init : function() {
 		this._controlsByPath={};
+		this._validationCache={};
+		this._messageCache={};
 		this._super();
 		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
 		var validator=this.get('_validator');
 		// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
 		if(validator && (!this._form || !this._form.get("_validator."+this._path))) {
-			var form=this._form || this;
-			
+			var form= this;
 			this._observer = validator.observe(this,'for',function(result,sender,key) {
-				// Code for settings validations and messages is triggering too many observer event atm.
 				var silent=sender===null || sender===form
+				if(silent && form.get('for.isDirty'))
+					silent=false;
+//				Ember.debug(form);
+//				console.log('Ran validation',sender,key);
+//				console.log(result.get('validations'));
+//				console.log(result.get('messages'));
+//				Ember.debug(sender);
+//				console.log('--------------');
+				if(sender===form)
+					form._reset();
 				form._setValidations(result,silent);
+				if(result.hasFinished())
+					result.reset();
 			},this.get('_path') || this.get('_modelName'));
 			
 			this._observer.run();
@@ -184,10 +233,12 @@ export default Panel.extend({
 	
 	didSubmit : null,
 	
-	__submit : function() {
+	_submit : function() {
 		this._apply();
 	},
 
+	submit : 'submit',
+	
 	layoutName: function() {
 		if(!this.get('container')) {
 			return null;

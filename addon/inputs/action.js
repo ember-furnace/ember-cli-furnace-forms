@@ -15,7 +15,6 @@ import Input from 'furnace-forms/components/input';
  */
 export default Input.extend({
 	
-	caption: null,
 	
 	submit: false,
 	
@@ -32,13 +31,5 @@ export default Input.extend({
 		}
 	},
 	
-	init:function() {
-		this._super();
-		if(this.get('caption')===null) {
-			var name=this.get('_panel._modelName')+'.'+this.get('_name');
-			this.set('caption',name);
-			
-		}
-	},
 	
 });

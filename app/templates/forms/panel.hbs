@@ -1,5 +1,5 @@
 {{#if caption}}
-	<h3 class="panel-caption">{{i18n caption}}</h3>
+	<h3 class="panel-caption">{{caption}}</h3>
 {{/if}}
 
 {{#each control in inputControls}}
@@ -9,4 +9,4 @@
 {{#each control in actionControls}}
 {{f-control control}}
 {{/each}}
-{{view "forms/messages" show=showMessages}}
+{{f-messages}}

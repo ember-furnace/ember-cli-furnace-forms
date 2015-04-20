@@ -6,9 +6,12 @@
  */
 import Ember from 'ember';
 import Input from 'furnace-forms/components/input';
+import Placeholder from 'furnace-forms/mixins/placeholder';
 
 import Options from 'furnace-forms/mixins/options';
-
+import SingleSelect from 'furnace-forms/mixins/single-select';
+import getName from 'furnace-forms/utils/get-name';
+import InputControl from 'furnace-forms/controls/input';
 /**
  * Text input control component
  * 
@@ -16,12 +19,8 @@ import Options from 'furnace-forms/mixins/options';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default Input.extend(Options,{
+export default Input.extend(Options,SingleSelect,Placeholder,{
 	
-		
-	layoutName: function() {		
-		if(this.constructor.typeKey!=='select')
-			return this._super();
-		return 'forms/select/input' ;
-	}.property(),
+	defaultLayout: 'forms/select',
+	
 });

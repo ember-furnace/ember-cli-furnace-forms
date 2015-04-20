@@ -101,6 +101,6 @@ export default Ember.ObjectProxy.extend({
 		if(this.content) {
 			return this.content.send.apply(this.content,arguments);
 		}
-	}
+	},
 	
 });

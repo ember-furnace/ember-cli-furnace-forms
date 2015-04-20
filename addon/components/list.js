@@ -5,9 +5,10 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import PanelComponent from 'furnace-forms/components/panel';
+import InputComponent from 'furnace-forms/components/input';
 import getName from 'furnace-forms/utils/get-name';
 import Options from 'furnace-forms/mixins/options';
+import ControlSupport from 'furnace-forms/mixins/control-support';
 
 import Input from 'furnace-forms/controls/input';
 /**
@@ -17,36 +18,37 @@ import Input from 'furnace-forms/controls/input';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default PanelComponent.extend(Options,{
-	tagName : 'control',
+export default InputComponent.extend(ControlSupport,Options,{
+	
+	attributeBindings: ['type'],
 	
 	actions : {
 		select: function(index) {
-			this.set('value',this._options[index].value);
+			this.set('value',this.get('_options')[index].value);
 		}
 	},
 	
-	optionClass : null,
+	optionType : null,
 	
 	name : Ember.computed.alias('_name'),
 		
-	controls: Ember.computed(function() {
+	controls: Ember.computed('_options',function() {
 		var ret = Ember.A();
 		var control = this;
-		this._options.forEach(function(option,index) {
-			ret.pushObject(Input.create({_component:control.optionClass,
+		this.get('_options').forEach(function(option,index) {
+			ret.pushObject(Input.create({_component:control.optionType,
 										 _name:control._name,
 										 _form:control._form,
 										 _panel:control,
 										 index : index,
-										 value : option.value,
-										 caption : option.caption,
-										 form : option.form===true ? getName(option.value) : option.form}));
-		})
+										 option : option}));
+		});
 		return ret;
 	}).readOnly(),
 	
 
-	
+	type : Ember.computed(function() {
+		return Ember.String.camelize(this.constructor.typeKey);
+	}),
 	
 });

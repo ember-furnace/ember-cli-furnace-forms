@@ -5,7 +5,7 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Input from 'furnace-forms/components/list/option';
+import Input from 'furnace-forms/components/list-option';
 
 import CheckedSupport from 'furnace-forms/mixins/checked-support';
 /**

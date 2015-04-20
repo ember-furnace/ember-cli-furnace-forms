@@ -1,13 +1,11 @@
 
-{{#if showErrors}}
-	{{#each message in controlErrors}}
-		<message class="error">{{i18n message attributes=message.attributes}}</message>
-	{{/each}}
-{{/if}}
-{{#each message in controlWarnings}}
-	<message class="warning">{{i18n message attributes=message.attributes}}</message>
+{{#each message in errors}}
+	<message {{bind-attr class="message.type message.visible:visible:hidden"}}>{{i18n message attributes=message.attributes}}</message>
 {{/each}}
-{{#each message in controlNotices}}
-	<message class="notice">{{i18n message attributes=message.attributes}}</message>
+{{#each message in warnings}}
+	<message {{bind-attr class="message.type message.visible:visible:hidden"}}>{{i18n message attributes=message.attributes}}</message>
+{{/each}}
+{{#each message in notices}}
+	<message {{bind-attr class="message.type message.visible:visible:hidden"}}>{{i18n message attributes=message.attributes}}</message>
 {{/each}}
 

@@ -1,10 +1,10 @@
 import Ember from 'ember';
 import Control from 'furnace-forms/controls/abstract';
 import Input from 'furnace-forms/controls/input'; 
-import List from 'furnace-forms/controls/list'; 
 import Action from 'furnace-forms/controls/action'; 
 import Panel from 'furnace-forms/controls/panel'; 
 import Form from 'furnace-forms/controls/form'; 
+import View from 'furnace-forms/controls/view'; 
 import PanelComponent from 'furnace-forms/components/panel';
 import FormComponent from 'furnace-forms/components/form';
 import InputComponent from 'furnace-forms/components/input';
@@ -38,42 +38,13 @@ function getOptions(args,defaultType) {
 	return options;
 }
 
-function inputOptions() {
-	if(arguments.length===1) {
-		if(typeof arguments[0] ==='function') {
-			this._meta.options._optionFn=arguments[0];
-			return this;
-		} else if(typeof arguments[0]==='string') {
-			var prop=arguments[0];
-			this._meta.options._optionFn=function() {
-				return this.getTarget().get(prop);
-			};
-			return this;
-		}
-	}
-	
-	var options=Ember.A();
-	for(var i=0;i<arguments.length;i++) {
-		options.push(arguments[i]);
-	}
-	this._meta.options._options=options;
-	
-	return this;
-}
+
 
 var getControl=function(type,options) {
 	return computedControl(type,options);
 };
 
 var Helpers= Ember.Mixin.create({
-	list : function(type,options) {
-		options=getOptions(arguments,'select');				
-		var cp=getControl(List,options);
-		cp.options=inputOptions;
-		return cp;
-	},
-	
-	
 	
 	input : function(type,options) {
 		options=getOptions(arguments,'text');
@@ -97,6 +68,14 @@ var Helpers= Ember.Mixin.create({
 		return getControl(Panel,options);
 	},
 	
+	view : function(type,options) {
+		options=getOptions(arguments,'view');
+		if(options._component!=='view')
+			options.layoutName=options._component.replace(/\./g,'/');
+		options._component='view';
+		return getControl(View,options);
+	},
+	
 	form: function() {
 		var options;
 		if(arguments.length===1) {
@@ -108,6 +87,9 @@ var Helpers= Ember.Mixin.create({
 			}
 			options=arguments[0];
 		}else if(arguments.length===2) {
+			if(typeof arguments[1]==='string') {
+				return getControl(Form,{'_component': arguments[1],_modelName:arguments[0]});
+			}
 			options=arguments[1];
 			options._modelName=arguments[0];
 		} else {
@@ -119,9 +101,9 @@ var Helpers= Ember.Mixin.create({
 	attr: function(key) {
 		var meta={
 				type: 'form-attr',
-				key:key
+				key: 'for.'+key
 			};
-		return  Ember.computed(function(key,value) {
+		return  Ember.computed(meta.key,function(key,value) {
 			var meta = this.constructor.metaForProperty(key);
 			
 			if(this.get(meta.key)===undefined) {
@@ -138,10 +120,10 @@ var Helpers= Ember.Mixin.create({
 		}).meta(meta);
 	},
 	
-	option: function(value,caption,form) {
-		return Option.create({value:value,caption:caption,form: form});
+	option: function(value,caption,control) {
+		
+		return Option.extend({value:value,caption:caption,control : control ? control : null});
 	}
 });
-
 
 export default Helpers;

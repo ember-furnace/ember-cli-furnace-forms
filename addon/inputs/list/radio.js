@@ -5,15 +5,22 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Control from 'furnace-forms/components/list/radio';
+import Input from 'furnace-forms/components/list';
+
+import SingleSelect from 'furnace-forms/mixins/single-select';
 
 /**
  * Text input control component
  * 
- * @class Text
+ * @class Radio
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default Control.extend({
+export default Input.extend(SingleSelect,{
+	
+	optionType : 'radio-option',
+	
+	defaultLayout: 'forms/list/radio',
+
 	
 });

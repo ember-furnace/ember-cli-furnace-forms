@@ -17,6 +17,14 @@ import Control from './abstract';
  * @protected
  */
 export default Control.extend({
-	_component : 'text',
+	_component : 'view',
+	
+//	getComponentClass : function(context,contextName) {
+//		var view=this._component
+//		if(typeof view ==="string") {
+//			view = context.get('container').lookup('view:'+view);
+//		}
+//		return view;
+//	},
 	
 });

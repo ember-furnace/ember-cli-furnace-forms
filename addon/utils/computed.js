@@ -1,7 +1,12 @@
 import Ember from 'ember';
 import PanelComponent from 'furnace-forms/components/panel';
 import FormComponent from 'furnace-forms/components/form';
-import Control from 'furnace-forms/controls/abstract';
+
+import ControlSupport from 'furnace-forms/mixins/control-support';
+
+import Conditions from 'furnace-forms/utils/conditions';
+import Options from 'furnace-forms/utils/options';
+
 function getMeta(options) {
 	return {
 		type: 'form-control',
@@ -14,7 +19,7 @@ function computedControl(type,options) {
 	options=options || {};
 	var meta=getMeta(options);
 	var control = Ember.computed(function(key) {
-		Ember.assert("You have assigned a control to something thats not a Panel or Form",this instanceof PanelComponent);
+		Ember.assert("You have assigned a control to something that does not have support controls, eg: Panel, Form or Option",ControlSupport.detect(this));
 		if(!this._controls) {
 			this._controls=Ember.A();
 		}
@@ -24,13 +29,15 @@ function computedControl(type,options) {
 			
 			var options=meta.options;
 			options._name=key;
-			if(this instanceof FormComponent && !this._form) {
+			if(this instanceof FormComponent) {
 				options._form=this;
 			}
 			else {
 				options._form=this._form;
 			}
+			
 			options._panel=this;
+			
 			if(typeof type.generate==='function') {
 				this._controls[key]=type.generate(options);				
 			} else {
@@ -40,40 +47,8 @@ function computedControl(type,options) {
 		return this._controls[key];
 	}).meta(meta);
 	
-	control.cond=function(props,fn) {
-		var _props=props.split(',');
-		var length=_props.length;
-		var _fn;	
-		var options=this._meta.options;
-		
-		for(var i =0;i<length;i++) {
-			_props[i]='_form.'+_props[i];			
-		}
-		if(arguments.length===1) {
-			options._conditionFn=function() {				
-				var props=this._conditionProps.split(',');		
-				for(var i=0; i<props.length;i++) {
-					var prop=this.get(props[i]);
-					if(prop instanceof Control) {
-						if(!prop.get('value') || prop.get('isValid')===false){
-							return false;
-						}
-					}
-					else if(!prop) {
-						return false;
-					}					
-				}
-				return true;
-			};
-		}
-		else {
-			options._conditionFn=function() {
-				return fn.call(this._form);
-			}
-		}
-		options._conditionProps=_props.join(',');		
-		return this;
-	}
+	control.cond=Conditions;
+	control.options=Options;
 	return control;
 }
 

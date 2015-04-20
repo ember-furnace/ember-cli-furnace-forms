@@ -8,7 +8,7 @@ export default Ember.Mixin.create({
 		this._super();
 		if(typeof this._conditionFn==='function') {
 			this.reopen({
-				_condition:Ember.computed(this._conditionProps,this._conditionFn)
+				_condition:Ember.computed(this._conditionProps+',_form.for',this._conditionFn)
 			});
 		}
 	},

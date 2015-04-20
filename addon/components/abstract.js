@@ -6,7 +6,7 @@
  */
 import Ember from 'ember';
 import Control from 'furnace-forms/controls/abstract';
-
+import I18n from 'furnace-i18n';
 
 function messageFilter(item) {
 	
@@ -45,6 +45,8 @@ export default Ember.Component.extend({
 		}
 		return null;
 	}.property('_focus'),
+	
+	caption: I18n.computed(null),
 	
 	_focus:false,
 	
@@ -127,12 +129,18 @@ export default Ember.Component.extend({
 	 * @type Boolean
 	 * @default true
 	 */
-	isEnabled: Ember.computed.alias('_enabled'),
+	isEnabled: true,
 	
 	setEnabled: function(enabled) {		
-		if(enabled!=this._enabled)
+		if(enabled!=this._enabled) {
 			this.set('_enabled',enabled);
+		}
+		this.set('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
 	},
+	
+	_panelEnabledObserver:Ember.observer('_panel.isEnabled',function() {
+		this.setEnabled(this._enabled);
+	}),
 			
 	/**
 	 * Whether the input is valid
@@ -143,22 +151,46 @@ export default Ember.Component.extend({
 	 */
 	_valid: null,
 
-	setValid: function(valid) {
-		if(valid!=this._valid) {
-			this.set('_valid',valid);
-			if(this._panel)
-				this._panel.propertyDidChange(this._name);
-		}
-	},
-	
-	
 	/**
 	 * Whether the control is valid or not (alias for private property _valid)
 	 * @property isValid
 	 * @type Boolean
 	 * @default null
 	 */
-	isValid: Ember.computed.alias('_valid'),
+	isValid: null,
+	
+	setValid: function(valid) {
+		Ember.run.once(this,function() {
+			if(valid!==this._valid) {	
+				this.set('isValid',valid);
+				this.set('_valid',valid);
+				this.notifyChange();
+			}
+		});
+	},
+	
+	_dirty:false,
+	
+	isDirty:  false,
+	
+	setDirty: function(dirty) {
+		Ember.run.once(this,function() {
+			if(dirty!==this._dirty) {
+				this.set('isDirty',dirty);
+				this.set('_dirty',dirty);
+				this.notifyChange();
+			}
+		});
+	},
+	
+	notifyChange: function() {
+		if(this._panel) {
+			Ember.run.once(this,function() {
+				this._panel.propertyDidChange(this._name);
+			});
+		}
+	},
+	
 	
 	/**
 	 * Get the path for the component
@@ -172,10 +204,16 @@ export default Ember.Component.extend({
 		}
 	},
 	
-	getFor : function() {
+	getFor : function(path) {
+		var model=null;
 		if(this['for'])
-			return this['for'];			
-		return this.getForm()['for'];
+			model = this.get('for');			
+		else
+			model = this.getForm().get('for');
+		if(path) {
+			return model.get(path);
+		}
+		return model;
 	},
 	
 	getTarget : function() {
@@ -200,7 +238,7 @@ export default Ember.Component.extend({
 	 */
 	_controlClasses : function() {
 		var classes=[];
-		if(this.get('hasError') && this.get('showErrors')) {
+		if(this.get('hasError')) {
 			classes.push('error');
 		} 
 		if(this.get('hasWarning')) {
@@ -210,64 +248,104 @@ export default Ember.Component.extend({
 			classes.push('notice');
 		}		
 		return classes.join(" ");
-	}.property('_controlMessages,showErrors'),
+	}.property('hasError,hasWarning,hasNotice'),
 	
-	hasError:Ember.computed('_errors.length',function(){
-		var errors=this.get('_errors.length')>0;
-		return errors;
-	}).volatile(),
+	hasError: false,
 	
-	hasWarning:Ember.computed('_warnings',function() {
-		var warnings=this.get('_warnings.length')>0;
-		return warnings;
-	}).volatile(),
+	hasWarning: false,
 	
-	hasNotice:Ember.computed('_notices',function() {
-		var notices=this.get('_notices.length')>0;
-		return notices;
-	}).volatile(),
+	hasNotice: false,
 	
 	__controlMessages : null,
 	
 	_controlMessages : null,
 	
 	_controlMessageObserver : function() {
-		var messages=null;
-		if(this.__controlMessages) {			
-			var focus=this.get('_focus');
-			if(!focus) {
-				messages= this.__controlMessages.filter(function(message) {
-					if(message.display==="focus")
-						return false;
-					return true;
-				});
-			} else {
-				var showDelayed=this.get('_showDelayedMessages');
-				messages= this.__controlMessages.filter(function(message) {
-					if(message.display==="immediate")
-						return true;
-					if(showDelayed && message.display==='delayed') 
-						return true;
-					if(focus && message.display==='focus') 
-						return true;
+		var messages=this.__controlMessages;
+		var source = null;
+		
+		var focus=this.get('_focus');
+		if(!focus) {
+			source= this.__controlMessages.filter(function(message) {
+				if(message.display==="focus")
 					return false;
-				});
-			}
+				return true;
+			});
+		} else {
+			var showDelayed=this.get('_showDelayedMessages');
+			source= this.__controlMessages.filter(function(message) {
+				if(message.display==="immediate")
+					return true;
+				if(showDelayed && message.display==='delayed') 
+					return true;
+				if(focus && message.display==='focus') 
+					return true;
+				return false;
+			});
 		}
-		this.set('_controlMessages',messages);
-	}.observes('__controlMessages,_focus,_showDelayedMessages'),
+		this._updateMessages(source,this._controlMessages);
+		
+		this.set('hasError',this._controlMessages.findBy('type','error')!==undefined);
+		this.set('hasWarning',this._controlMessages.findBy('type','warning')!==undefined);
+		this.set('hasNotice',this._controlMessages.findBy('type','notice')!==undefined);
+		
+		
+		if(this._enabled && (this.hasError || this.hasWarning || this.hasNotice)) {
+			this.set('_showMessages',true);
+		}
+		else {
+			this.set('_showMessages',false);
+		}
+		
+		this.propertyDidChange('_controlMessages');
+		this.propertyDidChange('_showMessages');
+	}.observes('_focus,_showDelayedMessages'),
 	
-	setMessages: function(messages) {
-		this.set('showErrors',true);
-		this.set('__controlMessages',messages);
+	_enabledObserver: function() {
+		if(this._enabled && (this.hasError || this.hasWarning || this.hasNotice)) {
+			this.set('_showMessages',true);
+		}
+		else {
+			this.set('_showMessages',false);
+		}
+	}.observes('_enabled'),
+	
+	setMessages: function(messages,silent) {
+		this._updateMessages(messages,this.__controlMessages);
+		if(!silent)
+			Ember.run.once(this,this._controlMessageObserver);
 	},
 	
 	
-	_errors : Ember.computed.filterBy('_controlMessages','type','error').volatile(),
+	_updateMessages: function(source,target) {
+		target.forEach(function(item) {
+			if(!source) {
+				target.removeObject(item);
+			} else {
+				var _messages=source.filterBy('type',item.type).filterBy('message',item.message);
+				if(!_messages.length) {
+					target.removeObject(item);
+				} else {
+					
+					_messages.forEach(function(message) {
+						Ember.set(item,'attributes',message.attributes);
+						source.removeObject(message);
+					})
+				}
+			}
+		});
+		if(source) {
+			source.forEach(function(message) {
+				target.pushObject(message)
+			});
+		}
+	},
 	
-	_warnings : Ember.computed.filterBy('_controlMessages','type','warning').volatile(),
+	_errors : Ember.computed.filterBy('_controlMessages','type','error'),
+	
+	_warnings : Ember.computed.filterBy('_controlMessages','type','warning'),
 
-	_notices : Ember.computed.filterBy('_controlMessages','type','notice').volatile(),
+	_notices : Ember.computed.filterBy('_controlMessages','type','notice'),
 
 	controlErrors: Ember.computed.oneWay('_errors'),
 	
@@ -277,8 +355,12 @@ export default Ember.Component.extend({
 	
 	_showDelayedMessages : true,
 	
+	_showMessages : false,
+	
 	init:function() {		
 		this._super();	
+		this.set('__controlMessages',Ember.A());
+		this.set('_controlMessages',Ember.A());
 		this.set('target',this.get('targetObject'));
 		if(this.get('targetObject.'+this._name) instanceof Control) {
 			this.set('targetObject.'+this._name+'.content',this);
@@ -286,37 +368,34 @@ export default Ember.Component.extend({
 		if(this._form) {
 			this.set('_path',this._getPath());
 		}
-		if(this.get('caption')===null) {
+		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
 			var name=this.get('_panel._modelName')+'.'+this.get('_name');
 			this.set('caption',name);
-			
 		}
-		var form=this._form || this;
-		form._registerControl(this);
+		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);
 	},
+	
+	defaultLayout : Ember.computed.alias('tagName'),
 	
 	layoutName: function() {
 		if(!this.get('container')) {
 			return null;
-		}		
-		var name='forms/'+this.get('tagName');
-		return name ;
+		}
+		if(this.constructor.typeKey) {
+			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+			if(layoutName===this.constructor.typeKey) {
+				layoutName = 'forms/'+layoutName;
+			} else {
+				layoutName = layoutName+'/input';
+			}
+			if(this.get('container').lookup('template:'+layoutName)) {
+				return layoutName;
+			}
+		}
+		return this.defaultLayout;
 	}.property(),
 	
-	showErrors : true,
-	
-	showMessages : Ember.computed('_controlMessages,showErrors',function(){
-		if((this.get('hasError') && this.get('showErrors')) || this.get('hasWarning') || this.get('hasNotice'))
-			return true;
-		return false;
-	}),
-	
 	_focusObserver : function(sender,key) {		
-//		if(this._focus) {
-//			this.set('showErrors',false);
-//		} else {
-//			this.set('showErrors',true);
-//		}
 		this.set('_showDelayedMessages',false);
 	}.observes('_focus'),
 	
@@ -332,8 +411,7 @@ export default Ember.Component.extend({
 		if(this.get('targetObject.'+this._name) instanceof Control) {
 			this.set('targetObject.'+this._name+'.content',null);
 		}
-		var form=this._form || this;
-		form._unregisterControl(this);
+		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
 	}
 	
 });

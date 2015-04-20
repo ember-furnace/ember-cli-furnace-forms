@@ -5,7 +5,7 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Input from 'furnace-forms/components/list/option';
+import Input from 'furnace-forms/components/list-option';
 
 import CheckedSupport from 'furnace-forms/mixins/checked-support';
 /**
@@ -17,7 +17,8 @@ import CheckedSupport from 'furnace-forms/mixins/checked-support';
  */
 export default Input.extend(CheckedSupport,{
 	
-	tagName : 'radio-option',
+	
+	defaultLayout: 'forms/list/radio-option',
 	
 	name : Ember.computed.alias('_name'),
 	
@@ -26,10 +27,6 @@ export default Input.extend(CheckedSupport,{
 	}.property('elementId'),
 		
 	checked : Ember.computed.alias('selected'),
-	
-	layoutName: function() {			
-		return 'forms/list/radio-option' ;
-	}.property(),
 		
 	click : function(event) {
 		if(event.toElement.id===this.get('inputId')) {

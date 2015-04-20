@@ -20,43 +20,30 @@ export default Control.extend({
 	
 	_orgValue : null,
 	
-	_dirty: function() {
-		return this.get('value')!=this.get('_orgValue');
-	}.property('value'),
+	defaultLayout: 'forms/input',
 	
-	isDirty: Ember.computed.alias('_dirty'),
-	
-	layoutName: function() {
-		if(!this.get('container')) {
-			return null;
-		}
-		if(this.constructor.typeKey) {
-			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
-			if(layoutName===this.constructor.typeKey) {
-				return 'forms/'+layoutName;
-			}
-			return layoutName+'/input';
-		}
-		return 'forms/input' ;
-	}.property(),
+	property: null,
 	
 	inputId: null,
 
-	caption : null,
-	
 	value:null,
 
 	init:function() {
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in 
 		if(this.get('_name')) {
-			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);			
-			this.reopen({
-				property:Ember.computed.alias('_panel.for.'+this.get('_name'))
-			});
-			
-			this.set('value',this.get('property'));
-			this.set('_orgValue',this.get('property'));
+			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
+			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
+				this.reopen({
+					property:Ember.computed.alias('_panel.for.'+this.get('_name'))
+				});
+				
+				this.set('value',this.get('property'));
+				this.set('_orgValue',this.get('property'));
+			}
+			else {
+				this.set('_orgValue',this.get('value'));
+			}
 		}
 		
 		if(!this.get('_panel.isEnabled')) {
@@ -74,17 +61,26 @@ export default Control.extend({
 		if(!this.get('_form._syncToSource')) {
 			this.set('_orgValue',this.get('property'));
 		}
+		this.setDirty(this.get('value')!==this.get('_orgValue'));
 	}.observes('property'),
 	
-	_valueObserver:function() {		
+	
+	_valueObserver:function() {
 		if(this.get('_name') && this.get('_form._syncToSource')) {
 			this._apply();
 		}
+		this.setDirty(this.get('value')!==this.get('_orgValue'));
 		this._panel.propertyDidChange(this._name);
 	}.observes('value'),
 	
 	_apply: function() {
-		this.set('property',this.get('value'));
+		if(this.property!==null) {
+			Ember.run.once(this,function(){
+				if(this.get('_panel.for')) {
+					this.set('property',this.get('value'));
+				}
+			});
+		}
 	},
 	
 	_reset: function() {
