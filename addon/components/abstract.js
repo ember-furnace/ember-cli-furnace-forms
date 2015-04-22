@@ -318,13 +318,14 @@ export default Ember.Component.extend({
 	
 	
 	_updateMessages: function(source,target) {
+		var remove=Ember.A();
 		target.forEach(function(item) {
 			if(!source) {
-				target.removeObject(item);
+				remove.pushObject(item);
 			} else {
 				var _messages=source.filterBy('type',item.type).filterBy('message',item.message);
 				if(!_messages.length) {
-					target.removeObject(item);
+					remove.pushObject(item);
 				} else {
 					
 					_messages.forEach(function(message) {
@@ -334,6 +335,7 @@ export default Ember.Component.extend({
 				}
 			}
 		});
+		target.removeObjects(remove);
 		if(source) {
 			source.forEach(function(message) {
 				target.pushObject(message)
