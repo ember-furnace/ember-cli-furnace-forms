@@ -10,6 +10,7 @@ export default Ember.Mixin.create({
 	
 	init: function() {
 		this._super.apply(this, arguments);
+		
 		this.on('change', this, this._updateElementValue);
 	},
 
@@ -17,5 +18,10 @@ export default Ember.Mixin.create({
 		 Ember.run.next(this, function() {
 			set(this, 'checked', this.$('#'+get(this,'inputId')).prop('checked'));
 		 });
+	},
+	
+	didInsertElement : function() {
+		this._super();
+		this.$('#'+get(this,'inputId')).prop('checked',this.get('checked'));
 	}
 })
