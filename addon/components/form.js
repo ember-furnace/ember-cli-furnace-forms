@@ -171,10 +171,10 @@ export default Panel.extend({
 		return this.constructor.typeKey;
 	}.property('for'),
 	
-	_reset:function() {
+	_reset:function(modelChanged) {
 		this._validationCache={};
 		this._messageCache={};
-		this._super();
+		this._super(modelChanged);
 	},
 	
 	_validator: function() {
@@ -217,8 +217,7 @@ export default Panel.extend({
 //				console.log(result.get('messages'));
 //				Ember.debug(sender);
 //				console.log('--------------');
-				if(sender===form)
-					form._reset();
+				
 				form._setValidations(result,silent);
 				if(result.hasFinished())
 					result.reset();
@@ -228,6 +227,10 @@ export default Panel.extend({
 		
 		}
 	},
+	
+	_forObserver : Ember.observer('for',function(){
+		this._reset(true);
+	}),
 	
 	willSubmit : null,
 	

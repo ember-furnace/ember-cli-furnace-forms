@@ -113,8 +113,8 @@ export default Control.extend(ControlSupport,{
 		this.get('inputControls').invoke('_apply');
 	},
 	
-	_reset:function() {
-		this._super();
-		this.get('inputControls').invoke('_reset');
+	_reset:function(modelChanged) {
+		this._super(modelChanged);
+		this.get('controls').invoke('_reset',modelChanged);
 	},
 });

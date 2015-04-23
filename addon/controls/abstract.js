@@ -84,16 +84,22 @@ export default Ember.ObjectProxy.extend({
 		}
 		return ret;
 	},
-
+	
+	isValid : Ember.computed('content.isValid,_valid',function() {
+		if(this.content)
+			return this.content.get('isValid');
+		return this._valid;
+	}),
+	
 	_apply : function() {
 		if(this.content) {
 			return this.content._apply();
 		}
 	},
 	
-	_reset : function() {
+	_reset : function(modelChanged) {
 		if(this.content) {
-			return this.content._reset();
+			return this.content._reset(modelChanged);
 		}
 	},
 	

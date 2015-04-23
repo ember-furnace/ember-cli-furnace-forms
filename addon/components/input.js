@@ -83,7 +83,11 @@ export default Control.extend({
 		}
 	},
 	
-	_reset: function() {
+	_reset: function(modelChanged) {
+		this._super(modelChanged);
+		if(modelChanged) {
+			this.set('_orgValue',this.get('property'));
+		}
 		this.set('value',this.get('_orgValue'));
 	},
 	

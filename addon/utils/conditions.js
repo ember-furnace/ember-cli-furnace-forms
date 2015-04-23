@@ -9,11 +9,12 @@ export default function(props,fn) {
 			_props[i]='_form.'+_props[i];			
 		}		
 		if(arguments.length===1) {
-			options._conditionFn=function() {				
+			options._conditionFn=function(sender) {
 				var props=this._conditionProps.split(',');				
 				for(var i=0; i<props.length;i++) {
 					var prop=this.get(props[i]);
 					if(prop instanceof Control) {
+						Ember.warn('Condition check on control "'+props[i]+'" but the control is not available (yet), nested validations might not be performed. This may not be what you want!',prop.content!==null);
 						if(!prop.get('value') || prop.get('isValid')===false){
 							return false;
 						}

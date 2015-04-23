@@ -34,8 +34,8 @@ export default Control.extend(Placeholder,{
 		}
 	}.observes('value,hasFocus'),
 	
-	_reset:function() {
-		this._super();
+	_reset:function(modelChanged) {
+		this._super(modelChanged);
 		if(this._delayedMessageTimer) {
 			Ember.run.cancel(this._delayedMessageTimer);
 		}

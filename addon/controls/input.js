@@ -19,4 +19,10 @@ import Control from './abstract';
 export default Control.extend({
 	_component : 'text',
 	
+	value : Ember.computed('content.value',function() {
+		if(this.content)
+			return this.content.get('value');
+		else 
+			return this.get('_panel.for.'+this.get('_name'));
+	}),
 });

@@ -406,7 +406,8 @@ export default Ember.Component.extend({
 	},
 	
 	_reset: function() {
-		this.setValid(null);
+		this.set('isValid',null);
+		this.set('_valid',null);
 	},
 	
 	willDestroy : function() {

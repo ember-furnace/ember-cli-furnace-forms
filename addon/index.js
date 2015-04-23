@@ -23,6 +23,7 @@ import RadioOption from './inputs/list/radio-option';
 import Messages from './components/messages';
 import Helpers from './mixins/helpers';
 import Conditional from './mixins/conditional';
+import ControlSupport from './mixins/control-support';
 
 /**
  * @class Forms
@@ -76,6 +77,8 @@ export default Ember.Namespace.extend(Helpers, {
 	Messages : Messages,
 	
 	Conditional: Conditional,
+	
+	ControlSupport : ControlSupport
 	
 	
 }).create();
