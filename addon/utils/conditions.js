@@ -14,7 +14,7 @@ export default function(props,fn) {
 				for(var i=0; i<props.length;i++) {
 					var prop=this.get(props[i]);
 					if(prop instanceof Control) {
-						Ember.warn('Condition check on control "'+props[i]+'" but the control is not available (yet), nested validations might not be performed. This may not be what you want!',prop.content!==null);
+						Ember.warn('Condition check on control "'+props[i]+'" but the control is not available (yet)!',prop.content!==null);
 						if(!prop.get('value') || prop.get('isValid')===false){
 							return false;
 						}

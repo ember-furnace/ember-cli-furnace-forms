@@ -240,18 +240,20 @@ export default Panel.extend({
 		this._apply();
 	},
 
-	submit : 'submit',
+	submit : function() {
+		this.send('_submit');
+	},
 	
 	layoutName: function() {
 		if(!this.get('container')) {
 			return null;
 		}
-		var name='forms/'+getName(this.get('targetObject'),true);
+		var name=getName(this.get('targetObject'),true)+'/form';
 		if(name!==null)
 			name=name.replace(/\./g,'/');
 		if(!this.get('container').lookup('template:'+name)) {
 			if(getName(this.get('for'),true)) {
-				name='forms/'+getName(this.get('for')).replace(/\./g,'/');
+				name=getName(this.get('for')).replace(/\./g,'/')+'/form';
 			}
 			if(!name || !this.get('container').lookup('template:'+name)) {
 				name='forms/form';
@@ -265,5 +267,14 @@ export default Panel.extend({
 			this._observer.destroy();
 		}
 		this._super();
+	}
+}).reopenClass({
+	async : function() {
+		this.reopen({
+			_syncFromSource : false,
+			
+			_syncToSource : false,
+		});
+		return this;
 	}
 });

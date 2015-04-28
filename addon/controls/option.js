@@ -33,6 +33,34 @@ export default Ember.Object.extend(ControlSupport,{
 			this.set('caption',this.value);
 		}
 	},
+	
+	/**
+	 * Whether the input is enabled
+	 * @property _enabled
+	 * @type Boolean
+	 * @default true
+	 * @private
+	 */
+	_enabled : true,
+	
+	/**
+	 * Whether the control is enabled or not (alias for private property _enabled)
+	 * @property isEnabled
+	 * @type Boolean
+	 * @default true
+	 */
+	isEnabled: true,
+	
+	setEnabled: function(enabled) {		
+		if(enabled!=this._enabled) {
+			this.set('_enabled',enabled);
+		}
+		this.set('isEnabled',this._enabled && (!this._input || this._input.isEnabled));
+	},
+	
+	_optionEnabledObserver:Ember.observer('_input.isEnabled',function() {
+		this.setEnabled(this._enabled);
+	}),
 		
 	'for' : Ember.computed.alias('value')
 });

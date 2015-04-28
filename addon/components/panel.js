@@ -28,7 +28,12 @@ export default Control.extend(ControlSupport,{
 		this._super();		
 		if(this._panel && this.get('for')===this.get('_panel.for')) {
 			this.set('_path',this.get('_panel._path'));
-		}		
+		}	
+		if(this.get('_panel') && !this.get('_panel.isEnabled')) {
+			Ember.debug(this);
+			Ember.debug(this._panel);
+			this.setEnabled(false);
+		}
 	},
 	
 	actions: {
@@ -44,22 +49,6 @@ export default Control.extend(ControlSupport,{
 	willApply: null,
 	
 	didApply: null,
-	
-//	layoutName: function() {
-//		if(!this.get('container')) {
-//			return null;
-//		}
-//		if(this.constructor.typeKey) {
-//			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
-//			if(layoutName===this.constructor.typeKey) {
-//				return 'forms/'+layoutName;
-//			}
-//			return layoutName+'/panel';
-//		}
-//		return 'forms/panel' ;
-//	}.property(),
-	
-	_staticModelName : null,
 	
 	_modelName : Ember.computed('for',function(key,value) {
 		if(value)  {
