@@ -30,8 +30,6 @@ export default Control.extend(ControlSupport,{
 			this.set('_path',this.get('_panel._path'));
 		}	
 		if(this.get('_panel') && !this.get('_panel.isEnabled')) {
-			Ember.debug(this);
-			Ember.debug(this._panel);
 			this.setEnabled(false);
 		}
 	},
