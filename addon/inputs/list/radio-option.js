@@ -7,7 +7,7 @@
 import Ember from 'ember';
 import Input from 'furnace-forms/components/list-option';
 
-import CheckedSupport from 'furnace-forms/mixins/checked-support';
+import CheckedSupport from 'furnace-forms/mixins/components/checked-support';
 /**
  * Text input control component
  * 
@@ -20,17 +20,17 @@ export default Input.extend(CheckedSupport,{
 	
 	defaultLayout: 'forms/list/radio-option',
 	
-	name : Ember.computed.alias('_name'),
+	
 	
 	inputId: function() {
-		return this.elementId+'-'+this.index;
+		return this.elementId+'-'+this.get('index');
 	}.property('elementId'),
 		
 	checked : Ember.computed.alias('selected'),
 		
 	click : function(event) {
 		if(event.toElement.id===this.get('inputId')) {
-			this.send('select',this.index);
+			this.send('select');
 		}
 	}
 });

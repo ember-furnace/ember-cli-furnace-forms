@@ -13,7 +13,11 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	hasPrerequisites : Ember.computed.alias('_condition')
+	hasPrerequisites : Ember.computed.alias('_condition'),
 
-	
+	conditionProperties: Ember.computed('_conditionProps',function() {
+		if(!this._conditionProps)
+			return null;
+		return this._conditionProps.split(',');
+	}).readOnly(),
 });

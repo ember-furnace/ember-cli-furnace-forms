@@ -7,7 +7,6 @@
 import Ember from 'ember';
 import Input from 'furnace-forms/components/list';
 
-import SingleSelect from 'furnace-forms/mixins/single-select';
 
 /**
  * Text input control component
@@ -16,7 +15,7 @@ import SingleSelect from 'furnace-forms/mixins/single-select';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default Input.extend(SingleSelect,{
+export default Input.extend({
 	
 	optionType : 'radio-option',
 	

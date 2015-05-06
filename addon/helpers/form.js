@@ -31,6 +31,16 @@ export default function formHelper(params, hash, options, env) {
 	} else {
 		named=view.get('renderedName');
 	}
-	var component=Lookup.call(view,named ? named :contextObject);
+	var controlClass=Lookup.call(view,named ? named :contextObject);
+	var control=controlClass.create({container:view.container,target:view.get('controller')});
+	var component=control.getComponent();
+	options.helperName='form';
+	hash.control=control;	
+	options.destroy=function() {
+		this._super();
+		console.log('destroying form');
+		this.control.destroy();
+	}
+	Ember.assert('Control ('+control._name+') does not specify a component',component);
 	return env.helpers.view.helperFunction.call(this,[component],hash,options,env);
 }

@@ -12,6 +12,6 @@ import Ember from "ember";
  */
 export default function controlHelper(params, hash, options, env) {
 	var view = env.data.view;
-	var component=view.container.lookup('view:forms.messages');	
+	var component=view.container.lookup('component:forms.messages');	
 	env.helpers.view.helperFunction.call(this,[component],hash,options,env);
 }

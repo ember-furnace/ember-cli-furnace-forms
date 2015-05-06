@@ -7,7 +7,7 @@
 import Ember from 'ember';
 import Control from 'furnace-forms/components/input';
 
-import CheckedSupport from 'furnace-forms/mixins/checked-support';
+import CheckedSupport from 'furnace-forms/mixins/components/checked-support';
 /**
  * Text input control component
  * 

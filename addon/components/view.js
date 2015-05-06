@@ -35,22 +35,5 @@ export default Control.extend({
 		return this.defaultLayout;
 	}.property(),
 	
-	init:function() {
-		this._super();
-		// If we do not have a name, we're an anonymous option without a counterpart in 
-		if(this.get('_name')) {
-			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {	
-				this.reopen({
-					value:Ember.computed.alias('_panel.for.'+this.get('_name'))
-				});
-			}
-			else {
-				this.reopen({
-					value:Ember.computed.alias('_panel.for')
-				});
-			}
-			
-		}				
-		
-	},
+	value:Ember.computed.alias('control.value'),
 });

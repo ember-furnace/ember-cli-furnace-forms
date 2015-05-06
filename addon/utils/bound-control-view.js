@@ -43,14 +43,13 @@ export default ContainerView.extend(_Metamorph, {
     }
     var hash    = this._boundComponentOptions;           
     var hashForComponent = {};
-
+    hash['control']=control;
     var prop;
     for (prop in hash) {
       if (prop === '_boundComponentOptions' || prop === 'componentClassStream') { continue; }
       hashForComponent[prop] = hash[prop];
     }
-    hashForComponent=control.extendHash(hashForComponent);
-    var props   = {};
+    var props   = {};        
     mergeViewBindings(this, props, hashForComponent);
     return this.createChildView(componentClass, props);
   }

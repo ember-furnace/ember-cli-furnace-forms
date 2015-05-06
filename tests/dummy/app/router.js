@@ -13,6 +13,9 @@ Router.map(function() {
 		this.route('checkbox', {path:'/checkbox'});
 		this.route('checklist', {path:'/checklist'});
 	});
+	this.route('conditions', {path:'/conditions'}, function() {
+		this.route('stacked', {path:'/stacked'});
+	});
 });
 
 export default Router;

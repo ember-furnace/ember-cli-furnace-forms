@@ -6,7 +6,7 @@
  */
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
-
+import I18n from 'furnace-i18n';
 /**
  * Abstract control component proxy 
  * 
@@ -15,7 +15,7 @@ import Lookup from 'furnace-forms/utils/lookup-class';
  * @extends Ember.ObjectProxy
  * @private
  */
-export default Ember.ObjectProxy.extend({
+export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	_name: null,
 	
@@ -25,88 +25,229 @@ export default Ember.ObjectProxy.extend({
 	
 	_component: null,
 	
-	_valid: null,
+	_for : null,
 	
-	_enabled: null,
 	
-	// For additional computed properties on the component
-	_extend: null,
+	caption: I18n.computed(null),
 	
-	getComponentClass : function(context,contextName) {	
-		var component=this._component
-		if(typeof component ==="string") {
-			component = Lookup.call(context,this._component,'input');
-		}
-		if(this._extend) {
-			var typeKey=component.typeKey;
-			component= component.extend(this._extend);
-			component.typeKey=typeKey;
-		}		
-
-		return component;
+	hasPrerequisites: null,
+	
+	actions: {
 		
+		reset : function(action) {
+			this._reset();
+		},
 	},
 	
-	setEnabled : function(enabled) {
-		if(this.content)
-			this.content.setEnabled(enabled);
-		else 
-			this._enabled=enabled;
-	},
+	isEnabled: true,
 	
-	setValid : function(valid) {
-		if(this.content)
-			this.content.setValid(valid);
-		else 
-			this._valid=valid;
-	},
+	_enabled: true,
 	
-	_contentObserver : function() {
-		if(this._valid!==null)
-			this.content.setValid(this._valid);
-		if(this._enabled!==null)
-			this.content.setEnabled(this._enabled);
-	}.observes('content'),
-	
-	getComponent : function(hash) {
-		hash=this.extendHash(hash);
-		
-	},
-	
-	extendHash: function(hash) {
-		var ret=hash || {};
-		var keys=Ember.keys(this);
-		for(var key in keys) {
-			// The toString method has type "string" but should not be copied. Caused one hell of a headache.
-			if(typeof keys[key] ==='string' && keys[key]!=='toString') {
-				ret[keys[key]]=this[keys[key]];
-			}
+	setEnabled: function(enabled) {		
+		if(enabled!=this._enabled) {
+			this.set('_enabled',enabled);
 		}
-		return ret;
+		this.setFlag('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
 	},
 	
-	isValid : Ember.computed('content.isValid,_valid',function() {
-		if(this.content)
-			return this.content.get('isValid');
-		return this._valid;
+	_panelEnabledObserver:Ember.observer('_panel.isEnabled',function() {
+		this.setEnabled(this._enabled);
 	}),
 	
-	_apply : function() {
-		if(this.content) {
-			return this.content._apply();
+	
+	_valid: null,
+	
+	isValid: null,
+	
+	setValid: function(valid) {
+		Ember.run.once(this,function() {
+			if(valid!==this._valid) {	
+				this.setFlag('isValid',valid);
+				this.set('_valid',valid);
+				this.notifyChange();
+			}
+		});
+	},
+		
+	
+		
+	_dirty: false,
+	
+	isDirty: false,
+	
+	setDirty: function(dirty) {
+		Ember.run.once(this,function() {
+			if(dirty!==this._dirty) {
+				this.setFlag('isDirty',dirty);
+				this.set('_dirty',dirty);						
+				this.notifyChange();
+			}
+		});
+	},
+	
+	setFlag:function(property,value) {
+		this.set(property,value);
+		this._components.invoke('set',property,value);
+	},
+	
+	init:function() {		
+		this._super();	
+		this.set('_controlMessages',Ember.A());
+		this.set('_components',Ember.A());		
+		if(this._form) {
+			this.set('_path',this._getPath());
+			this.set('target',this._panel);
+		}
+		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
+			var name=this.get('_panel._modelName') ? this.get('_panel._modelName')+'.'+this.get('_name') : this.get('_name');			
+			this.set('caption',name);
+		}
+		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);
+	},
+	
+	_apply: function() {
+
+	},
+	
+	_reset: function() {
+		this.setFlag('isValid',null);
+		this.set('_valid',null);
+	},
+	
+	notifyChange: function() {
+		if(this._panel) {
+//			console.log('change',this.toString(),this._name);
+			Ember.run.once(this,function() {
+				this._panel.propertyDidChange(this._name);
+			});
 		}
 	},
 	
-	_reset : function(modelChanged) {
-		if(this.content) {
-			return this.content._reset(modelChanged);
+	_getPath: function() {
+		if(!this['for']) {
+			return (this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name');
 		}
 	},
 	
-	send: function() { 
-		if(this.content) {
-			return this.content.send.apply(this.content,arguments);
+	getFor : function(path) {
+		var model=null;
+		if(this['for'])
+			model = this.get('for');			
+		else
+			model = this.getForm().get('for');
+		Ember.assert('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
+		if(path) {
+			return model.get(path);
+		}
+		return model;
+	},
+	
+	getTarget : function() {
+		if(this._form)
+			return this.getForm().get('targetObject');
+		return this.get('targetObject');
+	},
+	
+	getPanel : function() {
+		return this._panel;
+	},
+	
+	getForm : function(path) {
+		if(path) {
+			return this._form.get(path);
+		}
+		return this._form;
+	},
+	
+	_controlMessages : null,
+	
+	setMessages: function(messages,silent) {
+		this._updateMessages(messages,this._controlMessages);
+		if(!silent) {
+			Ember.run.once(this,function() {
+				this._components.invoke('_controlMessageObserver');
+			});
 		}
 	},
+	
+	
+	_updateMessages: function(source,target) {
+		var remove=Ember.A();
+		target.forEach(function(item) {
+			if(!source) {
+				remove.pushObject(item);
+			} else {
+				var _messages=source.filterBy('type',item.type).filterBy('message',item.message);
+				if(!_messages.length) {
+					remove.pushObject(item);
+				} else {
+					
+					_messages.forEach(function(message) {
+						Ember.set(item,'attributes',message.attributes);
+						source.removeObject(message);
+					})
+				}
+			}
+		});
+		target.removeObjects(remove);
+		if(source) {
+			source.forEach(function(message) {
+				target.pushObject(message)
+			});
+		}
+	},
+	
+	_components : null,
+	
+	registerComponent:function(component) {
+		this._components.pushObject(component);
+		component.set('isValid',this.get('isValid'));
+		component.set('isEnabled',this.get('isEnabled'));
+		component.set('isDirty',this.get('isDirty'));
+	},
+	
+	unregisterComponent:function(component) {
+		this._components.removeObject(component);
+	},
+	
+	
+	
+	_componentType : 'forms',
+	
+	getComponentClass : function() {	
+		var component=this._component
+		if(typeof component ==="string") {
+			component = Lookup.call(this,this._component,this._componentType);
+		}
+		return component;		
+	},
+	
+	getComponent : function() {
+		var component=this.getComponentClass();
+		if(!component)
+			return null;
+		return component.create({container:this.container,
+								control:this,
+								_debugContainerKey : component + this.get('_name')
+								});
+	},
+	
+	toString: function() {
+		var string=this._super();
+		return string.substring(0,string.length-1)+':'+this.get('_name')+'>';
+	},
+	
+	willDestroy : function() {
+		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
+		this._super();
+	},
+	destroy: function() {
+		this._super();
+//		console.log('destroying control',this.toString(),this._name);
+		Ember.warn('Destroying control '+this.toString()+ ' while there are still components attached! '+ (this._components.length),this._components.length===0);
+//		if(this._components.length!==0)
+//			console.trace();
+	},
+	
 	
 });

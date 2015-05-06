@@ -5,8 +5,8 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Control from 'furnace-forms/components/input';
-import Placeholder from 'furnace-forms/mixins/placeholder';
+import Input from 'furnace-forms/components/input';
+import Placeholder from 'furnace-forms/mixins/components/placeholder';
 
 /**
  * Text input control component
@@ -15,7 +15,7 @@ import Placeholder from 'furnace-forms/mixins/placeholder';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Input
  */
-export default Control.extend(Placeholder,{
+export default Input.extend(Placeholder,{
 	_showDelayedMessages : false,
 	
 	_delayedMessageTimer : null,

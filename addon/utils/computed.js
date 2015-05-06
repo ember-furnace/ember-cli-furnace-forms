@@ -1,13 +1,14 @@
 import Ember from 'ember';
-import PanelComponent from 'furnace-forms/components/panel';
-import FormComponent from 'furnace-forms/components/form';
-
-import ControlSupport from 'furnace-forms/mixins/control-support';
+import Panel from 'furnace-forms/controls/panel';
+import getControl from 'furnace-forms/utils/get-control';
+import Control from  'furnace-forms/controls/abstract';
+import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 
 import Conditions from 'furnace-forms/utils/conditions';
 import Options from 'furnace-forms/utils/options';
 
 function getMeta(options) {
+	options._mixin={};
 	return {
 		type: 'form-control',
 		options:options
@@ -17,37 +18,25 @@ function getMeta(options) {
 
 function computedControl(type,options) {
 	options=options || {};
+	options._controlType=type;
 	var meta=getMeta(options);
 	var control = Ember.computed(function(key) {
-		Ember.assert("You have assigned a control to something that does not have support controls, eg: Panel, Form or Option",ControlSupport.detect(this));
+		Ember.assert("You have assigned a control with key "+key+" to "+this.toString()+" but it has no control-support like a Panel, Form or Option",ControlSupport.detect(this));
 		if(!this._controls) {
 			this._controls=Ember.A();
 		}
 		if(!this._controls[key]) {
 			this._controls[key]=null;
-			var meta = this.constructor.metaForProperty(key);
+//			console.log(options);
+//			var meta = this.constructor.metaForProperty(key);
+			this._controls[key]=getControl.call(this,key,options._controlType,options);
 			
-			var options=meta.options;
-			options._name=key;
-			if(this instanceof FormComponent) {
-				options._form=this;
-			}
-			else {
-				options._form=this._form;
-			}
-			
-			options._panel=this;
-			
-			if(typeof type.generate==='function') {
-				this._controls[key]=type.generate(options);				
-			} else {
-				this._controls[key]=type.create(options);
-			}
 		}			
 		return this._controls[key];
 	}).meta(meta);
 	
 	control.cond=Conditions;
+	control.on=Conditions;
 	control.options=Options;
 	return control;
 }

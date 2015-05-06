@@ -5,6 +5,7 @@
 import Ember from "ember";
 import getName from 'furnace-forms/utils/get-name';
 import boundControl from './bound-control';
+
 /**
  * @method f-control
  * @for Furnace.Forms.helpers
@@ -28,9 +29,13 @@ export default function controlHelper(params, hash, options, env) {
 		boundControl.call(this,[params[0]],hash,options,env);
 	}
 	else {
-		var component = control.getComponentClass(view,control._panel.get('_modelName'));
-		Ember.assert('Control ('+control._name+') does not specify a component',component);
-		hash=control.extendHash(hash);
+		if(!control._component) {			
+			control._component=view.get('controller.optionType');
+		}
+		var component = control.getComponent()
+		Ember.warn('Control ('+control._name+') does not specify a component, nothing will be rendered',component);
+		if(!component)
+			return;
 		env.helpers.view.helperFunction.call(this,[component],hash,options,env);
 	}
 }

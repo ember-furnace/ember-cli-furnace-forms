@@ -1,11 +1,11 @@
 <label  {{bind-attr for=inputId}}>{{caption}}</label>
 {{view "select"
-       content=options
+       content=control.options
        optionValuePath="content.index"
        optionLabelPath="content.caption"
-       value=selectedIndex
+       value=control.selectedIndex
        prompt=placeholder}}
-{{#if showControl}}
-	{{f-control control dynamic=true}}
+{{#if control.showOptionControl}}
+	{{f-control control.optionControl dynamic=true}}
 {{/if}}
 {{f-messages}}

@@ -4,10 +4,8 @@
  * @module furnace
  * @submodule furnace-forms
  */
-import Control from './abstract';
-import Action from 'furnace-forms/controls/action';
+import Component from './abstract';
 import Ember from 'ember';
-import ControlSupport from 'furnace-forms/mixins/control-support';
 import getName from 'furnace-forms/utils/get-name';
 
 /**
@@ -17,91 +15,12 @@ import getName from 'furnace-forms/utils/get-name';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Abstract
  */
-export default Control.extend(ControlSupport,{
+export default Component.extend({
 	tagName : 'panel',
 	
-	'for': null,
+	controls : Ember.computed.alias('control.controls'),
 	
-	modelName: Ember.computed.alias('_modelName'),
+	inputControls : Ember.computed.alias('control.inputControls'),
 	
-	init: function() {
-		this._super();		
-		if(this._panel && this.get('for')===this.get('_panel.for')) {
-			this.set('_path',this.get('_panel._path'));
-		}	
-		if(this.get('_panel') && !this.get('_panel.isEnabled')) {
-			this.setEnabled(false);
-		}
-	},
-	
-	actions: {
-		apply:function() {
-			this.sendAction('willApply');
-							
-			this._apply();
-			
-			this.sendAction('didApply');
-		}
-	},
-	
-	willApply: null,
-	
-	didApply: null,
-	
-	_modelName : Ember.computed('for',function(key,value) {
-		if(value)  {
-			return value;
-		}	
-		if(this.get('for')===this.get('_panel.for')) {
-			return this.get('_panel._modelName');
-		}
-		else if(this.get('for')) {
-			return getName(this.get('for'));
-		}
-		else {
-			return null;
-		}
-	}),
-	
-	_targetName : function() {
-		if(this.get('targetObject')) {
-			return getName(this.get('targetObject'));
-		}
-		else {
-			return null;
-		}
-	}.property('targetObject'),
-	
-	caption : null,
-	
-	inputControls: Ember.computed(function() {
-		var ret = Ember.A();
-		var self = this;
-		this.constructor.eachComputedProperty(function(name, meta) {
-			if (meta.type==='form-control' && !(self.get(name) instanceof Action)) {
-				ret.pushObject(self.get(name));
-			}
-		});
-		return ret;
-	}).readOnly(),
-	
-	actionControls: Ember.computed(function() {
-		var ret = Ember.A();
-		var self = this;
-		this.constructor.eachComputedProperty(function(name, meta) {
-			if (meta.type==='form-control' && (self.get(name) instanceof Action)) {
-				ret.pushObject(self.get(name));
-			}
-		});
-		return ret;
-	}).readOnly(),
-	
-	_apply:function() {
-		this.get('inputControls').invoke('_apply');
-	},
-	
-	_reset:function(modelChanged) {
-		this._super(modelChanged);
-		this.get('controls').invoke('_reset',modelChanged);
-	},
+	actionControls : Ember.computed.alias('control.actionControls'),
 });

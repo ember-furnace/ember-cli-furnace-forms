@@ -4,7 +4,7 @@
  * @module furnace
  * @submodule furnace-forms
  */
-import Control from './input';
+import Control from './abstract';
 
 /**
  * Action control component proxy 
@@ -15,5 +15,18 @@ import Control from './input';
  * @protected
  */
 export default Control.extend({
+	_componentType : 'input',
+	_component : 'button',
 	
+	dispatch : function() {
+		if(!this.get('isEnabled'))
+			return;
+		this.send(this._name,this);		
+	},
+	
+	submit : function() {
+		if(!this.get('isEnabled'))
+			return;
+		this.send('_submit',this._name);
+	}
 });

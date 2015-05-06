@@ -5,25 +5,16 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Form from './components/form';
-import Input from './components/input';
-import Panel from './components/panel';
-import View from './components/view';
-import Condition from './components/condition';
-import Action from './inputs/action';
-import Submit from './inputs/submit';
-import Text from './inputs/text';
-import Textarea from './inputs/textarea';
-import Password from './inputs/password';
-import Select from './inputs/select';
-import Checkbox from './inputs/checkbox';
-import RadioList from './inputs/list/radio';
-import RadioOption from './inputs/list/radio-option';
 
-import Messages from './components/messages';
+
+import Controls from './controls';
+import Components from './components';
+import Inputs from './inputs';
+
 import Helpers from './mixins/helpers';
-import Conditional from './mixins/conditional';
-import ControlSupport from './mixins/control-support';
+import Conditional from './mixins/controls/conditional';
+import ControlSupport from './mixins/controls/control-support';
+import ValueSupport from './mixins/controls/value-support';
 
 /**
  * @class Forms
@@ -31,54 +22,19 @@ import ControlSupport from './mixins/control-support';
  * @static
  */
 export default Ember.Namespace.extend(Helpers, {	
-	/**
-	 * Form component
-	 * @property Form
-	 * @type Furnace.Forms.Components.Form
-	 */
-	Form : Form,
 	
-	/**
-	 * Input component
-	 * @property Input
-	 * @type Furnace.Forms.Components.Input
-	 */
-	Input : Input,
+	Controls : Controls,
 	
-	/**
-	 * Action component
-	 * @property Action
-	 * @type Furnace.Forms.Components.Action
-	 */
-	Action : Action,
+	Components : Components,
 
-	Submit : Submit,
-	
-	Panel : Panel,
-	
-	View : View,
-
-	Condition : Condition,
-	
-	Text : Text,
-	
-	Textarea : Textarea,
-	
-	Password : Password,
-	
-	Checkbox : 	Checkbox,
-	
-	Select : Select,
-	
-	RadioList : RadioList,
-
-	RadioOption : RadioOption,
-
-	Messages : Messages,
+	Inputs : Inputs,
+		
 	
 	Conditional: Conditional,
 	
-	ControlSupport : ControlSupport
+	ControlSupport : ControlSupport,
+	
+	ValueSupport : ValueSupport
 	
 	
 }).create();

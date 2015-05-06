@@ -6,8 +6,8 @@
  */
 import Ember from 'ember';
 import Control from './abstract';
-
-
+import Lookup from 'furnace-forms/utils/lookup-class';
+import ValueSupport from 'furnace-forms/mixins/controls/value-support';
 /**
  * Input control component proxy 
  * 
@@ -16,13 +16,21 @@ import Control from './abstract';
  * @extends Furnace.Forms.Controls.Abstract
  * @protected
  */
-export default Control.extend({
+export default Control.extend(ValueSupport,{
 	_component : 'text',
 	
-	value : Ember.computed('content.value',function() {
-		if(this.content)
-			return this.content.get('value');
-		else 
-			return this.get('_panel.for.'+this.get('_name'));
-	}),
+	_componentType : 'input',
+	
+	
+	init:function() {
+		this._super();
+		
+		if(!this.get('_panel.isEnabled')) {
+			this.setEnabled(false);
+		}
+		
+	},
+	
+	
+	
 });

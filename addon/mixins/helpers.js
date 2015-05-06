@@ -3,15 +3,12 @@ import Control from 'furnace-forms/controls/abstract';
 import Input from 'furnace-forms/controls/input'; 
 import Action from 'furnace-forms/controls/action'; 
 import Panel from 'furnace-forms/controls/panel'; 
-import Form from 'furnace-forms/controls/form'; 
 import View from 'furnace-forms/controls/view'; 
-import PanelComponent from 'furnace-forms/components/panel';
+import Form from 'furnace-forms/controls/form';
 import FormComponent from 'furnace-forms/components/form';
-import InputComponent from 'furnace-forms/components/input';
 import Lookup from 'furnace-forms/utils/lookup-class';
 
 
-import Option from 'furnace-forms/controls/option';
 
 import {computedControl} from 'furnace-forms/utils/computed';
 
@@ -46,56 +43,71 @@ var getControl=function(type,options) {
 
 var Helpers= Ember.Mixin.create({
 	
-	input : function(type,options) {
+	control : function(control,component,options) {
+//		return getControl(control,)
+	},
+	
+	input : function(component,options) {
 		options=getOptions(arguments,'text');
-		return getControl(Input,options);
+		return getControl('control:input',options);
 	},
 	
-	action : function(type,options) {
-		options=getOptions(arguments,'action');
-		return getControl(Action,options);
+	action : function(component,options) {
+		options=getOptions(arguments,'button');
+		return getControl('control:action',options);
 	},
 	
-	submit : function(type,options) {
+	submit : function(component,options) {
 		options=getOptions(arguments,'submit');
 		options=options || {};
 		options.submit=true;
-		return getControl(Action,options);
+		return getControl('control:action',options);
 	},
 	
-	panel : function(type,options) {
+	panel : function(component,options) {
 		options=getOptions(arguments,'panel');
-		return getControl(Panel,options);
+		return getControl('control:panel',options);
 	},
 	
-	view : function(type,options) {
+	view : function(view,options) {
 		options=getOptions(arguments,'view');
 		if(options._component!=='view')
 			options.layoutName=options._component.replace(/\./g,'/');
 		options._component='view';
-		return getControl(View,options);
+		return getControl('control:view',options);
 	},
 	
 	form: function() {
 		var options;
+		var control=null;
+		var async=function() {
+			this._meta.options._syncFromSource=false;
+			this._meta.options._syncToSource=false;
+			return this;
+		}
 		if(arguments.length===1) {
-			if(arguments[0].superclass===FormComponent) {
-				return getControl(Form,{'_component': arguments[0]});
-			}
-			else if(typeof arguments[0]==='string') {
-				return getControl(Form,{'_component': arguments[0]});
+//			if(arguments[0].superclass===FormComponent) {
+//				return getControl( arguments[0]);
+//			}
+//			else 
+			if(typeof arguments[0]==='string') {
+				control= getControl( 'form:'+arguments[0]);
+				control.async=async;
+				return control;
 			}
 			options=arguments[0];
 		}else if(arguments.length===2) {
 			if(typeof arguments[1]==='string') {
-				return getControl(Form,{'_component': arguments[1],_modelName:arguments[0]});
+				control = getControl(arguments[1],{_modelName:arguments[0]});
+				control.async=async;
+				return control;
 			}
 			options=arguments[1];
 			options._modelName=arguments[0];
 		} else {
 			Ember.assert('The form helper accepts either 1 or 2 arguments');
 		}
-		return FormComponent.extend(options);
+		return Form.extend(options);
 	},
 	
 	attr: function(key) {
@@ -122,7 +134,7 @@ var Helpers= Ember.Mixin.create({
 	
 	option: function(value,caption,control) {
 		
-		return Option.extend({value:value,caption:caption,control : control ? control : null});
+		return Ember.Object.extend({value:value,caption:caption,control : control ? control : null}).create();
 	}
 });
 

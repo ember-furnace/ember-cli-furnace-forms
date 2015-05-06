@@ -4,9 +4,8 @@
  * @module furnace
  * @submodule furnace-forms
  */
-import Panel from './panel';
+import Input from './input';
 import Ember from 'ember';
-import Conditional from 'furnace-forms/mixins/conditional';
 /**
  * Conditional panel component
  * 
@@ -14,13 +13,23 @@ import Conditional from 'furnace-forms/mixins/conditional';
  * @namespace Furnace.Forms.Components
  * @extends Furnace.Forms.Components.Panel
  */
-export default Panel.extend(Conditional,{
+export default Input.extend({
 	
+	tagName : 'panel',
+	
+	controls : Ember.computed.alias('control.controls'),
+	
+	inputControls : Ember.computed.alias('control.inputControls'),
+	
+	actionControls : Ember.computed.alias('control.actionControls'),
 	
 //	_rendered : false,
 //	isVisible: Ember.computed.alias('_condition'),
 	
-	value : Ember.computed.alias('_condition'),
+	init : function() {
+		this._super();
+		Ember.warn('You did not specify a condition for the control rendering the conditionpanel '+this.get('name'),this.get('hasPrerequisites')!==null);
+	} 
 	
 //	render : function(buffer) {
 //		if(this.get('_condition')) {			

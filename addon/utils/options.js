@@ -1,4 +1,24 @@
+import ControlSupport from 'furnace-forms/mixins/controls/control-support';
+import OptionsSupport from 'furnace-forms/mixins/controls/options-support';
+import SingleSelect from 'furnace-forms/mixins/controls/single-select';
 export default function inputOptions() {
+	this._meta.options._mixin.controlSupport=ControlSupport;
+	this._meta.options._mixin.optionsSupport=OptionsSupport;
+	this._meta.options._mixin.optionsType=SingleSelect;
+	
+	this.on=function(props) {		
+		var _props=props.split(',');
+		var length=_props.length;
+		for(var i =0;i<length;i++) {
+			_props[i]='_form.'+_props[i];			
+		}
+		this._meta.options._optionProps=_props.join(',');
+		return this;
+	}
+	this.multiple=function() {
+		
+	}
+	
 	if(arguments.length===1) {
 		if(typeof arguments[0] ==='function') {
 			this._meta.options._optionFn=arguments[0];
@@ -16,7 +36,9 @@ export default function inputOptions() {
 	for(var i=0;i<arguments.length;i++) {
 		options.push(arguments[i]);
 	}
-	this._meta.options._options=options;
+	this._meta.options._optionFn=function() {
+		return options;
+	}
 	
 	return this;
 }

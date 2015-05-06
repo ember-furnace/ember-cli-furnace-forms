@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import PanelComponent from 'furnace-forms/components/panel';
+import Panel from 'furnace-forms/controls/panel';
 export default function(object,silent) {
 	var objectName=null;
 	if(typeof object === 'string') {
@@ -12,7 +12,7 @@ export default function(object,silent) {
 		var tmpName = object.constructor.toString();
 		var index=tmpName.indexOf(':');
 		objectName=tmpName.substring(index+1,tmpName.indexOf(':',index+1)).replace(/\//g,'.');	
-	} else if(object instanceof PanelComponent) {
+	} else if(object instanceof Panel) {
 		objectName=object.get('layoutName');
 	} else if(object instanceof Ember.Component) {		
 		objectName=object.get('layoutName');
