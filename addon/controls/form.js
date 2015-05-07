@@ -31,8 +31,10 @@ export default Panel.extend({
 	_setValidations : function(result,silent) {
 		var validations=result.get('validations');
 		var messages=result.get('messages');
+		
 		this._validationCache=validations;
 		this._messageCache=messages;	
+	
 		for(var name in validations) {
 			if(this._controlsByPath[name]!==undefined) {				
 				this._controlsByPath[name].invoke('setValid',validations[name]);
@@ -195,7 +197,8 @@ export default Panel.extend({
 					validator=input.get('_form._validator');
 					target=input.get('_form.for');
 					path=input.get('_path');
-					if(path) {					
+					if(path) {
+						Ember.assert('No target for validation of path ' + path + " in form " +form,target);
 						target=target.get(path);
 						if(validator)
 							validator=validator.get(path);
@@ -301,7 +304,8 @@ export default Panel.extend({
 			var form= this;
 			this._observer = validator.observe(this,'for',function(result,sender,key) {
 				var silent=sender===null || sender===form
-				if(silent && form.get('for.isDirty'))
+				// If our target model changed, immediate show validations unless it's a new model
+				if(silent && (form.get('for.isDirty') && !form.get('for.isNew')))
 					silent=false;
 //				Ember.debug(form);
 //				console.log('Ran validation',sender ? sender.toString() : null,key);
@@ -311,9 +315,12 @@ export default Panel.extend({
 //				console.log('--------------');
 				
 				form._setValidations(result,silent);
+				
+				// We only want to receive changed status on next run, so reset the result if it has finished
 				if(result.hasFinished())
 					result.reset();
 			},this.get('_path') || this.get('_modelName'));
+			
 			if(this.get('for'))
 				this._observer.run();
 		

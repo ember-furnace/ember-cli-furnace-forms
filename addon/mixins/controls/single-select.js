@@ -23,25 +23,29 @@ export default Ember.Mixin.create({
 	},
 	
 	_selectedIndexObserver:Ember.observer('selectedIndex', function() {
-		var option = this.getOption();
-		var ret=null;
-		var	oldValue=this.get('optionControl');
-		if(option && option.control) {						
-			var options=option.control._meta.options;
-			options['for']=this.get('value');
-			options._path=this._panel._path;
-			ret = getControl.call(this,'value',option.control._meta.options._controlType,options);
-			this.set('showOptionControl',true);
-		} 
-		else { 
-			this.set('showOptionControl',false);			
-		}	
-		if(oldValue) {
-			Ember.run.later(function() {
-				oldValue.destroy();
-			});
-		}
-		this.set('optionControl',ret);
+		Ember.run.once(this,function() {
+			var option = this.getOption();
+			if(option && option.value!==this.get('value'))
+				this.set('value',option.value);
+			var ret=null;
+			var	oldValue=this.get('optionControl');
+			if(option && option.control) {						
+				var options=option.control._meta.options;
+				options['for']=this.get('value');
+				options._path=this._panel._path;
+				ret = getControl.call(this,'value',option.control._meta.options._controlType,options);
+				this.set('showOptionControl',true);
+			} 
+			else { 
+				this.set('showOptionControl',false);			
+			}	
+			if(oldValue) {
+				Ember.run.later(function() {
+					oldValue.destroy();
+				});
+			}
+			this.set('optionControl',ret);
+		});
 	}),
 
 	init: function() {
@@ -63,22 +67,33 @@ export default Ember.Mixin.create({
 		return this.getOption();
 	}),
 	
-	selectedIndex : Ember.computed('value,options',function(key,value) {
-		if(value===null) {
-			this.set('value',null);
-			return 0;
-		}
-		if(value) {
-			this.set('value',this.get('_options')[value-1].value);
-			return value;
-		}
-		else {
+	selectedIndex : 0,
+	
+	_valueObserver: Ember.observer('value',function() {
+		this._super();
+		var option=this.getOption();
+		if(!option || this.get('value')!==option.value) {
 			if(this.get('_options')) {
-				var option = this.get('_options').findBy('value',this.get('value'));
-				return this.get('_options').indexOf(option)+1;
+				option = this.get('_options').findBy('value',this.get('value'));
+				this.set('selectedIndex',this.get('_options').indexOf(option)+1);
 			}
 		}
-		return 0;
+//		Ember.computed('value,options',function(key,value) {
+//			console.log('selected index changed',key,value);
+//			console.trace();
+//			if(value===null) {
+//				this.set('value',null);
+//				return 0;
+//			}
+//			if(value) {
+//				this.set('value',this.get('_options')[value-1].value);
+//				return value;
+//			}
+//			else {
+//				
+//			}
+//			return 0;
+//		}),
 	}),
 	
 	setValid: function(valid) {

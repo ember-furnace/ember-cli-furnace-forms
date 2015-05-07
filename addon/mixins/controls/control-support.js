@@ -60,7 +60,7 @@ export default Ember.Mixin.create({
 		});
 	},
 	
-	_controlDirtyObserver: Ember.observer('inputControls.@each.isDirty',function(){		
+	_controlDirtyObserver: Ember.observer('controls.@each.isDirty',function(){		
 		this.setDirty(this._dirty);
 	}),
 	
@@ -77,15 +77,15 @@ export default Ember.Mixin.create({
 			if(this._valid!=valid) {				
 				this.set('_valid',valid);
 			}
-//			console.log('setting validation',this.toString());
 			valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0
 			if(valid!=this.isValid) {
 				this.setFlag('isValid',valid);
+				this.notifyChange();
 			}
 		});
 	},
 	
-	_controlValidObserver: Ember.observer('inputControls.@each.isValid',function(){
+	_controlValidObserver: Ember.observer('controls.@each.isValid',function(){
 		this.setValid(this._valid);
 	}),
 	

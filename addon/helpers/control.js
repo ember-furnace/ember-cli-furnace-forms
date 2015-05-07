@@ -23,7 +23,6 @@ export default function controlHelper(params, hash, options, env) {
 		delete hash['dynamic'];
 	
 	Ember.assert('Control not found',control);
-
 	if(dynamic) {
 		Ember.assert('A dynamic control display is required but the component helper is not avaiable!',env.helpers.component!==undefined);
 		boundControl.call(this,[params[0]],hash,options,env);
@@ -32,7 +31,9 @@ export default function controlHelper(params, hash, options, env) {
 		if(!control._component) {			
 			control._component=view.get('controller.optionType');
 		}
-		var component = control.getComponent()
+		var component = control.getComponentClass();
+		hash.control=control;
+		hash._debugContainerKey = component + control.get('_name');
 		Ember.warn('Control ('+control._name+') does not specify a component, nothing will be rendered',component);
 		if(!component)
 			return;

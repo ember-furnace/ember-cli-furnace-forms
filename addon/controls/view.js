@@ -19,29 +19,31 @@ import Control from './abstract';
 export default Control.extend({
 	_component : 'view',
 	
+	_componentType : 'view',
+	
 	init : function() {
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in 
 		if(this.get('_name')) {
-			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {	
-				this.reopen({
-					value:Ember.computed.alias('_panel.for.'+this.get('_name'))
-				});
-			}
-			else {
-				this.reopen({
-					value:Ember.computed.alias('_panel.for')
-				});
-			}
+			this.reopen({
+				value:Ember.computed.alias('_panel.for.'+this.get('_name'))
+			});
 			
 		}			
-	}
-//	getComponentClass : function(context,contextName) {
-//		var view=this._component
-//		if(typeof view ==="string") {
-//			view = context.get('container').lookup('view:'+view);
-//		}
-//		return view;
-//	},
+	},
+
+
+
+	getComponentClass : function() {
+		var componentClass=null;
+		componentClass = this._super();
+		if(!componentClass) {
+			this.layoutName=this._component.replace(/\./g,'/');
+			this._component='view';
+			this._componentType='forms';
+			return this.getComponentClass();
+		}
+		return componentClass;
+	},
 	
 });

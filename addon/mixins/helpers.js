@@ -43,8 +43,9 @@ var getControl=function(type,options) {
 
 var Helpers= Ember.Mixin.create({
 	
-	control : function(control,component,options) {
-//		return getControl(control,)
+	control : function(control,options) {
+		options=getOptions(arguments);
+		return getControl('control:'+control,options);
 	},
 	
 	input : function(component,options) {
@@ -71,9 +72,10 @@ var Helpers= Ember.Mixin.create({
 	
 	view : function(view,options) {
 		options=getOptions(arguments,'view');
-		if(options._component!=='view')
-			options.layoutName=options._component.replace(/\./g,'/');
-		options._component='view';
+// Try to find a corresponding view, if not just change the layoutname of the default
+//		if(options._component!=='view')
+//			options.layoutName=options._component.replace(/\./g,'/');
+//		options._component='view';
 		return getControl('control:view',options);
 	},
 	

@@ -15,18 +15,18 @@ export default Ember.Mixin.create({
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in 
 		if(this.get('_name')) {
-			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
-			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
+//			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
+//			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
 				this.reopen({
-					property:Ember.computed.alias('_panel.for.'+this.get('_name'))
+					property:Ember.computed.alias('_panel.'+(this._panel['for']  ? 'for.' : 'value.')+this.get('_name'))
 				});
 				
 				this.set('value',this.get('property'));
 				this.set('_orgValue',this.get('property'));
-			}
-			else {
-				this.set('_orgValue',this.get('value'));
-			}
+//			}
+//			else {
+//				this.set('_orgValue',this.get('value'));
+//			}
 		}
 	},
 	
@@ -38,9 +38,13 @@ export default Ember.Mixin.create({
 //			this.set('_orgValue',this.get('property'));
 //		}
 //		if(this.get('_name') && this.get('_form._syncFromSource') && this.get('value')!==this.get('property')) {
-		if( this.get('value')!==this.get('property')) {
-			this.set('value',this.get('property'));
-		}
+		
+		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
+		Ember.run.once(this,function() {
+			if( this.get('value')!==this.get('property')) {
+				this.set('value',this.get('property'));
+			}
+		});
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
 	}.observes('property'),
 	
@@ -59,9 +63,8 @@ export default Ember.Mixin.create({
 	_apply: function() {
 		if(this.property!==null) {
 			Ember.run.once(this,function(){
-				if(this.get('_panel.for')) {
+				if(this.get('property')!==this.get('value'))
 					this.set('property',this.get('value'));
-				}
 			});
 		}
 	},

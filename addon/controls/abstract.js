@@ -69,7 +69,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		});
 	},
 		
-	
+	store: Ember.computed.alias('target.store'),
 		
 	_dirty: false,
 	

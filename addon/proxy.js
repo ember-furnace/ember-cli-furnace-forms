@@ -18,7 +18,7 @@ var Proxy = Ember.Object.extend({
 
 	_contentPropertyDidChange : function (content, contentKey) {
 		var key = contentKey.slice(9); // remove "content."
-		if (key in this) { return; } // if shadowed in proxy			
+		if (key in this) { return; } // if shadowed in proxy
 		this._cache[key] = this._content.get(key);
 		this.propertyDidChange(key);
 	},
@@ -61,8 +61,9 @@ var Proxy = Ember.Object.extend({
 		if(!this._content)
 			return undefined;
 		if(keys.length===1) {
-			if (this._syncFromSource || !(key in this._cache)) 
+			if (this._syncFromSource || !(key in this._cache)) {
 				this._cache[key] = this._content.get(key);
+			}
 			return this._cache[key];
 		}
 		var key=keys.shift();
@@ -91,8 +92,10 @@ var Proxy = Ember.Object.extend({
 			this._proxies[i]._apply();
 		}
 		if(!this._syncToSource) {
-			for(var i in this._cache) {
-				this._content.set(i,this._cache[i]);
+			for(var key in this._cache) {
+				if(this._content[key] instanceof Ember.ComputedProperty && this._content[key]._readOnly)
+					continue;
+				this._content.set(key,this._cache[key]);
 			}
 		}
 	},

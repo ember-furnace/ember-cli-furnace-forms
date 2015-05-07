@@ -197,11 +197,9 @@ export default Ember.Component.extend({
 	init : function() {
 		this._super();
 		this.set('_controlMessages',Ember.A());
+		Ember.assert('A form component ('+this+') initialized without a control!',this.control);
 		this.control.registerComponent(this);
 		this.set('target',this.control);
-//		if(this.get('targetObject.'+this._name) instanceof Control) {
-//			this.set('targetObject.'+this._name+'.content',this);
-//		}
 	},
 	
 	_enabledObserver: function() {
@@ -326,5 +324,15 @@ export default Ember.Component.extend({
 //		}
 //		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
 	},
+	
+	getStore: function() {
+		return this.get('control.store');
+	},
+	
+	getFor: function(key) {
+		return this.control.getFor(key);
+	}
+	
+	
 	
 });
