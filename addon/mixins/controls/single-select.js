@@ -18,7 +18,7 @@ export default Ember.Mixin.create({
 				if(control)
 					control.set('selected',true);
 			}
-			this._selectedIndexObserver();
+			this._valueObserver();
 		}
 	},
 	
@@ -50,7 +50,7 @@ export default Ember.Mixin.create({
 
 	init: function() {
 		this._super();
-		Ember.warn('No options support for single-select',OptionsSupport.detect(this));
+		Ember.warn('No options support for single-select',OptionsSupport.detect(this));	
 	},
 	
 	getOption: function(index) {
@@ -69,7 +69,7 @@ export default Ember.Mixin.create({
 	
 	selectedIndex : 0,
 	
-	_valueObserver: Ember.observer('value',function() {
+	_valueObserver: Ember.observer('value,_options',function() {
 		this._super();
 		var option=this.getOption();
 		if(!option || this.get('value')!==option.value) {
@@ -77,6 +77,7 @@ export default Ember.Mixin.create({
 				option = this.get('_options').findBy('value',this.get('value'));
 				this.set('selectedIndex',this.get('_options').indexOf(option)+1);
 			}
+			
 		}
 //		Ember.computed('value,options',function(key,value) {
 //			console.log('selected index changed',key,value);
