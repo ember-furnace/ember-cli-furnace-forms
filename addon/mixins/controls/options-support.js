@@ -37,7 +37,7 @@ export default Ember.Mixin.create({
 		if(this._optionFn) {			
 			var optionProps=this._optionProps ? this._optionProps+',_form.for' : '_form.for';
 			this.reopen({
-				_optionsObserver: Ember.observer(optionProps,function() {					
+				_optionsObserver: Ember.observer(optionProps,function() {
 					Ember.run.once(this,function() {
 						var value = this._optionFn();
 						if(value instanceof Ember.RSVP.Promise) {

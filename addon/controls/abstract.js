@@ -94,6 +94,14 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		this._super();	
 		this.set('_controlMessages',Ember.A());
 		this.set('_components',Ember.A());		
+		var control=this;
+		// Initialize computed attributes
+		this.constructor.eachComputedProperty(function(name, meta) {			
+			if (meta.type==='form-attr') {
+				console.log('init',name);
+				control.get(name);
+			}
+		});
 		if(this._form) {
 			this.set('_path',this._getPath());
 			this.set('target',this._panel);

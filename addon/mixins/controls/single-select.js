@@ -25,8 +25,14 @@ export default Ember.Mixin.create({
 	_selectedIndexObserver:Ember.observer('selectedIndex', function() {
 		Ember.run.once(this,function() {
 			var option = this.getOption();
-			if(option && option.value!==this.get('value'))
-				this.set('value',option.value);
+			if(option && option.value!==this.get('value')) {
+				this.set('value',option.value);				
+			}
+			else {
+				if(this.get('selectedIndex')===null) {
+					this.set('value',null);
+				}
+			}
 			var ret=null;
 			var	oldValue=this.get('optionControl');
 			if(option && option.control) {						
