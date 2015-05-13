@@ -45,6 +45,12 @@ export default Ember.Mixin.create({
 			else { 
 				this.set('showOptionControl',false);			
 			}	
+			if(this._controlsLoaded) {
+				this.get("controls").invoke('set','selected',false);
+				var control=this.get("controls").findBy('index',this.get('selectedIndex'));
+				if(control)
+					control.set('selected',true);
+			}
 			if(oldValue) {
 				Ember.run.later(function() {
 					oldValue.destroy();
@@ -85,22 +91,6 @@ export default Ember.Mixin.create({
 			}
 			
 		}
-//		Ember.computed('value,options',function(key,value) {
-//			console.log('selected index changed',key,value);
-//			console.trace();
-//			if(value===null) {
-//				this.set('value',null);
-//				return 0;
-//			}
-//			if(value) {
-//				this.set('value',this.get('_options')[value-1].value);
-//				return value;
-//			}
-//			else {
-//				
-//			}
-//			return 0;
-//		}),
 	}),
 	
 	setValid: function(valid) {

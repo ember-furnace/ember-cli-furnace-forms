@@ -68,7 +68,7 @@ export default Panel.extend({
 				this.send(action,form);
 		},
 		
-		_submit: function(action) {
+		submit: function(action) {
 			action= action===undefined  ?  'submit' : action;
 			var form=this;
 			this._validate().then(function(valid) {
@@ -339,8 +339,9 @@ export default Panel.extend({
 		this._apply();
 	},
 	
+	
 	submit : function(action) {
-		this.send('_submit',action);
+		this.send('submit',action);
 	},
 	
 //	unregisterComponent:function(component) {

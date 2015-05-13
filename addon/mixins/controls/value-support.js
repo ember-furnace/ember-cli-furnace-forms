@@ -17,12 +17,22 @@ export default Ember.Mixin.create({
 		if(this.get('_name')) {
 //			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
 //			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
-				this.reopen({
-					property:Ember.computed.alias('_panel.'+(this._panel['for']  ? 'for.' : 'value.')+this.get('_name'))
+			var propertyName= '_panel.'+(this._panel['for']  ? 'for.' : 'value.')+this.get('_name');
+			this.reopen({
+				property:Ember.computed.alias(propertyName)
+			});
+			var property=this.get('property');
+			if(Ember.PromiseProxyMixin.detect(property)) {
+				var control=this;
+				property.then(function(propertyValue){
+					control.set('value',propertyValue);
+					control.set('_orgValue',propertyValue);
 				});
-				
+			}
+			else {
 				this.set('value',this.get('property'));
 				this.set('_orgValue',this.get('property'));
+			}
 //			}
 //			else {
 //				this.set('_orgValue',this.get('value'));
@@ -41,8 +51,18 @@ export default Ember.Mixin.create({
 		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
 		Ember.run.once(this,function() {
-			if( this.get('value')!==this.get('property')) {
-				this.set('value',this.get('property'));
+//			
+			var property=this.get('property');
+			if(Ember.PromiseProxyMixin.detect(property)) {
+				var control=this;
+				property.then(function(propertyValue){
+					control.set('value',propertyValue);
+				});
+			}
+			else {
+				if( this.get('value')!==property) {
+					this.set('value',this.get('property'));
+				}
 			}
 		});
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
@@ -71,11 +91,24 @@ export default Ember.Mixin.create({
 	
 	_reset: function(modelChanged) {
 		this._super(modelChanged);
-		if(modelChanged) {
-			this.set('_orgValue',this.get('property'));
+		var property=this.get('property');
+		if(Ember.PromiseProxyMixin.detect(property)) {
+			var control=this;
+			this.set('_orgValue',null);
+			this.set('value',null);
+			property.then(function(propertyValue){
+				if(modelChanged) {
+					control.set('_orgValue',propertyValue);
+				}
+				control.set('value',propertyValue);
+			});
 		}
-		this.set('value',this.get('_orgValue'));
-		
+		else {
+			if(modelChanged) {
+				this.set('_orgValue',property);
+			}
+			this.set('value',property);
+		}
 	},
 	
 });

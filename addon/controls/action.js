@@ -27,6 +27,6 @@ export default Control.extend({
 	submit : function() {
 		if(!this.get('isEnabled'))
 			return;
-		this.send('_submit',this._name);
+		this.send('submit',this._name);
 	}
 });

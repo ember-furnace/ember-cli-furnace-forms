@@ -60,12 +60,6 @@ export default Ember.Mixin.create({
 	_updateOptions : function(newOptions) {
 		var ret=Ember.A();
 		var options=[];
-//		var oldOptions=this.get('_options');
-//		Ember.run.later(function() {
-//			oldOptions.forEach(function(option){
-//				option.destroy();
-//			});	
-//		})
 		
 		if(!newOptions || !newOptions.length) {
 			return ret;
@@ -78,19 +72,9 @@ export default Ember.Mixin.create({
 	},
 	
 	options : Ember.computed.alias('_options'),
-//		
-//	_optionsObserver: function() {
-//		var options=[];
-//		var _options=this.get('_options');
-//		_options.forEach(function(option,index) {			
-//			options.push({index: index+1, caption: option.get('caption')});
-//		});
-//		this.set('options',options);
-//	}.observes('_options'),
 	
 	destroy: function() {
 		this.get('_options').invoke('destroy');
-//		this.set('_options',null);
 		this._super();
 	},
 	
