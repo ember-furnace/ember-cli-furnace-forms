@@ -6,6 +6,7 @@
  */
 import Ember from 'ember';
 import Text from './inputs/text';
+import Password from './inputs/password';
 import TextArea from './inputs/textarea';
 import Button from './inputs/button';
 import Submit from './inputs/submit';
@@ -26,6 +27,8 @@ export default Ember.Namespace.extend( {
 	 * @type Furnace.Forms.Components.Form
 	 */
 	Text : Text,
+	
+	Password : Password,
 
 	TextArea : TextArea,
 	

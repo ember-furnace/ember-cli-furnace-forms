@@ -19,14 +19,33 @@ export default Control.extend({
 	_component : 'button',
 	
 	dispatch : function() {
-		if(!this.get('isEnabled'))
+		if(!this.get('isEnabled')) {
+			if(this.get('hasPrerequisites')===false)
+				this.send('validate');
 			return;
+		}
 		this.send(this._name,this);		
 	},
 	
 	submit : function() {
-		if(!this.get('isEnabled'))
+		if(!this.get('isEnabled')) {
+			if(this.get('hasPrerequisites')===false)
+				this.send('validate');
 			return;
+		}
 		this.send('submit',this._name);
-	}
+	},
+	
+	init: function() {
+		this._super();
+		this.updateEnabled();
+	},
+	
+	updateEnabled:Ember.observer('hasPrerequisites',function() {
+		if(this.get('hasPrerequisites')!==false) {
+			this.setEnabled(true);					
+		} else {
+			this.setEnabled(false);			
+		}
+	}),
 });

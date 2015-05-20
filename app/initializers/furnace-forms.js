@@ -31,7 +31,7 @@ export function initialize(container, application) {
 
 	application.register('input:button',Forms.Inputs.Button);
 	application.register('input:select',Forms.Inputs.Select);
-//	application.register('input:password',Forms.Password);
+	application.register('input:password',Forms.Inputs.Password);
 	application.register('input:checkbox',Forms.Inputs.Checkbox);
 	application.register('input:radio',Forms.Inputs.RadioList);
 	application.register('input:radio-option',Forms.Inputs.RadioOption);

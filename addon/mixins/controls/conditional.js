@@ -10,6 +10,8 @@ export default Ember.Mixin.create({
 			this.reopen({
 				_condition:Ember.computed(this._conditionProps+',_form.for',this._conditionFn)
 			});
+			// Initialize the condition so observers get notified and our condition will observe its condition properties
+			this.get('_condition');
 		}
 	},
 	
