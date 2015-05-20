@@ -23,13 +23,14 @@ export default Input.extend(CheckedSupport,{
 	
 	
 	inputId: function() {
-		return this.elementId+'-'+this.get('index');
+		return this.elementId+'Input';
 	}.property('elementId'),
 		
 	checked : Ember.computed.alias('selected'),
 		
 	click : function(event) {
-		if(event.toElement.id===this.get('inputId')) {
+		var target=event.toElement || event.target;
+		if(target.id===this.get('inputId')) {
 			this.send('select');
 		}
 	}
