@@ -22,6 +22,10 @@ export default Ember.Mixin.create({
 	
 	didInsertElement : function() {
 		this._super();
-		this.$('#'+get(this,'inputId')).prop('checked',this.get('checked'));
+		Ember.run.next(this, function() {
+			this.$('#'+get(this,'inputId')).prop('checked',this.get('checked'));
+		});
+		
+		
 	}
 })

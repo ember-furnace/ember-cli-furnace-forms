@@ -24,10 +24,22 @@ export default Control.extend(CheckedSupport,{
 	name : Ember.computed.alias('_name'),
 	
 	inputId: function() {
-		return this.elementId+'-'+this.index;
+		return this.elementId+'Input';
 	}.property('elementId'),
 		
-	checked : Ember.computed.alias('selected'),
+	checked : Ember.computed('value', function(property,value) {
+		if(value !== undefined) {
+			if(value===true) {
+				this.set('value',this.get('checkedValue'));
+			} else {
+				this.set('value',this.get('uncheckedValue'));
+			}
+			return value;
+		}
+		if(this.get('value')===this.checkedValue)
+			return true;
+		return false;
+	}),
 	
 	init: function() {
 		this._super();
@@ -35,19 +47,11 @@ export default Control.extend(CheckedSupport,{
 	},
 	
 	_checkedObserver: Ember.observer('value',function() {
-		console.log('checked observer');
 		if(this.get('value')===this.checkedValue)
-			this.set('selected',true);
+			this.set('checked',true);
 		else 
-			this.set('selected',false);
+			this.set('checked',false);
 		this.$('#'+Ember.get(this,'inputId')).prop('checked',this.get('checked'));
 	}),
 	
-	_update: Ember.observer('selected',function() {
-		if(this.get('selected')) {
-			this.set('value',this.get('checkedValue'));
-		}else {
-			this.set('value',this.get('uncheckedValue'));
-		}
-	})	
 });
