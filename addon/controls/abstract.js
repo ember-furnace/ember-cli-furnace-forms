@@ -98,7 +98,6 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		// Initialize computed attributes
 		this.constructor.eachComputedProperty(function(name, meta) {			
 			if (meta.type==='form-attr') {
-				console.log('init',name);
 				control.get(name);
 			}
 		});
@@ -248,11 +247,13 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	willDestroy : function() {
 		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
 		this._super();
+//		console.log('Destroy control ',this.toString());
 	},
+	
 	destroy: function() {
 		this._super();
 //		console.log('destroying control',this.toString(),this._name);
-		Ember.warn('Destroying control '+this.toString()+ ' while there are still components attached! '+ (this._components.length),this._components.length===0);
+//		Ember.warn('Destroying control '+this.toString()+ ' while there are still components attached! '+ (this._components.length),this._components.length===0);
 //		if(this._components.length!==0)
 //			console.trace();
 	},

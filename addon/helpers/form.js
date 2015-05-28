@@ -36,11 +36,12 @@ export default function formHelper(params, hash, options, env) {
 	var component=control.getComponent();
 	options.helperName='form';
 	hash.control=control;	
-	options.destroy=function() {
-		this._super();
-		console.log('destroying form');
-		this.control.destroy();
-	}
+	component.reopen({
+		destroy : function() {
+			this._super();
+			this.control.destroy();
+		}
+	});
 	Ember.assert('Control ('+control._name+') does not specify a component',component);
 	return env.helpers.view.helperFunction.call(this,[component],hash,options,env);
 }
