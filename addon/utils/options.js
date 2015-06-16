@@ -1,6 +1,7 @@
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 import OptionsSupport from 'furnace-forms/mixins/controls/options-support';
 import SingleSelect from 'furnace-forms/mixins/controls/single-select';
+import MultiSelect from 'furnace-forms/mixins/controls/multi-select';
 export default function inputOptions() {
 	this._meta.options._mixin.controlSupport=ControlSupport;
 	this._meta.options._mixin.optionsSupport=OptionsSupport;
@@ -16,7 +17,8 @@ export default function inputOptions() {
 		return this;
 	}
 	this.multiple=function() {
-		
+		this._meta.options._mixin.optionsType=MultiSelect;
+		return this;
 	}
 	
 	if(arguments.length===1) {

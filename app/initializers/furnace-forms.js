@@ -33,8 +33,13 @@ export function initialize(container, application) {
 	application.register('input:select',Forms.Inputs.Select);
 	application.register('input:password',Forms.Inputs.Password);
 	application.register('input:checkbox',Forms.Inputs.Checkbox);
+	
 	application.register('input:radio',Forms.Inputs.RadioList);
 	application.register('input:radio-option',Forms.Inputs.RadioOption);
+	
+	application.register('input:check',Forms.Inputs.CheckList);
+	application.register('input:check-option',Forms.Inputs.CheckOption);
+	
 	application.register('input:submit',Forms.Inputs.Submit);
 	application.register('component:forms.messages',Forms.Components.Messages);
 	

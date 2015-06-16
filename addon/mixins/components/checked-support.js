@@ -9,7 +9,7 @@ export default Ember.Mixin.create({
 	inputId:null,
 	
 	init: function() {
-		this._super.apply(this, arguments);
+		this._super();
 		
 		this.on('change', this, this._updateElementValue);
 	},

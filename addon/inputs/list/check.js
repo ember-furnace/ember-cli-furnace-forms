@@ -18,11 +18,8 @@ import Option from './check-option';
  */
 export default Input.extend({
 	
-	optionClass : Option,
+	optionType : 'check-option',
 	
-	layoutName: function() {		
-		if(this.constructor.typeKey)
-			return this._super();
-		return 'forms/list/check' ;
-	}.property(),
+	defaultLayout: 'forms/list/check',
+
 });

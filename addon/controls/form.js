@@ -182,7 +182,7 @@ export default Panel.extend({
 		var validator=this.get('_validator');
 		var promisses=Ember.A();
 		if(!validator) {
-			return  Ember.RSVP.Promise(function(resolve) {
+			return new Ember.RSVP.Promise(function(resolve) {
 				resolve(true);
 			});
 		}

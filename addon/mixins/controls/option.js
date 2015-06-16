@@ -24,7 +24,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	actions :{
 		select : function() {
-			this._panel.send('select',this._option.index);
+			this._panel.send('select',this._option.index,!this.get('selected'));
 		}
 	},
 	
@@ -34,7 +34,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	value : Ember.computed.alias('_option.value'),
 	
-	selected : false,
+	selected :  Ember.computed.alias('_option.selected'),
 	
 	caption : Ember.computed.alias('_option.caption'),
 		
@@ -59,6 +59,11 @@ export default Ember.Mixin.create(ControlSupport,{
 			this.set('caption',this.value);
 		}
 		
+	},
+	
+	registerComponent:function(component) {
+		this._super(component);
+		component.set('value',this.get('value'));
 	},
 	
 	/**

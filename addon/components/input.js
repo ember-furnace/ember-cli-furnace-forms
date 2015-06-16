@@ -27,8 +27,10 @@ export default Control.extend({
 
 	value: null,
 	
+	
 	_valueObserver:function() {
-		this.set('control.value',this.get('value'));
+		if(this.get('value')!==this.get('control.value'))
+			this.set('control.value',this.get('value'));
 	}.observes('value'),
 	
 	inputInsert:function() {
