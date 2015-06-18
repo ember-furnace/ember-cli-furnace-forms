@@ -37,7 +37,20 @@ export default Ember.Mixin.create(ControlSupport,{
 	selected :  Ember.computed.alias('_option.selected'),
 	
 	caption : Ember.computed.alias('_option.caption'),
-		
+	
+	showOptionControl : Ember.computed('optionControl,selected',function() {
+		this._controlValidObserver();
+		var optionControl=this.get('optionControl');
+		if(optionControl) {
+			if(this.get('selected')) {
+				optionControl.setEnabled(true);
+				return true;
+			}
+			optionControl.setEnabled(false);
+		} 
+		return false;
+	}),
+	
 	optionControl : Ember.computed('_option.control',function() {
 		// @TODO: should probably destroy existing control
 		if(this._option.control) {
@@ -47,7 +60,27 @@ export default Ember.Mixin.create(ControlSupport,{
 		}
 			
 		return null;
-	}),
+	}).meta({type : 'form-control'}),
+	
+	
+	setValid : function(valid) {
+		Ember.run.once(this,function() {
+			if(this.isDestroyed) {
+				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
+				return;
+			}
+			if(this._valid!=valid) {				
+				this.set('_valid',valid);
+			}
+			if(this.get('selected'))
+				valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0
+			if(valid!=this.isValid) {
+				this.setFlag('isValid',valid);
+				this.notifyChange();
+			}
+		});
+	},
+	
 	
 	index : Ember.computed.alias('_option.index'),
 	
@@ -100,7 +133,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	// We alias the for property for panels and forms
 	'for' : Ember.computed(function() {
-		return this;
+		return this.get('value');
 	}),
 	
 });

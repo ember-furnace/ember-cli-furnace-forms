@@ -50,6 +50,15 @@ export default Panel.extend({
 	
 	_name: Ember.computed.oneWay('_modelName'),
 	
+	_modelPath : Ember.computed('_form,_name',function() {
+		if(!this._form)
+			return this.get('_name');
+		else 
+			return this._panel.get('_path');
+		return '';
+	}),
+	
+	
 	_controlsByPath: null,
 	
 	_forms: null,
@@ -77,6 +86,7 @@ export default Panel.extend({
 					form.get('target').send(action,form);				
 				} else {
 					// Notice about invalid for development?
+					Ember.Logger.info(form+' was submitted but was marked invalid');
 				}
 				
 			});
@@ -99,7 +109,9 @@ export default Panel.extend({
 	},
 	
 	_registerControl: function(control,prefix) {
-		var name=(prefix ? prefix : this._modelName);
+		var name= this.get('_modelName');
+		if(prefix)
+			name+='.'+prefix;
 		// We should register ourself nameless. If there is a parent it should register with our name.
 		if(control!==this) {
 			// If a control has path, register it with that path
@@ -111,6 +123,7 @@ export default Panel.extend({
 				name+='.'+control.get('_name');
 			}
 		}
+
 		if(this._controlsByPath[name]===undefined)
 			this._controlsByPath[name]=Ember.A();
 		
@@ -126,13 +139,15 @@ export default Panel.extend({
 				this._form._registerForm(control);
 			}
 			else {
-				this._form._registerControl(control,this._panel._path ? this._panel._path : this._modelName);
+				this._form._registerControl(control, this._panel._path);
 			}
 		}
 	},
 	
 	_unregisterControl: function(control,prefix) {
-		var name=(prefix ? prefix : this._modelName);
+		var name= this.get('_modelName');
+		if(prefix)
+			name+='.'+prefix;
 		if(control!==this) {
 			if(control._path) {
 				name+='.'+control._path;
@@ -143,16 +158,14 @@ export default Panel.extend({
 			}
 		}
 		
-		if(this._controlsByPath[name]===undefined) {
-			console.log(this.toString(),name,control.toString());
-		}
+		Ember.warn(this+" cannot unregister control "+control+" with name "+name,this._controlsByPath[name]!==undefined);
 		this._controlsByPath[name].removeObject(control);
 		
 		if(this._form) {
 			if(control===this) { 
 				this._form._unregisterForm(control);
 			} else {
-				this._form._unregisterControl(control,this._panel._path ? this._panel._path : this._modelName);
+				this._form._unregisterControl(control, this._panel._path);
 			}
 		}
 	},
@@ -215,7 +228,7 @@ export default Panel.extend({
 			promisses.pushObjects(this._forms.invoke('_validate'));
 		} else {
 			promisses.pushObject(validator.validate(target,modelName));
-			promisses.pushObjects(this._forms.invoke('_validate'));
+			promisses.pushObjects(this._forms.filterBy('isEnabled',true).invoke('_validate'));
 		}
 		return Ember.RSVP.all(promisses).then(function(result){
 			var outcome=true;
@@ -278,7 +291,7 @@ export default Panel.extend({
 		this._validationCache={};
 		this._messageCache={};
 		this._super();
-		
+		this.set('_path',null);
 		if(!this._syncFromSource || !this._syncToSource) {
 			var _for=this.get('for');
 			this.reopen({
@@ -319,7 +332,7 @@ export default Panel.extend({
 				// We only want to receive changed status on next run, so reset the result if it has finished
 				if(result.hasFinished())
 					result.reset();
-			},this.get('_path') || this.get('_modelName'));
+			}, this.get('_modelName'));
 			
 			if(this.get('for'))
 				this._observer.run();

@@ -45,32 +45,43 @@ export default Ember.Mixin.create({
 	
 //	setValid: function(valid) {
 //		Ember.run.once(this,function() {
-//			if(this.optionControl && valid && this.get('optionControl.isValid')===false) {
-//				var isValid=this.get('isValid');		
-//				this.setFlag('isValid',false);
-//				this.set('_valid',valid);
-//				if(isValid===true)
-//					this.notifyChange();
+//			if(valid) {
+//				var isValid=this.get('isValid');
+//				var control=this;
+//				var doBreak=false;
+//				this.get('_options').forEach(function(option) {					
+//					var optionControl=option.get('control');
+//					if(control && !control.get('isValid')) {
+//						control.setFlag('isValid',false);
+//						doBreak=true;
+//					}
+//				});												
+//				control.set('_valid',valid);
+//				if(doBreak)
+//					return;
 //			}
-//			else if(valid!==this._valid || valid!==this.isValid) {	
+//			if(valid!==this._valid || valid!==this.isValid) {	
 //				this.setFlag('isValid',valid);
 //				this.set('_valid',valid);
 //				this.notifyChange();
 //			}
 //		});
 //	},
-	
+//	
 //	_apply : function() {
-//		if(this.optionControl) {
-//			this.optionControl._apply();
-//		}
-//		this._super();
+//		this.get('_options').forEach(function(option) {
+//			var control=option.get('control');
+//			if(control)
+//				control._apply();
+//		});		
 //	},
 //	
 //	_reset : function(modelChanged) {
-//		if(this.optionControl) {
-//			this.optionControl._reset(modelChanged);
-//		}
+//		this.get('_options').forEach(function(option) {
+//			var control=option.get('control');
+//			if(control)
+//				control._reset(modelChanged);
+//		});		
 //		this._super(modelChanged);
 //	},
 //	
@@ -78,6 +89,6 @@ export default Ember.Mixin.create({
 //		Ember.run.once(this,function() {
 //			this.setValid(this._valid);
 //		});
-//	}.observes('optionControl,optionControl.isValid'),
+//	}.observes('_options.@each.control,_options.@each.control.isValid'),
 		
 });
