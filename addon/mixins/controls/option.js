@@ -17,6 +17,7 @@ import I18n from 'furnace-i18n';
  * @protected
  */
 export default Ember.Mixin.create(ControlSupport,{
+	_isFormOption: true,
 	
 	_componentType : 'input',
 	
@@ -24,7 +25,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	actions :{
 		select : function() {
-			this._panel.send('select',this._option.index,!this.get('selected'));
+			this._panel.select(this._option.index,!this.get('selected'));
 		}
 	},
 	
@@ -32,7 +33,18 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	_option : null,
 	
-	value : Ember.computed.alias('_option.value'),
+	value : null,
+	
+	_valueObserver:Ember.observer('value',function() {
+		if(this.get('_option.value')!==this.value) {
+			var selected=this.get('selected');
+			if(selected)
+				this._panel.select(this._option.index,false);
+			this.set('_option.value',this.value);
+			if(selected)
+				this._panel.select(this._option.index,true);
+		}
+	}),
 	
 	selected :  Ember.computed.alias('_option.selected'),
 	
@@ -56,7 +68,7 @@ export default Ember.Mixin.create(ControlSupport,{
 		if(this._option.control) {
 			var options=this._option.control._meta.options;
 			options.caption=this.get('caption');
-			return getControl.call(this,'value',this._option.control._meta.options._controlType,options);
+			return getControl.call(this,'value',options._controlType,options);
 		}
 			
 		return null;
@@ -91,7 +103,7 @@ export default Ember.Mixin.create(ControlSupport,{
 		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
 			this.set('caption',this.value);
 		}
-		
+		this.set('value',this.get('_option.value'));
 	},
 	
 	registerComponent:function(component) {
@@ -133,7 +145,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	// We alias the for property for panels and forms
 	'for' : Ember.computed(function() {
-		return this.get('value');
+		return this;
 	}),
 	
 });

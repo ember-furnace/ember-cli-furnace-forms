@@ -7,6 +7,7 @@
 import Panel from './panel';
 import Lookup from 'furnace-forms/utils/lookup-class';
 import Proxy from 'furnace-forms/proxy';
+
 /**
  * Form control component proxy 
  * 
@@ -291,9 +292,9 @@ export default Panel.extend({
 		this._validationCache={};
 		this._messageCache={};
 		this._super();
-		this.set('_path',null);
+		this.set('_path',null);		
 		if(!this._syncFromSource || !this._syncToSource) {
-			var _for=this.get('for');
+			var _for=this.get('for') ;
 			this.reopen({
 				'for' : Ember.computed(function(key,value) {
 							if(value) {
@@ -308,7 +309,7 @@ export default Panel.extend({
 						}),
 			});
 			this.set('for',_for);
-		}
+		} 
 		
 //		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
 		var validator=this.get('_validator');

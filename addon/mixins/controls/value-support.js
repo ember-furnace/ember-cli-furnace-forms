@@ -83,8 +83,14 @@ export default Ember.Mixin.create({
 	_apply: function() {
 		if(this.property!==null) {
 			Ember.run.once(this,function(){
-				if(this.get('property')!==this.get('value'))
-					this.set('property',this.get('value'));
+				if(this.get('property')!==this.get('value')) {
+					try{
+						this.set('property',this.get('value'));
+					}
+					catch(e) {
+						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel.for')+") could not update its corresponding property to the new value");
+					}
+				}
 			});
 		}
 	},

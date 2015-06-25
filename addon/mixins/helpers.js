@@ -136,7 +136,6 @@ var Helpers= Ember.Mixin.create({
 	},
 	
 	option: function(value,caption,control) {
-		
 		return Ember.Object.extend({value:value,caption:caption,control : control ? control : null}).create();
 	}
 });

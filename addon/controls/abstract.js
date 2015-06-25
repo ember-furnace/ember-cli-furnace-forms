@@ -123,7 +123,6 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	notifyChange: function() {
 		if(this._panel) {
-//			console.log('change',this.toString(),this._name);
 			Ember.run.once(this,function() {
 				this._panel.propertyDidChange(this._name);
 			});

@@ -27,14 +27,15 @@ function computedControl(type,options) {
 		}
 		if(!this._controls[key]) {
 			this._controls[key]=null;
-//			console.log(options);
-//			var meta = this.constructor.metaForProperty(key);
 			this._controls[key]=getControl.call(this,key,options._controlType,options);
 			
 		}			
 		return this._controls[key];
-	}).meta(meta);
+	});
 	
+	control.meta(meta);
+		
+
 	control.cond=Conditions;
 	control.on=Conditions;
 	control.options=Options;

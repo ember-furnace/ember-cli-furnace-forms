@@ -6,22 +6,23 @@ import getControl from 'furnace-forms/utils/get-control';
 
 export default Ember.Mixin.create({
 	actions : {
-		select: function(index,selected) {
-			if(selected)
-				this.get('value').pushObject(this.get('_options')[index-1].value);
-			else 
-				this.get('value').removeObject(this.get('_options')[index-1].value);
-			if(this._controlsLoaded) {
-				var control=this.get("controls").findBy('index',index);
-				if(control)
-					control.set('selected',selected);
-			}
-			this._valueObserver();
-		},
+
 		
 	},
 	
-
+	select: function(index,selected) {
+		if(selected)
+			this.get('value').pushObject(this.get('_options')[index-1].value);
+		else 
+			this.get('value').removeObject(this.get('_options')[index-1].value);
+		if(this._controlsLoaded) {
+			var control=this.get("controls").findBy('index',index);
+			if(control)
+				control.set('selected',selected);
+		}
+		this._valueObserver();
+	},
+	
 	init: function() {
 		this._super();
 		Ember.warn('No options support for multi-select',OptionsSupport.detect(this));
@@ -33,14 +34,24 @@ export default Ember.Mixin.create({
 	
 	_valueObserver: Ember.observer('value,_options',function() {
 		this._super();
+		var changed=false;
 		var value=this.get('value');
 		this.get('_options').forEach(function(option) {
 			if(value.contains(option.get('value'))) {
-				option.set('selected',true);
+				if(option.get('selected')!==true) {
+					changed=true;
+					option.set('selected',true);
+				}
 			} else {
-				option.set('selected',false);
+				if(option.get('selected')!==false) {
+					changed=true;
+					option.set('selected',false);
+				}
 			}
 		});
+		if(changed) {
+			this.notifyChange();
+		}
 	}),
 	
 //	setValid: function(valid) {

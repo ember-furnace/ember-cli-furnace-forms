@@ -10,16 +10,18 @@ export default Ember.Mixin.create({
 	showOptionControl : false,
 	
 	actions : {
-		select: function(index) {
-			this.set('value',this.get('_options')[index-1].value);
-			if(this._controlsLoaded) {
-				this.get("controls").invoke('set','selected',false);
-				var control=this.get("controls").findBy('index',index);
-				if(control)
-					control.set('selected',true);
-			}
-			this._valueObserver();
+		
+	},
+	
+	select: function(index) {
+		this.set('value',this.get('_options')[index-1].value);
+		if(this._controlsLoaded) {
+			this.get("controls").invoke('set','selected',false);
+			var control=this.get("controls").findBy('index',index);
+			if(control)
+				control.set('selected',true);
 		}
+		this._valueObserver();
 	},
 	
 	_selectedIndexObserver:Ember.observer('selectedIndex', function() {
