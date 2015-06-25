@@ -41,6 +41,6 @@ export default function inputOptions() {
 	this._meta.options._optionFn=function() {
 		return options;
 	}
-	
+	this._meta.options._optionsStatic=true;
 	return this;
 }

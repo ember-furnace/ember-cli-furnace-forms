@@ -75,7 +75,10 @@ export default Ember.Mixin.create({
 	options : Ember.computed.alias('_options'),
 	
 	destroy: function() {
-		this.get('_options').invoke('destroy');
+		// Only destroy options if we have an optionFn
+		if(!this._optionsStatic) {
+			this.get('_options').invoke('destroy');
+		}
 		this._super();
 	},
 	
