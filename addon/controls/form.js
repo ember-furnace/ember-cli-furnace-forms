@@ -16,7 +16,7 @@ import Proxy from 'furnace-forms/proxy';
  * @extends Furnace.Forms.Controls.Abstract
  * @protected
  */
-export default Panel.extend({
+var Form = Panel.extend({
 	_component: 'form',
 
 	_syncFromSource : true,
@@ -204,10 +204,12 @@ export default Panel.extend({
 			if(typeof paths==='string'){
 				paths=Ember.A(paths);
 			}
-			paths.forEach(function(path) {
+			paths.toArray().forEach(function(path) {
 				var _path=path.replace(/^_form\./,'');
 				var input=form.get(_path);
 				if(input) {
+					paths.removeObject(path);
+					console.log(input.toString(),path);
 					validator=input.get('_form._validator');
 					target=input.get('_form.for');
 					path=input.get('_path');
@@ -221,12 +223,16 @@ export default Panel.extend({
 							promisses.pushObject(validator.validate(target,modelName))
 						}					
 					}
+					if(input instanceof Form) {
+						console.log('the control is a form');
+						promisses.pushObject(input._validate());
+					}
 				} else {
-					Ember.warn('Tried to validate path "'+_path+'" but it does not exist');
+					Ember.warn('Tried to validate path "'+_path+'" but it does not exist in '+form);
 				}
 				
 			});
-			promisses.pushObjects(this._forms.invoke('_validate'));
+			promisses.pushObjects(this._forms.invoke('_validate',paths));
 		} else {
 			promisses.pushObject(validator.validate(target,modelName));
 			promisses.pushObjects(this._forms.filterBy('isEnabled',true).invoke('_validate'));
@@ -317,7 +323,7 @@ export default Panel.extend({
 		if(validator && (!this._form || !(this._form.get("_validator."+this._path) instanceof validator.constructor))) {
 			var form= this;
 			this._observer = validator.observe(this,'for',function(result,sender,key) {
-				var silent=sender===null || sender===form
+				var silent=sender===null || sender===form;
 				// If our target model changed, immediate show validations unless it's a new model
 				if(silent && (form.get('for.isDirty') && !form.get('for.isNew')))
 					silent=false;
@@ -404,3 +410,4 @@ export default Panel.extend({
 		return this;
 	}
 });
+export default Form;

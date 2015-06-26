@@ -114,7 +114,8 @@ export default Ember.Mixin.create({
 	
 	_apply : function() {
 		if(this.optionControl) {
-			this.optionControl._apply();
+			// Notify the optionControl the model has changed
+			this.optionControl._reset(true);
 		}
 		this._super();
 	},

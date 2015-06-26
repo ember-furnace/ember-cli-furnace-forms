@@ -170,8 +170,10 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	_controlMessages : null,
 	
 	setMessages: function(messages,silent) {
-		this._updateMessages(messages,this._controlMessages);
+		this._updateMessages(messages,this._controlMessages);		
 		this._messagesSilent=silent;
+		if(this.get('hasPrerequisites')===false)
+			silent=true;
 		if(!silent) {
 			Ember.run.once(this,function() {
 				this._components.invoke('_controlMessageObserver');
