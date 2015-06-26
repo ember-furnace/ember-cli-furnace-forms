@@ -32,6 +32,8 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	hasPrerequisites: null,
 	
+	_messagesSilent: false,
+	
 	actions: {
 		
 		reset : function(action) {
@@ -169,6 +171,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	setMessages: function(messages,silent) {
 		this._updateMessages(messages,this._controlMessages);
+		this._messagesSilent=silent;
 		if(!silent) {
 			Ember.run.once(this,function() {
 				this._components.invoke('_controlMessageObserver');
@@ -210,6 +213,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		component.set('isValid',this.get('isValid'));
 		component.set('isEnabled',this.get('isEnabled'));
 		component.set('isDirty',this.get('isDirty'));
+		if(!this._messagesSilent) {
+			component._controlMessageObserver();
+		}
 	},
 	
 	unregisterComponent:function(component) {
