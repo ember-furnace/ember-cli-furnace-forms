@@ -209,7 +209,6 @@ var Form = Panel.extend({
 				var input=form.get(_path);
 				if(input) {
 					paths.removeObject(path);
-					console.log(input.toString(),path);
 					validator=input.get('_form._validator');
 					target=input.get('_form.for');
 					path=input.get('_path');
@@ -224,7 +223,6 @@ var Form = Panel.extend({
 						}					
 					}
 					if(input instanceof Form) {
-						console.log('the control is a form');
 						promisses.pushObject(input._validate());
 					}
 				} else {
