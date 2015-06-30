@@ -36,28 +36,37 @@ export default Ember.Mixin.create({
 				}
 			}
 			var ret=null;
-			var	oldValue=this.get('optionControl');
-			if(option && option.control) {						
-				var options=option.control._meta.options;
-				options['for']=this.get('value');
-				options._path=this._panel._path;
-				ret = getControl.call(this,'value',option.control._meta.options._controlType,options);
-				this.set('showOptionControl',true);
-			} 
-			else { 
-				this.set('showOptionControl',false);			
-			}	
+			
+			// Use option control directly instead of generating our own
+//			var	oldValue=this.get('optionControl');
+//			if(option && option.control) {						
+//				var options=option.control._meta.options;
+//				options['for']=this.get('value');
+//				options._path=this._panel._path;
+//				ret = option.get('optionControl');
+//				this.set('showOptionControl',true);
+//			} 
+//			else { 
+//				this.set('showOptionControl',false);			
+//			}	
 			if(this._controlsLoaded) {
 				this.get("controls").invoke('set','selected',false);
 				var control=this.get("controls").findBy('index',this.get('selectedIndex'));
-				if(control)
+				if(control) {
 					control.set('selected',true);
+					ret = control.get('optionControl');
+					if(ret)
+						this.set('showOptionControl',true);
+					else 
+						this.set('showOptionControl',false);
+				}
 			}
-			if(oldValue) {
-				Ember.run.later(function() {
-					oldValue.destroy();
-				});
-			}
+			// Since we're using the options control, dont destroy it.
+//			if(oldValue) {
+//				Ember.run.later(function() {
+//					oldValue.destroy();
+//				});
+//			}
 			this.set('optionControl',ret);
 		});
 	}),

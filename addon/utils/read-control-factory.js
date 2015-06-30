@@ -7,5 +7,5 @@ export default function readComponentFactory(nameOrStream, view) {
   if(control===null)
 	  return null;
   Ember.assert('The dynamic control helper only supports passing a control object!',control instanceof Control);
-  return control.getComponentClass(view,control._panel.get('_modelName')); 
+  return control.getComponentClass(view); 
 }

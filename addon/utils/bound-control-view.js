@@ -28,8 +28,13 @@ export default ContainerView.extend(_Metamorph, {
   },
   _updateBoundChildComponent:function() {
 	  var component=this._createNewComponent();
-	  if(component)
-		  this.replace(0, 1, [component]);
+	  if(component) {
+		  if(this.toArray().length)
+			  this.replace(0, 1, [component]);
+		  else
+			  this.pushObject(component);
+			  
+	  }
 	  else 
 		  this.removeChild(this.objectAt(0));
   },
@@ -43,7 +48,7 @@ export default ContainerView.extend(_Metamorph, {
     }
     var hash    = this._boundComponentOptions;           
     var hashForComponent = {};
-    hash['control']=control;
+    hash['control']=control
     var prop;
     for (prop in hash) {
       if (prop === '_boundComponentOptions' || prop === 'componentClassStream') { continue; }

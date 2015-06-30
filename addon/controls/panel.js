@@ -100,9 +100,10 @@ export default Control.extend(ControlSupport,{
 		var options=options || {};
 		mixins=mixins || [];	
 		if(!options['for']) {
-			if(options._panel && options._panel._isFormOption) {
-				options['for']=Ember.computed.alias('_panel.for');
-			} else if(options._panel.get('for.'+options._name)) {
+//			if(options._panel && options._panel._isFormOption) {
+//				options['for']=Ember.computed.alias('_panel.for');
+//			} else 
+			if(options._panel.get('for.'+options._name)) {
 				options['for']=Ember.computed.alias('_panel.for.'+options._name);
 			} else {
 				options['for']=Ember.computed.alias('_panel.for');						

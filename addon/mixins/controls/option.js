@@ -63,15 +63,16 @@ export default Ember.Mixin.create(ControlSupport,{
 		return false;
 	}),
 	
+	_optionControl : null,
+	
 	optionControl : Ember.computed('_option.control',function() {
 		// @TODO: should probably destroy existing control
-		if(this._option.control) {
+		if(this._optionControl === null && this._option.control) {
 			var options=this._option.control._meta.options;
 			options.caption=this.get('caption');
-			return getControl.call(this,'value',options._controlType,options);
+			this._optionControl= getControl.call(this,'value',options._controlType,options);
 		}
-			
-		return null;
+		return this._optionControl;
 	}).meta({type : 'form-control'}),
 	
 	

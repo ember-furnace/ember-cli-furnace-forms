@@ -68,6 +68,7 @@ var Form = Panel.extend({
 	
 	actions : {
 		validate : function(paths) {
+			
 			this._validate(paths);
 
 		},
@@ -207,11 +208,18 @@ var Form = Panel.extend({
 		var modelName=this.get('_modelName');
 		var validator=this.get('_validator');
 		var promisses=Ember.A();
+		if(this._panel && this._panel._isFormOption) {
+			if(!this._panel.get('selected'))
+				return new Ember.RSVP.Promise(function(resolve) {
+					resolve(true);
+				});
+		}
 		if(!validator) {
 			return new Ember.RSVP.Promise(function(resolve) {
 				resolve(true);
 			});
 		}
+		console.log('Validating '+this);
 		if(paths) {				
 			if(typeof paths==='string'){
 				paths=Ember.A(paths);
