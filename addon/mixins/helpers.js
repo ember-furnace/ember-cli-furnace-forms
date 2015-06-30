@@ -48,24 +48,29 @@ var Helpers= Ember.Mixin.create({
 		return getControl('control:'+control,options);
 	},
 	
-	input : function(component,options) {
+	input : function(decoratorName,options) {
 		options=getOptions(arguments,'text');
 		return getControl('control:input',options);
 	},
 	
-	action : function(component,options) {
+	list : function(decoratorName,options) {
+		options=getOptions(arguments,'list');
+		return getControl('control:list',options);
+	},
+	
+	action : function(decoratorName,options) {
 		options=getOptions(arguments,'button');
 		return getControl('control:action',options);
 	},
 	
-	submit : function(component,options) {
+	submit : function(decoratorName,options) {
 		options=getOptions(arguments,'submit');
 		options=options || {};
 		options.submit=true;
 		return getControl('control:action',options);
 	},
 	
-	panel : function(component,options) {
+	panel : function(decoratorName,options) {
 		options=getOptions(arguments,'panel');
 		return getControl('control:panel',options);
 	},

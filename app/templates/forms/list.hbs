@@ -1,0 +1,13 @@
+<label  {{bind-attr for=inputId}}>{{caption}}</label>
+{{#each control in itemControls}}
+{{f-control control}}
+{{/each}}
+
+{{#each control in inputControls}}
+{{f-control control}}
+{{/each}}
+
+{{#each control in actionControls}}
+{{f-control control}}
+{{/each}}
+{{f-messages}}

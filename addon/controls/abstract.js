@@ -27,6 +27,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	_for : null,
 	
+	decorator: Ember.computed('_component,_componentType',function() {
+		return this.get('_componentType')+'.'+this.get('_component');
+	}),
 	
 	caption: I18n.computed(null),
 	
@@ -125,7 +128,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	notifyChange: function() {
 		if(this._panel) {
-			Ember.run.once(this,function() {
+			Ember.run.scheduleOnce('sync',this,function() {
 				this._panel.propertyDidChange(this._name);
 			});
 		}

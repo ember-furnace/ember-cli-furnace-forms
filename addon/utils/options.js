@@ -6,7 +6,6 @@ export default function inputOptions() {
 	this._meta.options._mixin.controlSupport=ControlSupport;
 	this._meta.options._mixin.optionsSupport=OptionsSupport;
 	this._meta.options._mixin.optionsType=SingleSelect;
-	
 	this.on=function(props) {		
 		var _props=props.split(',');
 		var length=_props.length;

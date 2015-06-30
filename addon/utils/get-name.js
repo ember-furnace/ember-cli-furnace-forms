@@ -17,7 +17,10 @@ export default function(object,silent) {
 	} else if(object instanceof Ember.Component) {		
 		objectName=object.get('layoutName');
 	} else if(object instanceof Ember.Object) {
-		objectName=object.constructor.typeKey;
+		if(object.constructor.modelName!==undefined)
+			objectName=object.constructor.modelName;
+		else
+			objectName=object.constructor.typeKey;
 	} 
 //	else {
 //		Ember.warn('Can not determine form for type '+(typeof object));

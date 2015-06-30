@@ -5,7 +5,8 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Input from 'furnace-forms/components/input';
+import Input from 'furnace-forms/components/list';
+
 
 /**
  * Text input control component
@@ -16,12 +17,11 @@ import Input from 'furnace-forms/components/input';
  */
 export default Input.extend({
 	
-	attributeBindings: ['type'],
+	defaultLayout: 'forms/list',
+
+	itemControls : Ember.computed.alias('control.itemControls'),
 	
-	controls : Ember.computed.alias('control.controls'),
+	inputControls : Ember.computed.alias('control.inputControls'),
 	
-	type : Ember.computed(function() {
-		return Ember.String.camelize(this.constructor.typeKey);
-	}),
-	
+	actionControls : Ember.computed.alias('control.actionControls'),
 });

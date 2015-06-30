@@ -70,25 +70,22 @@ export default Ember.Mixin.create({
 	
 	
 	_valueObserver:function() {
-//		if(this.get('_name') && this.get('_form._syncToSource')) {
-			this._apply();
-//		}
+		this._apply();
 		this.setDirty(this.get('value')!==this.get('_orgValue'));
-		// This notification causes an extra event in "conditions" was it required? Yes. The other events were extra, trigger by accessing to hasPrerequisites aliased property
-//		this._panel.propertyDidChange(this._name);
 		this.notifyChange();
-		this._components.invoke('set','value',this.get('value'));
+		
 	}.observes('value'),
 	
 	_apply: function() {
 		if(this.property!==null) {
-			Ember.run.once(this,function(){
+			Ember.run.scheduleOnce('sync',this,function(){
+				this._components.invoke('set','value',this.get('value'));
 				if(this.get('property')!==this.get('value')) {
 					try{
 						this.set('property',this.get('value'));
 					}
 					catch(e) {
-						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel.for')+") could not update its corresponding property to the new value");
+						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel.for')+") could not update its corresponding property to the new value: "+e);
 					}
 				}
 			});

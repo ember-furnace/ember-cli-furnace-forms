@@ -12,6 +12,7 @@ import Button from './inputs/button';
 import Submit from './inputs/submit';
 import Select from './inputs/select';
 import Checkbox from './inputs/checkbox';
+import List from './inputs/list';
 import RadioList from './inputs/list/radio';
 import RadioOption from './inputs/list/radio-option';
 import CheckList from './inputs/list/check';
@@ -37,6 +38,8 @@ export default Ember.Namespace.extend( {
 	Select : Select,
 	
 	Checkbox : Checkbox,
+	
+	List : List,
 	
 	RadioList : RadioList,
 	

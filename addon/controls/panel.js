@@ -21,7 +21,7 @@ import Proxy from 'furnace-forms/proxy';
  */
 export default Control.extend(ControlSupport,{
 	_component : 'panel',
-		
+	
 	'for' : null,
 	
 	modelName: Ember.computed.alias('_modelName'),
@@ -92,14 +92,13 @@ export default Control.extend(ControlSupport,{
 	
 	_reset:function(modelChanged) {
 		this._super(modelChanged);
-		this.get('controls').invoke('_reset',modelChanged);
 	},
 	
 }).reopenClass({
 	
 	generate : function(mixins,options) {
 		var options=options || {};
-		mixins=mixins || [];
+		mixins=mixins || [];	
 		if(!options['for']) {
 			if(options._panel && options._panel._isFormOption) {
 				options['for']=Ember.computed.alias('_panel.for');

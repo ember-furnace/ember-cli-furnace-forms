@@ -39,7 +39,7 @@ export default Ember.Mixin.create({
 			var optionProps=this._optionProps ? this._optionProps+',_form.for' : '_form.for';
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
-					Ember.run.once(this,function() {
+					Ember.run.scheduleOnce('sync',this,function() {
 						var value = this._optionFn();
 						if(value instanceof Ember.RSVP.Promise) {
 							var _self=this;
@@ -54,7 +54,7 @@ export default Ember.Mixin.create({
 					});
 				})
 			});
-			this._optionsObserver();
+			Ember.run.later(this,this._optionsObserver);
 		}
 	},
 	

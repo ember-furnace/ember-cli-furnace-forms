@@ -18,6 +18,8 @@ import Proxy from 'furnace-forms/proxy';
  */
 var Form = Panel.extend({
 	_component: 'form',
+	
+	_componentType: 'forms',
 
 	_syncFromSource : true,
 	
@@ -123,8 +125,12 @@ var Form = Panel.extend({
 			else {
 				name+='.'+control.get('_name');
 			}
-		}
-
+		} else {
+			if(!name)
+				name='form';
+		} 
+			
+		Ember.assert("Could not determine name for control "+control,name);
 		if(this._controlsByPath[name]===undefined)
 			this._controlsByPath[name]=Ember.A();
 		
@@ -157,11 +163,17 @@ var Form = Panel.extend({
 			else {
 				name+='.'+control.get('_name');
 			}
-		}
+		}else {
+			if(!name)
+				name='form';
+		} 
 		
 		Ember.warn(this+" cannot unregister control "+control+" with name "+name,this._controlsByPath[name]!==undefined);
-		this._controlsByPath[name].removeObject(control);
-		
+		if(this._controlsByPath[name]!==undefined)
+			this._controlsByPath[name].removeObject(control);
+		else {
+			console.log(this._controlsByPath);
+		}
 		if(this._form) {
 			if(control===this) { 
 				this._form._unregisterForm(control);
@@ -295,8 +307,7 @@ var Form = Panel.extend({
 		this._controlsByPath={};
 		this._validationCache={};
 		this._messageCache={};
-		this._super();
-		this.set('_path',null);		
+		
 		if(!this._syncFromSource || !this._syncToSource) {
 			var _for=this.get('for') ;
 			this.reopen({
@@ -314,6 +325,9 @@ var Form = Panel.extend({
 			});
 			this.set('for',_for);
 		} 
+		
+		this._super();
+		this.set('_path',null);		
 		
 //		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
 		var validator=this.get('_validator');
@@ -339,8 +353,10 @@ var Form = Panel.extend({
 					result.reset();
 			}, this.get('_modelName'));
 			
-			if(this.get('for'))
-				this._observer.run();
+			Ember.run.scheduleOnce('afterRender',this,function() {
+				if(this.get('for'))
+					this._observer.run();
+			});
 		
 		}
 	},

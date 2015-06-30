@@ -9,6 +9,7 @@ import Ember from 'ember';
 import Form from './controls/form';
 import Panel from './controls/panel';
 import Input from './controls/input';
+import List from './controls/list';
 import Action from './controls/action';
 import View from './controls/view';
 
@@ -21,6 +22,7 @@ export default Ember.Namespace.extend( {
 	Form : Form,
 	Panel : Panel,
 	Input : Input,
+	List : List,
 	Action : Action,
 	View : View,
 	

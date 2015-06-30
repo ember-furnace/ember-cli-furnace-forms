@@ -5,36 +5,52 @@ export default Ember.Mixin.create({
 	
 //	_path : null,
 	
+	_controlPromise : null,
+	
+	
 	init : function() {
 		this._super();
-
-		this._controls={};
+		// "for" or "value" might not be available yet
+		Ember.run.later(this,this._loadControls);
 	},
 	
-	controls: Ember.computed(function() {
-		var ret = Ember.A();
-		var self = this;
-		this.constructor.eachComputedProperty(function(name, meta) {
-			if (meta.type==='form-control') {
-				ret.pushObject(self.get(name));
-			}
-		});
-		return ret;
+	controls: Ember.computed('_controls',function() {
+		if(this._controls===null) {
+			return Ember.A();
+		}
+		return this._controls;
 	}).readOnly(),
 	
-	inputControls: Ember.computed(function() {
-		var ret = Ember.A();
-		var self = this;
-		this.constructor.eachComputedProperty(function(name, meta) {
+	_loadControls : function() {
+		var control=this;
+		var controls=Ember.A();
+		control.constructor.eachComputedProperty(function(name, meta) {
+			if (meta.type==='form-control') {
+				controls.pushObject(control.get(name));
+			}
+		});
+		this.set('_controls',controls);
+	},
+	
+	inputControls: Ember.computed('_controls',function() {
+	    var ret = Ember.A();
+	    if(this._controls===null) {
+	    	return ret;
+	    }
+	    var self = this;
+	    this.constructor.eachComputedProperty(function(name, meta) {
 			if (meta.type==='form-control' && !(self.get(name) instanceof Action)) {
 				ret.pushObject(self.get(name));
 			}
-		});
+	    });
 		return ret;
 	}).readOnly(),
 	
-	actionControls: Ember.computed(function() {
+	actionControls: Ember.computed('_controls',function() {
 		var ret = Ember.A();
+		if(this._controls===null) {
+	    	return ret;
+		}
 		var self = this;
 		this.constructor.eachComputedProperty(function(name, meta) {
 			if (meta.type==='form-control' && (self.get(name) instanceof Action)) {
@@ -49,7 +65,7 @@ export default Ember.Mixin.create({
 //	isDirty : false,
 	
 	setDirty : function(dirty) {
-		Ember.run.once(this,function() {
+		Ember.run.scheduleOnce('sync',this,function() {
 			if(this._dirty!=dirty) {
 				this.set('_dirty',dirty);
 			}
@@ -60,7 +76,7 @@ export default Ember.Mixin.create({
 		});
 	},
 	
-	_controlDirtyObserver: Ember.observer('controls.@each.isDirty',function(){		
+	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty',function(){		
 		this.setDirty(this._dirty);
 	}),
 	
@@ -69,7 +85,7 @@ export default Ember.Mixin.create({
 //	isValid : null,
 	
 	setValid : function(valid) {
-		Ember.run.once(this,function() {
+		Ember.run.scheduleOnce('sync',this,function() {
 			if(this.isDestroyed) {
 				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
 				return;
@@ -85,7 +101,7 @@ export default Ember.Mixin.create({
 		});
 	},
 	
-	_controlValidObserver: Ember.observer('controls.@each.isValid',function(){
+	_controlValidObserver: Ember.observer('_controls.@each.isValid',function(){
 		this.setValid(this._valid);
 	}),
 	
@@ -95,8 +111,17 @@ export default Ember.Mixin.create({
 //		this._super();
 //	}
 	destroy : function() {
-		this.get('controls').invoke('destroy');
+		var controls=this.get('controls');
+		if(controls)
+			controls.invoke('destroy');
 		this._super();
-	}
+	},
+	
+	_reset:function(modelChanged) {
+		this._super(modelChanged);
+		var controls=this.get('controls');
+		if(controls)
+			controls.invoke('_reset',modelChanged);
+	},
 	
 });

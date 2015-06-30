@@ -10,6 +10,8 @@ import Panel from './components/panel';
 import Condition from './components/condition';
 import Messages from './components/messages';
 import Input from './components/input';
+import List from './components/list';
+import ListOption from './components/list-option';
 import View from './components/view';
 /**
  * @class Forms
@@ -31,6 +33,10 @@ export default Ember.Namespace.extend( {
 	Messages : Messages,
 	
 	Input : Input,
+	
+	List : List,
+	
+	ListOption : ListOption,
 
 	View : View,
 	
