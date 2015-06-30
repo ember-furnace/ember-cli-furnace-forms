@@ -330,35 +330,35 @@ var Form = Panel.extend({
 		this.set('_path',null);		
 		
 //		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
-		var validator=this.get('_validator');
-		// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
-		if(validator && (!this._form || !(this._form.get("_validator."+this._path) instanceof validator.constructor))) {
-			var form= this;
-			this._observer = validator.observe(this,'for',function(result,sender,key) {
-				var silent=sender===null || sender===form;
-				// If our target model changed, immediate show validations unless it's a new model
-				if(silent && (form.get('for.isDirty') && !form.get('for.isNew')))
-					silent=false;
-//				Ember.debug(form);
-//				console.log('Ran validation',sender ? sender.toString() : null,key);
-//				console.log(result.get('validations'));
-//				console.log(result.get('messages'));
-//				Ember.debug(sender);
-//				console.log('--------------');
+		Ember.run.scheduleOnce('afterRender',this,function() {
+			var validator=this.get('_validator');
+			// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
+			if(validator && (!this._form || !(this._form.get("_validator."+this._path) instanceof validator.constructor))) {
+				var form= this;
+				this._observer = validator.observe(this,'for',function(result,sender,key) {
+					var silent=sender===null || sender===form;
+					// If our target model changed, immediate show validations unless it's a new model
+					if(silent && (form.get('for.isDirty') && !form.get('for.isNew')))
+						silent=false;
+//					Ember.debug(form);
+//					console.log('Ran validation',sender ? sender.toString() : null,key,silent);
+//					console.log(result.get('validations'));
+//					console.log(result.get('messages'));
+//					Ember.debug(sender);
+//					console.log('--------------');
+					
+					form._setValidations(result,silent);
+					
+					// We only want to receive changed status on next run, so reset the result if it has finished
+					if(result.hasFinished())
+						result.reset();
+				}, this.get('_modelName'));
 				
-				form._setValidations(result,silent);
-				
-				// We only want to receive changed status on next run, so reset the result if it has finished
-				if(result.hasFinished())
-					result.reset();
-			}, this.get('_modelName'));
 			
-			Ember.run.scheduleOnce('afterRender',this,function() {
 				if(this.get('for'))
 					this._observer.run();
-			});
-		
-		}
+			}
+		});
 	},
 	
 	_forObserver : Ember.observer('for',function(){

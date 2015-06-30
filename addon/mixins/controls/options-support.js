@@ -54,7 +54,7 @@ export default Ember.Mixin.create({
 					});
 				})
 			});
-			Ember.run.later(this,this._optionsObserver);
+			this._optionsObserver();
 		}
 	},
 	

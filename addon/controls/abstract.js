@@ -174,9 +174,10 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	setMessages: function(messages,silent) {
 		this._updateMessages(messages,this._controlMessages);		
-		this._messagesSilent=silent;
-		if(this.get('hasPrerequisites')===false)
+		if(this.get('hasPrerequisites')===false || this._components.length===0)
 			silent=true;
+		this._messagesSilent=silent;		
+//		console.log("New messages for "+this+" Components: "+this._components.length);
 		if(!silent) {
 			Ember.run.once(this,function() {
 				this._components.invoke('_controlMessageObserver');
@@ -219,6 +220,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		component.set('isEnabled',this.get('isEnabled'));
 		component.set('isDirty',this.get('isDirty'));
 		if(!this._messagesSilent) {
+//			console.log(component+" component registered to "+this+", updating messages");
 			component._controlMessageObserver();
 		}
 	},
