@@ -219,7 +219,6 @@ var Form = Panel.extend({
 				resolve(true);
 			});
 		}
-		console.log('Validating '+this);
 		if(paths) {				
 			if(typeof paths==='string'){
 				paths=Ember.A(paths);

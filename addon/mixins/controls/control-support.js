@@ -24,11 +24,15 @@ export default Ember.Mixin.create({
 	_loadControls : function() {
 		var control=this;
 		var controls=Ember.A();
-		control.constructor.eachComputedProperty(function(name, meta) {
+		if(this.isDestroyed)
+			return;
+		control.constructor.eachComputedProperty(function(name, meta) {		
 			if (meta.type==='form-control') {
 				controls.pushObject(control.get(name));
 			}
-		});
+		});		
+		if(this.isDestroyed)
+			return;
 		this.set('_controls',controls);
 	},
 	
