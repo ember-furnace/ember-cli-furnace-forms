@@ -1,6 +1,7 @@
 import Ember from 'ember';
 export default Ember.Mixin.create({
 	_orgValue : null,
+	_orgArray : null,
 	
 	property: null,
 	
@@ -26,16 +27,16 @@ export default Ember.Mixin.create({
 				var control=this;
 				property.then(function(propertyValue){
 					control.set('value',propertyValue);
-					control.set('_orgValue',propertyValue);
+					control._setOrgValue(propertyValue);
 				});
 			}
 			else {
 				this.set('value',this.get('property'));
-				this.set('_orgValue',this.get('property'));
+				this._setOrgValue(this.get('property'));
 			}
 //			}
 //			else {
-//				this.set('_orgValue',this.get('value'));
+//				this._setOrgValue(this.get('value'));
 //			}
 		}
 	},
@@ -45,7 +46,7 @@ export default Ember.Mixin.create({
 		// If we sync to the source, do not update the _orgValue so we keep a reliable dirty flag
 		// If we're not syncing to the source, something else updated it and we should be dirty accordingly, so update _orgValue 
 //		if(!this.get('_form._syncToSource')) {
-//			this.set('_orgValue',this.get('property'));
+//			this._setOrgValue(this.get('property'));
 //		}
 //		if(this.get('_name') && this.get('_form._syncFromSource') && this.get('value')!==this.get('property')) {
 		
@@ -71,7 +72,27 @@ export default Ember.Mixin.create({
 	
 	_valueObserver:function() {
 		this._apply();
-		this.setDirty(this.get('value')!==this.get('_orgValue'));
+		var value=this.get('value');
+		var dirty=false;
+		if(value!==this.get('_orgValue')) {
+			dirty=true;
+		} else if(this._orgArray) {
+			var orgArray=this._orgArray;
+			if(value.length!==orgArray.length) {
+				dirty=true;
+			}
+			else {
+				value.forEach(function(value) {
+					if(!orgArray.contains(value)) {
+						dirty=true;
+					}
+				});
+			}
+			
+		} else {
+			dirty=true;
+		}
+		this.setDirty(dirty);
 		this.notifyChange();
 		
 	}.observes('value'),
@@ -97,21 +118,30 @@ export default Ember.Mixin.create({
 		var property=this.get('property');
 		if(Ember.PromiseProxyMixin.detect(property)) {
 			var control=this;
-			this.set('_orgValue',null);
+			this._setOrgValue(null);
 			this.set('value',null);
 			property.then(function(propertyValue){
 				if(modelChanged) {
-					control.set('_orgValue',propertyValue);
+					control._setOrgValue(propertyValue);
 				}
 				control.set('value',propertyValue);
 			});
 		}
 		else {
 			if(modelChanged) {
-				this.set('_orgValue',property);
+				this._setOrgValue(property);
 			}
 			this.set('value',property);
 		}
 	},
+	
+	_setOrgValue: function(orgValue) {
+		this.set('_orgValue',orgValue);
+		if(Ember.MutableArray.detect(orgValue)) {
+			this.set('_orgArray',orgValue.toArray());
+		} else {
+			this.set('_orgArray',null);
+		}
+	}
 	
 });
