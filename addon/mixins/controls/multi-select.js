@@ -11,14 +11,16 @@ export default Ember.Mixin.create({
 	},
 	
 	select: function(index,selected) {
-		if(selected)
+		if(selected) {
 			this.get('value').pushObject(this.get('_options')[index-1].value);
-		else 
+		} else  { 
 			this.get('value').removeObject(this.get('_options')[index-1].value);
+		}
 		if(this._controlsLoaded) {
 			var control=this.get("controls").findBy('index',index);
-			if(control)
+			if(control) {
 				control.set('selected',selected);
+			}
 		}
 		this._valueObserver();
 	},

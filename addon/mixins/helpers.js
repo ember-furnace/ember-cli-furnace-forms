@@ -65,8 +65,7 @@ var Helpers= Ember.Mixin.create({
 	
 	submit : function(decoratorName,options) {
 		options=getOptions(arguments,'submit');
-		options=options || {};
-		options.submit=true;
+		options=options || {};		
 		return getControl('control:action',options);
 	},
 	
