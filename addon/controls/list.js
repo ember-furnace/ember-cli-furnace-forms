@@ -45,11 +45,15 @@ export default Control.extend(ControlSupport,{
 		var control=this;
 		var value=this.get('value');
 		var oldControls=this._itemControls;
+	
 		var itemControls=Ember.A();
+		this.set('_itemControls',itemControls);
+		
 		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
-		if(this.isDestroying)
+		if(this.isDestroying) {
 			return;
-		if(Ember.Enumerable.detect(value)) {			
+		}
+		if(Ember.Enumerable.detect(value)) {	
 			value.forEach(function(value,index) {
 				var oldControl=oldControls ? oldControls.findBy('value',value) : undefined;
 				if(oldControl) {
@@ -68,7 +72,6 @@ export default Control.extend(ControlSupport,{
 				oldControl.destroy();
 			});
 		}
-		this.set('_itemControls',itemControls);
 	}),
 	
 	
@@ -82,14 +85,12 @@ export default Control.extend(ControlSupport,{
 	}),
 	
 	// We alias the for property for panels and forms
-	'for' : Ember.computed(function() {
-		return this.get('value');
-	}),
+	'for' : Ember.computed.alias('value'),
 	
 }).reopenClass({
 	
 	generate : function(mixins,options) {
-		var options=options || {};
+		options=options || {};
 		mixins=mixins || [];
 		mixins.push(options);
 		var typeKey=this.typeKey;
