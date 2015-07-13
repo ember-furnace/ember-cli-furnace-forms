@@ -1,12 +1,14 @@
 {{#if caption}}
 	<h3 class="panel-caption">{{caption}}</h3>
 {{/if}}
-
+<controls>
 {{#each control in inputControls}}
 {{f-control control}}
 {{/each}}
-
+</controls>
+<actions>
 {{#each control in actionControls}}
 {{f-control control}}
 {{/each}}
+</actions>
 {{f-messages}}
