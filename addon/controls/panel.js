@@ -9,7 +9,7 @@ import Ember from 'ember';
 
 import getName from 'furnace-forms/utils/get-name';
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
-
+import DS from 'ember-data';
 import Proxy from 'furnace-forms/proxy';
 /**
  * Panel control component proxy 
@@ -51,7 +51,7 @@ export default Control.extend(ControlSupport,{
 		apply:function() {
 			this._apply();
 		},
-		reset : function(action) {
+		reset : function() {
 			this._reset();
 		},
 	},
@@ -97,13 +97,16 @@ export default Control.extend(ControlSupport,{
 }).reopenClass({
 	
 	generate : function(mixins,options) {
-		var options=options || {};
+		options=options || {};
 		mixins=mixins || [];	
 		if(!options['for']) {
 //			if(options._panel && options._panel._isFormOption) {
 //				options['for']=Ember.computed.alias('_panel.for');
-//			} else 
-			if(options._panel.get('for.'+options._name)) {
+//			} else
+			if(options._name && Ember.Enumerable.detect(options._panel.get('for'))) {
+				options['for']=Ember.computed.alias('_panel.for.'+options._name);
+			}
+			else if(options._panel.get('for.'+options._name)) {
 				options['for']=Ember.computed.alias('_panel.for.'+options._name);
 			} else {
 				options['for']=Ember.computed.alias('_panel.for');						
