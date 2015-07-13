@@ -15,7 +15,7 @@ import Lookup from 'furnace-forms/utils/lookup-class';
 export default function formHelper(params, hash, options, env) {
 	Ember.assert("The for attribute of a form expects a object reference, not a string literal",hash['for']===undefined || (typeof hash['for']==='object' && hash['for'].isStream===true));
 	var contextObject=hash['for'] ? hash['for'].value() : null;
-	Ember.assert("You are required to specify a form or the 'for' attribute",params[0] || contextObject);
+	Ember.assert("You are required to specify a form or the 'for' attribute",params[0] || contextObject!==undefined);
 	var view = env.data.view;
 	if(!contextObject) {
 		contextObject=params[0];
