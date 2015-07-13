@@ -40,12 +40,16 @@ export default Ember.Mixin.create({
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
 					Ember.run.scheduleOnce('sync',this,function() {
+						if(!this.get('_form.for')) {
+							return;
+						}
 						var value = this._optionFn();
 						if(value instanceof Ember.RSVP.Promise) {
 							var _self=this;
 							value.then(function(options){
-								if(!_self.isDestroyed)
+								if(!_self.isDestroyed) {
 									_self.set('_options',options);
+								}
 							});
 							return this._orgOptions;
 						} else {
