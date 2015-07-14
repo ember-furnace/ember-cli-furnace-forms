@@ -7,9 +7,9 @@
 import Control from './abstract';
 import Ember from 'ember';
 
+import DS from 'ember-data';
 import getName from 'furnace-forms/utils/get-name';
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
-import DS from 'ember-data';
 import Proxy from 'furnace-forms/proxy';
 /**
  * Panel control component proxy 
@@ -42,9 +42,6 @@ export default Control.extend(ControlSupport,{
 		if(this._panel && this.get('for')===this.get('_panel.for')) {
 			this.set('_path',this.get('_panel._path'));
 		}	
-		if(this.get('_panel') && !this.get('_panel.isEnabled')) {
-			this.setEnabled(false);
-		}
 	},
 	
 	actions: {
@@ -55,6 +52,16 @@ export default Control.extend(ControlSupport,{
 			this._reset();
 		},
 	},
+	
+	setEnabled: function(enabled) {		
+		if(enabled!==this._enabled) {
+			this.set('_enabled',enabled);
+		}
+		this.setFlag('isEnabled',this._enabled && (!this._panel || (this.get('_panel.isEnabled') && this.get('_panel.hasPrerequisites')!==false)));
+	},
+	_panelEnabledObserver:Ember.observer('_panel.hasPrerequisites,_panel.isEnabled',function() {
+		this.setEnabled(this._enabled);
+	}),
 	
 	_modelName : Ember.computed('for',function(key,value) {
 		if(value)  {
@@ -103,10 +110,17 @@ export default Control.extend(ControlSupport,{
 //			if(options._panel && options._panel._isFormOption) {
 //				options['for']=Ember.computed.alias('_panel.for');
 //			} else
-			if(options._name && Ember.Enumerable.detect(options._panel.get('for'))) {
-				options['for']=Ember.computed.alias('_panel.for.'+options._name);
+			
+			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('for'))) {
+				if(options._panel.get('for') instanceof DS.ManyArray) {
+					options['for']=Ember.computed('_panel.for',function() {
+						return this.get('_panel.for').objectAt(this._name);
+					});
+				} else {
+					options['for']=Ember.computed.alias('_panel.for.'+options._name);
+				}
 			}
-			else if(options._panel.get('for.'+options._name)) {
+			else if(options._panel.get('for') && options._panel.get('for.'+options._name)!==undefined) {
 				options['for']=Ember.computed.alias('_panel.for.'+options._name);
 			} else {
 				options['for']=Ember.computed.alias('_panel.for');						
