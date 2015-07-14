@@ -49,7 +49,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	_enabled: true,
 	
 	setEnabled: function(enabled) {		
-		if(enabled!=this._enabled) {
+		if(enabled!==this._enabled) {
 			this.set('_enabled',enabled);
 		}
 		this.setFlag('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
@@ -114,6 +114,8 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			var name=this.get('_panel._modelName') ? this.get('_panel._modelName')+'.'+this.get('_name') : this.get('_name');			
 			this.set('caption',name);
 		}
+
+		this._panelEnabledObserver();
 		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);
 	},
 	
@@ -200,14 +202,14 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 					_messages.forEach(function(message) {
 						Ember.set(item,'attributes',message.attributes);
 						source.removeObject(message);
-					})
+					});
 				}
 			}
 		});
 		target.removeObjects(remove);
 		if(source) {
 			source.forEach(function(message) {
-				target.pushObject(message)
+				target.pushObject(message);
 			});
 		}
 	},
