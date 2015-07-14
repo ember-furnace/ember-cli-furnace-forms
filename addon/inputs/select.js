@@ -8,7 +8,6 @@ import Ember from 'ember';
 import Input from 'furnace-forms/components/input';
 import Placeholder from 'furnace-forms/mixins/components/placeholder';
 
-import getName from 'furnace-forms/utils/get-name';
 /**
  * Text input control component
  * 
@@ -20,4 +19,7 @@ export default Input.extend(Placeholder,{
 	
 	defaultLayout: 'forms/select',
 	
+	disabled : Ember.computed('isEnabled',function() {
+		return !this.get('isEnabled');
+	}),
 });
