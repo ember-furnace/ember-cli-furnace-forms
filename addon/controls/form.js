@@ -7,7 +7,7 @@
 import Panel from './panel';
 import Lookup from 'furnace-forms/utils/lookup-class';
 import Proxy from 'furnace-forms/proxy';
-
+import Ember from 'ember';
 /**
  * Form control component proxy 
  * 
@@ -42,7 +42,9 @@ var Form = Panel.extend({
 			if(this._controlsByPath[name]!==undefined) {				
 				this._controlsByPath[name].invoke('setValid',validations[name]);
 				if(messages[name]!==undefined) {
-					this._controlsByPath[name].invoke('setMessages',messages[name],silent);
+					this._controlsByPath[name].forEach(function(control){
+						control.setMessages(messages[name].toArray(),silent);
+					});
 				}
 				else { 
 					this._controlsByPath[name].invoke('setMessages',null);
