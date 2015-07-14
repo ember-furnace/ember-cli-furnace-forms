@@ -1,8 +1,5 @@
 import Ember from 'ember';
 import OptionsSupport from './options-support';
-import Form from 'furnace-forms/controls/form';
-import Forms from 'furnace-forms';
-import getControl from 'furnace-forms/utils/get-control';
 
 export default Ember.Mixin.create({
 	optionControl : null,
@@ -15,11 +12,11 @@ export default Ember.Mixin.create({
 	
 	select: function(index) {
 		this.set('value',this.get('_options')[index-1].value);
-		if(this._controlsLoaded) {
-			this.get("controls").invoke('set','selected',false);
-			var control=this.get("controls").findBy('index',index);
-			if(control)
-				control.set('selected',true);
+		
+		this.get("_options").invoke('set','selected',false);
+		var option=this.get("_options").findBy('index',index);
+		if(option) {
+			option.set('selected',true);
 		}
 		this._valueObserver();
 	},
@@ -49,16 +46,22 @@ export default Ember.Mixin.create({
 //			else { 
 //				this.set('showOptionControl',false);			
 //			}	
+			
+			this.get("_options").invoke('set','selected',false);
+			option = this.get("_options").findBy('index',this.get('selectedIndex'));
+			if(option) {
+				option.set('selected',true);
+			}
 			if(this._controlsLoaded) {
-				this.get("controls").invoke('set','selected',false);
 				var control=this.get("controls").findBy('index',this.get('selectedIndex'));
 				if(control) {
-					control.set('selected',true);
 					ret = control.get('optionControl');
-					if(ret)
+					if(ret) {
 						this.set('showOptionControl',true);
-					else 
+					}
+					else { 
 						this.set('showOptionControl',false);
+					}
 				}
 			}
 			// Since we're using the options control, dont destroy it.
@@ -101,7 +104,15 @@ export default Ember.Mixin.create({
 				this.set('selectedIndex',this.get('_options').indexOf(option)+1);
 			}
 			
+		} else if(option && !option.get('selected')){
+			this._selectedIndexObserver();
 		}
+	}),
+	
+	_optionsObserver: Ember.observer('_options',function() {
+		Ember.debug('options changed');
+//		this._valueObserver();
+//		this._selectedIndexObserver();
 	}),
 	
 	setValid: function(valid) {
@@ -110,8 +121,9 @@ export default Ember.Mixin.create({
 				var isValid=this.get('isValid');		
 				this.setFlag('isValid',false);
 				this.set('_valid',valid);
-				if(isValid===true)
+				if(isValid===true) {
 					this.notifyChange();
+				}
 			}
 			else if(valid!==this._valid || valid!==this.isValid) {	
 				this.setFlag('isValid',valid);
