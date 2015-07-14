@@ -25,9 +25,7 @@ export default Control.extend(ValueSupport,{
 	init:function() {
 		this._super();
 		
-		if(!this.get('_panel.isEnabled')) {
-			this.setEnabled(false);
-		}
+		
 		
 	},
 	
