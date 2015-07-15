@@ -17,6 +17,7 @@ import getControl from 'furnace-forms/utils/get-control';
  * @protected
  */
 export default Control.extend(ControlSupport,{
+	_isList : true,
 	
 	_component : 'list',
 	

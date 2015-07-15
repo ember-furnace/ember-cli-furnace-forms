@@ -36,9 +36,13 @@ export default Control.extend({
 
 	getComponentClass : function() {
 		var componentClass=null;
-		componentClass = this._super();
+		try {
+			componentClass = this._super();
+		}
+		catch(e){
+			//Ember.warn('No view defined for '+this+', using default');
+		}
 		if(!componentClass) {
-			this.layoutName=this._component.replace(/\./g,'/');
 			this._component='view';
 			this._componentType='forms';
 			return this.getComponentClass();

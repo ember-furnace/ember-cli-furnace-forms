@@ -1,5 +1,6 @@
 import Form from 'furnace-forms/controls/form';
 import Lookup from 'furnace-forms/utils/lookup-class';
+import Ember from 'ember';
 export default function getControl(name,type,options) {
 	options=options || {};
 	options._name=name;
@@ -28,8 +29,13 @@ export default function getControl(name,type,options) {
 		if(mixins.length) {
 			mixins.push(options);
 			return type.createWithMixins.apply(type,mixins);
-		} else {			
-			return type.create(options);
+		} else {		
+			try {
+				return type.create(options);
+			}
+			catch(e) {
+				Ember.assert('Could not create control '+type+':'+name+' '+e);
+			}
 		}
 	} 
 }

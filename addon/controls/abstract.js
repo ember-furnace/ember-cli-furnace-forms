@@ -137,7 +137,8 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	_getPath: function() {
-		if(!this['for']) {
+		// Temporary work arround to give lists a proper path
+		if(!this['for'] || this._isList) {
 			return (this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name');
 		}
 	},
