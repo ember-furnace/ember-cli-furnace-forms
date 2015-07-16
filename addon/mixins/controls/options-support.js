@@ -43,17 +43,26 @@ export default Ember.Mixin.create({
 						if(!this.get('_form.for')) {
 							return;
 						}
-						var value = this._optionFn();
+						var newOptions=Ember.A();
+						var value = this._optionFn(newOptions);
 						if(value instanceof Ember.RSVP.Promise) {
 							var _self=this;
 							value.then(function(options){
 								if(!_self.isDestroyed) {
-									_self.set('_options',options);
+									if(options!==undefined) {
+										_self.set('_options',options);
+									} else { 
+										_self.set('_options',newOptions);
+									}
 								}
 							});
 							return this._orgOptions;
 						} else {
-							this.set('_options',value);
+							if(value!==undefined) {
+								this.set('_options',value);
+							} else { 
+								this.set('_options',newOptions);
+							}
 						}
 					});
 				})
