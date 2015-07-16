@@ -34,7 +34,12 @@ export default Panel.extend({
 				name=getName(this.get('for')).replace(/\./g,'/')+'/form';
 			}
 			if(!name || !this.get('container').lookup('template:'+name)) {
-				name='forms/form';
+				if(this.get('control._modelName')) {
+					name=this.get('control._modelName').replace(/\./g,'/')+'/form';
+				}
+				if(!name || !this.get('container').lookup('template:'+name)) {
+					name='forms/form';
+				}
 			}
 		}
 		return name ;
