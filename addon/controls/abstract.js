@@ -31,7 +31,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		return this.get('_componentType')+'.'+this.get('_component');
 	}),
 	
-	caption: I18n.computed(null),
+	caption: undefined,
 	
 	hasPrerequisites: null,
 	
@@ -110,10 +110,10 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			this.set('_path',this._getPath());
 			this.set('target',this._panel);
 		}
-		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
-			var name=this.get('_panel._modelName') ? this.get('_panel._modelName')+'.'+this.get('_name') : this.get('_name');			
-			this.set('caption',name);
-		}
+//		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
+//			var name=this.get('_panel._modelName') ? this.get('_panel._modelName')+'.'+this.get('_name') : this.get('_name');			
+//			this.set('caption',name);
+//		}
 
 		this._panelEnabledObserver();
 		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);

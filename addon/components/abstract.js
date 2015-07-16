@@ -6,7 +6,7 @@
  */
 import Ember from 'ember';
 import Control from 'furnace-forms/controls/abstract';
-
+import I18n from 'furnace-i18n';
 /**
  * Abstract control component 
  * 
@@ -28,7 +28,7 @@ export default Ember.Component.extend({
 		return null;
 	}.property('_focus'),
 	
-	caption: Ember.computed.alias('control.caption'),
+	caption: I18n.computed(null),
 	
 	actions: {
 		focus:function() {
@@ -200,6 +200,18 @@ export default Ember.Component.extend({
 		Ember.assert('A form component ('+this+') initialized without a control!',this.control);
 		this.control.registerComponent(this);
 		this.set('target',this.control);
+		
+		if( this.caption instanceof Ember.ComputedProperty  && this.get('caption')===null) {
+			if(typeof this.control.caption ==='object') {
+				this.caption=Ember.computed.alias('control.caption');
+			} else if(this.get('control.caption')!==undefined) {
+				this.set('caption',this.get('control.caption'));
+			}
+			else { 
+				var name=this.get('control._panel._modelName') ? this.get('control._panel._modelName')+'.'+this.get('control._name') : this.get('control._name');
+				this.set('caption',name);
+			}
+		}
 	},
 	
 	_enabledObserver: function() {
@@ -331,7 +343,7 @@ export default Ember.Component.extend({
 	
 	getFor: function(key) {
 		return this.control.getFor(key);
-	}
+	},
 	
 	
 	
