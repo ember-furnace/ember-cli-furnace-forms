@@ -8,6 +8,7 @@ import Ember from 'ember';
 import Control from './input';
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 import getControl from 'furnace-forms/utils/get-control';
+
 /**
  * Input control component proxy 
  * 
@@ -30,49 +31,70 @@ export default Control.extend(ControlSupport,{
 	
 	_itemControls : null,
 	
+	sortProperties: null,
+	sortAscending: true,
+	
+	isSorted: Ember.computed.notEmpty('sortProperties'),
+	
+	orderBy:Ember.SortableMixin.mixins[1].properties.orderBy,
+	sortFunction:Ember.SortableMixin.mixins[1].properties.sortFunction,
+	
 	init : function() {
 		this._super();
 		Ember.run.later(this,this._loadItemControls);
 	},
 
-	itemControls : Ember.computed('_itemControls',function() {
+	itemControls : Ember.computed('_itemControls,sortProperties.@each',function() {
 		if(!this._itemControls) {
 			return Ember.A();
 		}
-		return this._itemControls;
-	}),
+		var content = this._itemControls;
+		var isSorted = this.get('isSorted');
+		var self = this;
+		if (content && isSorted) {
+			content = content.slice();
+			content.sort(function(item1, item2) {
+	          return self.orderBy(item1, item2);
+			});			
+			return Ember.A(content);
+		}
+		
+		return content;
+	}).readOnly(),
 	
 	_loadItemControls : Ember.observer('value,value.@each',function() {
-		var control=this;
-		var value=this.get('value');
-		var oldControls=this._itemControls;
-	
-		var itemControls=Ember.A();
-		this.set('_itemControls',itemControls);
+		Ember.run.scheduleOnce('sync',this,function() {
+			var control=this;
+			var value=this.get('value');
+			var oldControls=this._itemControls;
 		
-		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
-		if(this.isDestroying) {
-			return;
-		}
-		if(Ember.Enumerable.detect(value)) {	
-			value.forEach(function(value,index) {
-				var oldControl=oldControls ? oldControls.findBy('value',value) : undefined;
-				if(oldControl) {
-					itemControls.pushObject(oldControl);
-					oldControls.removeObject(oldControl);
-				} else {
-					var options=control._itemControl._meta.options;	
-					options['for']=null;
-					itemControls.pushObject(getControl.call(control,index,options._controlType,options));
-				}
-				
-			});
-		}
-		if(oldControls) {
-			oldControls.forEach(function(oldControl) {
-				oldControl.destroy();
-			});
-		}
+			var itemControls=Ember.A();
+			this.set('_itemControls',itemControls);
+			
+			Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
+			if(this.isDestroying) {
+				return;
+			}
+			if(Ember.Enumerable.detect(value)) {	
+				value.forEach(function(value,index) {
+					var oldControl=oldControls ? oldControls.findBy('value',value) : undefined;
+					if(oldControl) {
+						itemControls.pushObject(oldControl);
+						oldControls.removeObject(oldControl);
+					} else {
+						var options=control._itemControl._meta.options;	
+						options['for']=null;
+						itemControls.pushObject(getControl.call(control,index,options._controlType,options));
+					}
+					
+				});
+			}
+			if(oldControls) {
+				oldControls.forEach(function(oldControl) {
+					oldControl.destroy();
+				});
+			}
+		});
 	}),
 	
 	
@@ -83,7 +105,7 @@ export default Control.extend(ControlSupport,{
 	controls: Ember.computed('itemControls',function() {
 		var controls = this._super();
 		return controls.pushObjects(this.get('itemControls'));
-	}),
+	}).readOnly(),
 	
 	// We alias the for property for panels and forms
 	'for' : Ember.computed.alias('value'),
