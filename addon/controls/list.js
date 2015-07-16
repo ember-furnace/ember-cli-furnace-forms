@@ -42,7 +42,7 @@ export default Control.extend(ControlSupport,{
 		return this._itemControls;
 	}),
 	
-	_loadItemControls : Ember.observer('value.@each',function() {
+	_loadItemControls : Ember.observer('value,value.@each',function() {
 		var control=this;
 		var value=this.get('value');
 		var oldControls=this._itemControls;
