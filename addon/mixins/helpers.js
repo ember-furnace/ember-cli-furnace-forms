@@ -74,7 +74,7 @@ var Helpers= Ember.Mixin.create({
 		return getControl('control:panel',options);
 	},
 	
-	view : function(view,options) {
+	view : function(decoratorName,options) {
 		options=getOptions(arguments,'view');
 // Try to find a corresponding view, if not just change the layoutname of the default
 //		if(options._component!=='view')

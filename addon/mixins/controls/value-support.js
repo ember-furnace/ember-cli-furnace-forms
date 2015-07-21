@@ -15,7 +15,7 @@ export default Ember.Mixin.create({
 	init: function() {
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in 
-		if(this.get('_name')) {
+		if(this.get('_name')!==null) {
 //			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
 //			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
 			var propertyName= '_panel.'+(this._panel['for']  ? 'for.' : 'value.')+this.get('_name');
@@ -25,6 +25,7 @@ export default Ember.Mixin.create({
 			var property=this.get('property');
 			if(Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
+				
 				property.then(function(propertyValue){
 					control.set('value',propertyValue);
 					control._setOrgValue(propertyValue);
@@ -41,7 +42,7 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	_propertyObserver:function(value) {
+	_propertyObserver:function() {
 		
 		// If we sync to the source, do not update the _orgValue so we keep a reliable dirty flag
 		// If we're not syncing to the source, something else updated it and we should be dirty accordingly, so update _orgValue 
@@ -94,16 +95,41 @@ export default Ember.Mixin.create({
 		}
 		this.setDirty(dirty);
 		this.notifyChange();
-		
 	}.observes('value'),
 	
 	_apply: function() {
 		if(this.property!==null) {
 			Ember.run.scheduleOnce('sync',this,function(){
+				var property=this.get('property');
+				var value=this.get('value');
 				this._components.invoke('set','value',this.get('value'));
-				if(this.get('property')!==this.get('value')) {
+				
+				if(Ember.PromiseProxyMixin.detect(property)) {
+					var dirty=false;
+					if(value.get('length')!==property.get('length')) {
+						dirty=true;
+					}
+					else {
+						value.forEach(function(value) {
+							if(!property.contains(value)) {
+								dirty=true;
+							}
+						});
+						property.forEach(function(property) {
+							if(!value.contains(property)) {
+								dirty=true;
+							}
+						});						
+					}
+					if(dirty) {
+						property.clear();
+						property.pushObjects(value);
+					}
+					
+				}
+				else if(value!==property) {
 					try{
-						this.set('property',this.get('value'));
+						this.set('property',value);
 					}
 					catch(e) {
 						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel.for')+") could not update its corresponding property to the new value: "+e);

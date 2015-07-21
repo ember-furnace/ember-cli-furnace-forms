@@ -23,8 +23,8 @@ export default Control.extend({
 	
 	init : function() {
 		this._super();
-		// If we do not have a name, we're an anonymous option without a counterpart in 
-		if(this.get('_name')) {
+		// If we do not have a name, we're an anonymous option without a counterpart in
+		if(this.get('_name')!==null) {
 			this.reopen({
 				value:Ember.computed.alias('_panel.for.'+this.get('_name'))
 			});
@@ -40,7 +40,7 @@ export default Control.extend({
 			componentClass = this._super();
 		}
 		catch(e){
-			//Ember.warn('No view defined for '+this+', using default');
+//			Ember.warn('No view '+this._component+' defined for '+this+' ('+e.message+'), using default');
 		}
 		if(!componentClass) {
 			this._component='view';
