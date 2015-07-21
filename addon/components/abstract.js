@@ -305,7 +305,7 @@ export default Ember.Component.extend({
 		}
 		
 		if(this.constructor.typeKey) {
-			layoutName=(this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/');
+			layoutName=(this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/');			
 			if(this.get('container').lookup('template:'+layoutName)) {
 				return layoutName;
 			}
@@ -313,8 +313,8 @@ export default Ember.Component.extend({
 			if(layoutName===this.constructor.typeKey) {
 				layoutName = 'forms/'+layoutName;
 			} else {
-				layoutName = layoutName+'/input';
-			}
+				layoutName = layoutName+'/'+this.control._componentType;
+			}			
 			if(this.get('container').lookup('template:'+layoutName)) {
 				return layoutName;
 			}
@@ -322,7 +322,7 @@ export default Ember.Component.extend({
 		return this.get('defaultLayout');
 	}.property(),
 	
-	_focusObserver : function(sender,key) {		
+	_focusObserver : function() {		
 		this.set('_showDelayedMessages',false);
 	}.observes('_focus'),
 	
