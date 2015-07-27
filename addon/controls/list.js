@@ -41,6 +41,7 @@ export default Control.extend(ControlSupport,{
 	
 	init : function() {
 		this._super();
+		this._itemControls=Ember.A();
 		Ember.run.later(this,this._loadItemControls);
 	},
 
@@ -66,10 +67,9 @@ export default Control.extend(ControlSupport,{
 		Ember.run.scheduleOnce('sync',this,function() {
 			var control=this;
 			var value=this.get('value');
-			var oldControls=this._itemControls;
-		
-			var itemControls=Ember.A();
-			this.set('_itemControls',itemControls);
+					
+			var itemControls=this._itemControls;
+			var oldControls=itemControls.toArray();
 			
 			Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
 			if(this.isDestroying) {
@@ -77,9 +77,8 @@ export default Control.extend(ControlSupport,{
 			}
 			if(Ember.Enumerable.detect(value)) {	
 				value.forEach(function(value,index) {
-					var oldControl=oldControls ? oldControls.findBy('value',value) : undefined;
+					var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
 					if(oldControl) {
-						itemControls.pushObject(oldControl);
 						oldControls.removeObject(oldControl);
 					} else {
 						var options=control._itemControl._meta.options;	
@@ -91,6 +90,7 @@ export default Control.extend(ControlSupport,{
 			}
 			if(oldControls) {
 				oldControls.forEach(function(oldControl) {
+					itemControls.removeObject(oldControl);
 					oldControl.destroy();
 				});
 			}
