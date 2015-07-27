@@ -90,9 +90,7 @@ export default Ember.Mixin.create({
 				});
 			}
 			
-		} else {
-			dirty=true;
-		}
+		} 
 		this.setDirty(dirty);
 		this.notifyChange();
 	}.observes('value'),
@@ -104,7 +102,7 @@ export default Ember.Mixin.create({
 				var value=this.get('value');
 				this._components.invoke('set','value',this.get('value'));
 				
-				if(Ember.PromiseProxyMixin.detect(property)) {
+				if(Ember.Enumerable.detect(property)) {
 					var dirty=false;
 					if(value.get('length')!==property.get('length')) {
 						dirty=true;
