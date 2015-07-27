@@ -69,7 +69,7 @@ export default Ember.Mixin.create(ControlSupport,{
 		// @TODO: should probably destroy existing control
 		if(this._optionControl === null && this._option.control) {
 			var options=this._option.control._meta.options;
-			options.caption=this.get('caption');
+			options.caption=Ember.computed.alias('_panel.caption');
 			this._optionControl= getControl.call(this,'value',options._controlType,options);
 		}
 		return this._optionControl;
