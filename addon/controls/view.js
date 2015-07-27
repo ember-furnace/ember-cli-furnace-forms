@@ -25,10 +25,21 @@ export default Control.extend({
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in
 		if(this.get('_name')!==null) {
-			this.reopen({
-				value:Ember.computed.alias('_panel.for.'+this.get('_name'))
-			});
+			var propertyName='_panel.for.'+this.get('_name');
 			
+			var property=this.get('_panel.for.');
+			if(property instanceof DS.ManyArray) {
+				this.reopen({
+					value: Ember.computed('_panel.for,_panel.for.@each',function() {
+						return this.get('_panel.for').objectAt(this._name);
+					})
+				});
+			}
+			else {
+				this.reopen({
+					value:Ember.computed.alias(propertyName)
+				});
+			}
 		}			
 	},
 
