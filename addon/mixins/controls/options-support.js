@@ -80,6 +80,7 @@ export default Ember.Mixin.create({
 		}
 		newOptions.forEach(function(option,index) {
 			option.index=index+1;
+			option.set('selected',false);
 			ret.pushObject(option);
 		});
 		return ret;
