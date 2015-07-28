@@ -11,15 +11,15 @@ export default Ember.Mixin.create({
 				_condition:Ember.computed(this._conditionProps+',_form.for',this._conditionFn)
 			});
 			// Initialize the condition so observers get notified and our condition will observe its condition properties
-			this.get('_condition');
+			this.get('hasPrerequisites');
 		}
 	},
 	
 	hasPrerequisites : Ember.computed.alias('_condition'),
 
-	conditionProperties: Ember.computed('_conditionProps',function() {
+	conditionProperties: Ember.computed('_conditionProps',function() {		
 		if(!this._conditionProps)
 			return null;
-		return this._conditionProps.split(',');
-	}).readOnly(),
+		return Ember.A(this._conditionProps.split(','));
+	}).readOnly().volatile(),
 });
