@@ -235,13 +235,13 @@ var Form = Panel.extend({
 					path=input.get('_path');
 					if(path) {
 						Ember.assert('No target for validation of path ' + path + " in form " +form,target);
-						target=target.get(path);
-						if(validator)
-							validator=validator.get(path);
-						if(validator) {
-							modelName=modelName+'.'+path;
-							promisses.pushObject(validator.validate(target,modelName))
-						}					
+//						target=target.get(path);
+//						if(validator)
+//							validator=validator.get(path);
+//						if(validator) {
+							path=modelName+'.'+path;
+							promisses.pushObject(validator.validate(target,modelName,null,[path]))
+//						}					
 					}
 					if(input instanceof Form) {
 						promisses.pushObject(input._validate());
@@ -347,7 +347,7 @@ var Form = Panel.extend({
 				this._observer = validator.observe(this,'for',function(result,sender,key) {
 					var silent=sender===null || sender===form;
 					// If our target model changed, immediate show validations unless it's a new model
-					if(silent && (form.get('for.isDirty') && !form.get('for.isNew')))
+					if(silent && ((form.get('for.isDirty')===true || form.get('for.isDirty')===undefined) && !form.get('for.isNew')))
 						silent=false;
 //					Ember.debug(form);
 //					console.log('Ran validation',sender ? sender.toString() : null,key,silent);
@@ -364,14 +364,22 @@ var Form = Panel.extend({
 				}, this.get('_modelName'));
 				
 			
-				if(this.get('for'))
+				if(this.get('for')) {
+					this._currentFor=this.get('for');
 					this._observer.run();
+				}
 			}
 		});
 	},
 	
+	_currentFor : undefined,
+	
 	_forObserver : Ember.observer('for',function(){
-		this._reset(true);
+		// Only reset if 'for' actually changed
+		if(this.get('for')!==this._currentFor) {
+			this._reset(true);
+			this._currentFor=this.get('for');
+		}
 	}),
 	
 	willSubmit : null,

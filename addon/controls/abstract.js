@@ -54,11 +54,10 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		}
 		this.setFlag('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
 	},
-	
+			
 	_panelEnabledObserver:Ember.observer('_panel.isEnabled',function() {
 		this.setEnabled(this._enabled);
 	}),
-	
 	
 	_valid: null,
 	
@@ -81,6 +80,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	isDirty: false,
 	
 	setDirty: function(dirty) {
+		this._didReset=false;
 		Ember.run.once(this,function() {
 			if(dirty!==this._dirty) {
 				this.setFlag('isDirty',dirty);
@@ -114,7 +114,6 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 //			var name=this.get('_panel._modelName') ? this.get('_panel._modelName')+'.'+this.get('_name') : this.get('_name');			
 //			this.set('caption',name);
 //		}
-
 		this._panelEnabledObserver();
 		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);
 	},
@@ -123,9 +122,12 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 
 	},
 	
+	_didReset : false,
+	
 	_reset: function() {
 		this.setFlag('isValid',null);
 		this.set('_valid',null);
+		this._didReset=true;		
 	},
 	
 	notifyChange: function() {
@@ -177,8 +179,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	setMessages: function(messages,silent) {
 		this._updateMessages(messages,this._controlMessages);		
-		if(this.get('hasPrerequisites')===false || this._components.length===0)
+		if(this.get('hasPrerequisites')===false || this._components.length===0 || this._didReset)
 			silent=true;
+		this._didReset=false;
 		this._messagesSilent=silent;		
 //		console.log("New messages for "+this+" Components: "+this._components.length);
 		if(!silent) {

@@ -138,25 +138,27 @@ export default Ember.Mixin.create({
 	},
 	
 	_reset: function(modelChanged) {
-		this._super(modelChanged);
-		var property=this.get('property');
-		if(Ember.PromiseProxyMixin.detect(property)) {
-			var control=this;
-			this._setOrgValue(null);
-			this.set('value',null);
-			property.then(function(propertyValue){
-				if(modelChanged) {
-					control._setOrgValue(propertyValue);
-				}
-				control.set('value',propertyValue);
-			});
+		if(modelChanged) {
+			var property=this.get('property');
+			if(Ember.PromiseProxyMixin.detect(property)) {
+				var control=this;
+				this._setOrgValue(null);
+				this.set('value',null);
+				property.then(function(propertyValue){
+					if(modelChanged) {
+						control._setOrgValue(propertyValue);
+					}
+					control.set('value',propertyValue);
+				});
+			}
+			else {				
+				this.set('value',property);
+			}
 		}
 		else {
-			if(modelChanged) {
-				this._setOrgValue(property);
-			}
-			this.set('value',property);
+			this.set('value',this._orgValue);
 		}
+		this._super(modelChanged);
 	},
 	
 	_setOrgValue: function(orgValue) {
