@@ -41,7 +41,7 @@ export default Control.extend(ControlSupport,{
 	
 	init : function() {
 		this._super();
-		this._itemControls=Ember.A();
+		this.set('_itemControls',Ember.A());
 		Ember.run.later(this,this._loadItemControls);
 	},
 
@@ -102,13 +102,18 @@ export default Control.extend(ControlSupport,{
 //		this.setDirty(this._dirty);
 //	}),
 	
-	controls: Ember.computed('itemControls',function() {
-		var controls = this._super();
-		return controls.pushObjects(this.get('itemControls'));
-	}).readOnly(),
+	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
 	
 	// We alias the for property for panels and forms
 	'for' : Ember.computed.alias('value'),
+	
+	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_itemControls.@each.isDirty',function(){		
+		this._super();
+	}),
+	
+	_controlValidObserver: Ember.observer('_controls.@each.isValid,_itemControls.@each.isValid',function(){
+		this._super();
+	}),
 	
 }).reopenClass({
 	
