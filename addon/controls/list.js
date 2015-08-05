@@ -40,8 +40,8 @@ export default Control.extend(ControlSupport,{
 	sortFunction:Ember.SortableMixin.mixins[1].properties.sortFunction,
 	
 	init : function() {
-		this._super();
 		this.set('_itemControls',Ember.A());
+		this._super();
 		Ember.run.later(this,this._loadItemControls);
 	},
 
