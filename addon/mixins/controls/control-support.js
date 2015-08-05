@@ -11,7 +11,11 @@ export default Ember.Mixin.create({
 	init : function() {
 		this._super();
 		// "for" or "value" might not be available yet
-		Ember.run.later(this,this._loadControls);
+		if(!this.get('for')) {
+			Ember.run.later(this,this._loadControls);
+		} else {
+			this._loadControls();
+		}
 	},
 	
 	controls: Ember.computed('_controls',function() {

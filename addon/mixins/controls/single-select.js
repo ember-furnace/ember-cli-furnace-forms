@@ -22,60 +22,41 @@ export default Ember.Mixin.create({
 	},
 	
 	_selectedIndexObserver:Ember.observer('selectedIndex', function() {
-		Ember.run.once(this,function() {
-			var option = this.getOption();
-			if(option && option.value!==this.get('value')) {
-				this.set('value',option.value);				
+		var option = this.getOption();
+		if(option && option.value!==this.get('value')) {
+			this.set('value',option.value);				
+		}
+		else {
+			if(this.get('selectedIndex')===null) {
+				this.set('value',null);
 			}
-			else {
-				if(this.get('selectedIndex')===null) {
-					this.set('value',null);
+		}
+		var ret=null;
+		
+		this.get("_options").invoke('set','selected',false);
+		option = this.get("_options").findBy('index',this.get('selectedIndex'));
+		if(option) {
+			option.set('selected',true);
+		}
+		if(this._controlsLoaded) {
+			var control=this.get("controls").findBy('index',this.get('selectedIndex'));
+			if(control) {
+				ret = control.get('optionControl');
+				if(ret) {
+					this.set('showOptionControl',true);
+				}
+				else { 
+					this.set('showOptionControl',false);
 				}
 			}
-			var ret=null;
-			
-			// Use option control directly instead of generating our own
-//			var	oldValue=this.get('optionControl');
-//			if(option && option.control) {						
-//				var options=option.control._meta.options;
-//				options['for']=this.get('value');
-//				options._path=this._panel._path;
-//				ret = option.get('optionControl');
-//				this.set('showOptionControl',true);
-//			} 
-//			else { 
-//				this.set('showOptionControl',false);			
-//			}	
-			
-			this.get("_options").invoke('set','selected',false);
-			option = this.get("_options").findBy('index',this.get('selectedIndex'));
-			if(option) {
-				option.set('selected',true);
-			}
-			if(this._controlsLoaded) {
-				var control=this.get("controls").findBy('index',this.get('selectedIndex'));
-				if(control) {
-					ret = control.get('optionControl');
-					if(ret) {
-						this.set('showOptionControl',true);
-					}
-					else { 
-						this.set('showOptionControl',false);
-					}
-				}
-			}
-			// Since we're using the options control, dont destroy it.
-//			if(oldValue) {
-//				Ember.run.later(function() {
-//					oldValue.destroy();
-//				});
-//			}
-			this.set('optionControl',ret);
-		});
+		}
+		this.set('optionControl',ret);
 	}),
 
 	init: function() {
 		this._super();
+		this._valueObserver();
+		this._selectedIndexObserver();
 		Ember.warn('No options support for single-select',OptionsSupport.detect(this));	
 	},
 	
@@ -110,7 +91,7 @@ export default Ember.Mixin.create({
 	}),
 	
 	_optionsObserver: Ember.observer('_options',function() {
-		Ember.debug('options changed');
+//		Ember.debug('options changed');
 //		this._valueObserver();
 //		this._selectedIndexObserver();
 	}),

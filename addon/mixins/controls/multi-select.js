@@ -27,6 +27,7 @@ export default Ember.Mixin.create({
 	
 	init: function() {
 		this._super();
+		this._valueObserver();
 		Ember.warn('No options support for multi-select',OptionsSupport.detect(this));
 	},
 	
