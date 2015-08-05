@@ -5,6 +5,7 @@
  * @submodule furnace-forms
  */
 import Control from './abstract';
+import Ember from 'ember';
 
 /**
  * Action control component proxy 
@@ -38,7 +39,8 @@ export default Control.extend({
 	
 	init: function() {
 		this._super();
-		this.updateEnabled();
+		// We should schedule updateEnabled to make sure it not runs before hasPrerequisites may have updated in the current runloop
+		Ember.run.scheduleOnce('sync',this,this.updateEnabled);
 	},
 	
 	updateEnabled:Ember.observer('hasPrerequisites',function() {
