@@ -151,7 +151,10 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			model = this.get('for');			
 		else
 			model = this.getForm().get('for');
-		Ember.assert('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
+		if(!model) {			
+			Ember.Warning('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
+			return undefined;
+		}
 		if(path) {
 			return model.get(path);
 		}
@@ -265,7 +268,6 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	willDestroy : function() {
 		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
 		this._super();
-//		console.log('Destroy control ',this.toString());
 	},
 	
 	destroy: function() {
