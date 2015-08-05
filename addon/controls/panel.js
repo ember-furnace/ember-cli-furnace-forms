@@ -114,6 +114,9 @@ export default Control.extend(ControlSupport,{
 			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('for'))) {
 				if(options._panel.get('for') instanceof DS.ManyArray) {
 					options['for']=Ember.computed('_panel.for',function() {
+						if(!this.get('_panel.for')) {
+							return undefined;
+						}
 						return this.get('_panel.for').objectAt(this._name);
 					});
 				} else {
