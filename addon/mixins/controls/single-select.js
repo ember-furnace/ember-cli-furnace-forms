@@ -7,7 +7,9 @@ export default Ember.Mixin.create({
 	showOptionControl : false,
 	
 	actions : {
-		
+		onSelect : function(index) {
+			
+		},
 	},
 	
 	select: function(index) {
@@ -19,6 +21,7 @@ export default Ember.Mixin.create({
 			option.set('selected',true);
 		}
 		this._valueObserver();
+		this.send('onSelect',index);
 	},
 	
 	_selectedIndexObserver:Ember.observer('selectedIndex', function() {

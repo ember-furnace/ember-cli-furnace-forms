@@ -6,8 +6,12 @@ import getControl from 'furnace-forms/utils/get-control';
 
 export default Ember.Mixin.create({
 	actions : {
-
-		
+		select : function(index) {
+			
+		},
+		unselect : function(index) {
+			
+		},
 	},
 	
 	select: function(index,selected) {
@@ -23,6 +27,12 @@ export default Ember.Mixin.create({
 			}
 		}
 		this._valueObserver();
+		if(selected) {
+			this.send('select',index);
+		}
+		else { 
+			this.send('unselect',index);
+		}
 	},
 	
 	init: function() {

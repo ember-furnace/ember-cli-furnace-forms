@@ -143,7 +143,7 @@ export default Ember.Mixin.create({
 			return newOptions;
 		}
 		newOptions.forEach(function(option,index) {
-			option.index=index+1;
+			option.set('index',index+1);
 			option.set('selected',false);
 		});
 		return newOptions;
