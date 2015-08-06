@@ -6,6 +6,7 @@
  */
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
+import Actions from 'furnace-forms/mixins/controls/control-actions';
 import I18n from 'furnace-i18n';
 /**
  * Abstract control component proxy 
@@ -38,10 +39,6 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	_messagesSilent: false,
 	
 	actions: {
-		
-		reset : function(action) {
-			this._reset();
-		},
 	},
 	
 	isEnabled: true,
@@ -52,7 +49,13 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		if(enabled!==this._enabled) {
 			this.set('_enabled',enabled);
 		}
-		this.setFlag('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
+		enabled = this._enabled && (!this._panel || this._panel.isEnabled);
+		if(enabled) {
+			this.send('onEnabled');
+		} else {
+			this.send('onDisabled');
+		}
+		this.setFlag('isEnabled',enabled);
 	},
 			
 	_panelEnabledObserver:Ember.observer('_panel.isEnabled',function() {
@@ -67,6 +70,11 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		Ember.run.once(this,function() {
 			if(valid!==this._valid) {	
 				this.setFlag('isValid',valid);
+				if(valid) {
+					this.send('onValid');
+				} else {
+					this.send('onInvalid');
+				}
 				this.set('_valid',valid);
 				this.notifyChange();
 			}
@@ -110,10 +118,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			this.set('_path',this._getPath());
 			this.set('target',this._panel);
 		}
-//		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
-//			var name=this.get('_panel._modelName') ? this.get('_panel._modelName')+'.'+this.get('_name') : this.get('_name');			
-//			this.set('caption',name);
-//		}
+
 		this._panelEnabledObserver();
 		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);
 	},
@@ -152,7 +157,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		else
 			model = this.getForm().get('for');
 		if(!model) {			
-			Ember.Warning('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
+			Ember.warn('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
 			return undefined;
 		}
 		if(path) {
@@ -228,8 +233,8 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		component.set('isValid',this.get('isValid'));
 		component.set('isEnabled',this.get('isEnabled'));
 		component.set('isDirty',this.get('isDirty'));
-		if(!this._messagesSilent) {
-//			console.log(component+" component registered to "+this+", updating messages");
+		if(!this._messagesSilent && this._controlMessages.length) {
+//			console.log(component+" component registered to "+this+", updating messages");			
 			component._controlMessageObserver();
 		}
 	},
@@ -279,4 +284,4 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	
-});
+}).extend(Actions);
