@@ -18,7 +18,11 @@ import getName from 'furnace-forms/utils/get-name';
 export default Panel.extend({
 	tagName: 'form',
 	
-	classNameBindings: ['control._name','control._modelName'],
+	classNameBindings: ['_modelClass'],
+	
+	_modelClass : Ember.computed('control._modelName',function() {
+		return this.get('control._modelName').replace(/\./g,'-');
+	}),
 	
 	attributeBindings: ['type'],
 	
