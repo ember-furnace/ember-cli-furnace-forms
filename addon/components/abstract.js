@@ -17,9 +17,15 @@ import I18n from 'furnace-i18n';
 export default Ember.Component.extend({
 	tagName: 'control',
 	
-	classNameBindings: ['_validClass','_focusClass','_enabledClass','control._name','_controlClasses','_typeClass'],
+	classNameBindings: ['_validClass','_focusClass','_enabledClass','_nameClass','_controlClasses','_typeClass'],
 	
 	control: null,
+	
+	_nameClass : Ember.computed('control._name',function() {
+		var name=this.get('control._name');		
+		if(typeof name==='string')
+			return name.replace(/\./g,'-');
+	}),
 	
 	_focusClass : function() {
 		if(this.get('_focus')===true) {
@@ -31,12 +37,15 @@ export default Ember.Component.extend({
 	caption: I18n.computed(null),
 	
 	actions: {
+				
 		focus:function() {
 			this.setFocus(true);
+			this.send('onFocus');
 		},
 		
 		blur:function() {
 			this.setFocus(false);
+			this.send('onBlur');
 		},
 		
 	},
@@ -235,7 +244,7 @@ export default Ember.Component.extend({
 //
 //	_notices : Ember.computed.filterBy('_controlMessages','type','notice'),
 	
-	_controlMessageObserver : function() {
+	_controlMessageObserver : Ember.observer('_focus,_showDelayedMessages', function() {
 		var messages=this.__controlMessages;
 		var source = null;
 		
@@ -274,7 +283,7 @@ export default Ember.Component.extend({
 		
 		this.propertyDidChange('_controlMessages');
 		this.propertyDidChange('_showMessages');
-	}.observes('_focus,_showDelayedMessages'),
+	}),
 	
 	
 	defaultLayout : Ember.computed.alias('tagName'),
@@ -291,35 +300,41 @@ export default Ember.Component.extend({
 	 * - Finally defaultLayout (panel, text)
 	 */
 	
+	layouts: Ember.computed(function() {
+		var ret=Ember.A();		
+		ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayout'))).replace(/\./g,'/'));
+		if(this.constructor.typeKey) {
+			ret.pushObject((this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/'));			
+			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+			if(layoutName===this.constructor.typeKey) {
+				ret.pushObject( 'forms/'+layoutName);
+			} else {
+				ret.pushObject(layoutName+'/'+this.control._componentType);
+			}						
+		}
+		ret.pushObject(this.get('defaultLayout'));
+		return ret;
+	}),
+	
 	layoutName: function() {
 		var layoutName=null;
-		if(!this.get('container')) {
+		var container=this.get('container');
+		if(!container) {
 			return null;
 		}
 		if(this.control.get('layoutName')) {
 			return this.control.get('layoutName');
 		}
-		layoutName=(this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayout'))).replace(/\./g,'/');
-		if(this.get('container').lookup('template:'+layoutName)) {
-			return layoutName;
-		}
 		
-		if(this.constructor.typeKey) {
-			layoutName=(this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/');			
-			if(this.get('container').lookup('template:'+layoutName)) {
-				return layoutName;
+		this.get('layouts').forEach(function(layout){
+			if(layoutName===null && container.lookup('template:'+layout)) {
+				layoutName=layout;
+				return true;
 			}
-			layoutName=this.constructor.typeKey.replace(/\./g,'/');
-			if(layoutName===this.constructor.typeKey) {
-				layoutName = 'forms/'+layoutName;
-			} else {
-				layoutName = layoutName+'/'+this.control._componentType;
-			}			
-			if(this.get('container').lookup('template:'+layoutName)) {
-				return layoutName;
-			}
-		}
-		return this.get('defaultLayout');
+		});
+		
+		return layoutName;
+		
 	}.property(),
 	
 	_focusObserver : function() {		
