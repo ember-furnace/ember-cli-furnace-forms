@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import Option from 'furnace-forms/controls/option';
 import getControl from 'furnace-forms/utils/get-control';
-import OptionMixin from 'furnace-forms/mixins/controls/option';
 
 export default Ember.Mixin.create({
 	
@@ -45,7 +44,7 @@ export default Ember.Mixin.create({
 					var value = this._optionFn(newOptions,options);
 					if(value instanceof Ember.RSVP.Promise) {
 						var _self=this;
-						value.then(function(value){
+						value.then(function(value){							
 							if(!_self.isDestroyed) {
 								if(value!==undefined) {
 									_self.set('_options',value);
@@ -95,10 +94,10 @@ export default Ember.Mixin.create({
 					oldControl.destroy();
 				});
 			}
-		};	
+		}
 	}),
 	
-	optionControls : Ember.computed('_optionControls,sortProperties.@each',function() {
+	optionControls : Ember.computed('_optionControls.@each,sortProperties.@each',function() {
 		if(!this._controlsLoaded) {
 			this._controlsLoaded=true;
 			this._loadOptionControls();
