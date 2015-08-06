@@ -5,7 +5,13 @@
        optionLabelPath="content.caption"
        value=control.selectedIndex
        prompt=placeholder
-       disabled=disabled}}
+       disabled=disabled
+       change=selectionChanged
+       didInsertElement=inputInsert
+       targetObject=this 
+       focus-in="focus" 
+       focus-out="blur"
+       }}
 {{#if control.showOptionControl}}
 	{{f-control control.optionControl dynamic=true}}
 {{/if}}

@@ -19,7 +19,20 @@ export default Input.extend(Placeholder,{
 	
 	defaultLayout: 'forms/select',
 	
+	actions : {
+		selectionChanged : function(newIndex) {
+			this.send('onSelect',newIndex);
+		}
+	},
+	
 	disabled : Ember.computed('isEnabled',function() {
 		return !this.get('isEnabled');
 	}),
+	
+	selectionChanged : function() {
+		Ember.run.later(this,function() {
+			this.get('targetObject').send('selectionChanged',this.get('value'));
+		});
+	}
+	
 });
