@@ -28,15 +28,17 @@ export default Ember.Mixin.create({
 	_loadControls : function() {
 		var control=this;
 		var controls=Ember.A();
-		if(this.isDestroyed)
+		if(this.isDestroyed) {
 			return;
+		}
 		control.constructor.eachComputedProperty(function(name, meta) {		
 			if (meta.type==='form-control') {
 				controls.pushObject(control.get(name));
 			}
 		});		
-		if(this.isDestroyed)
+		if(this.isDestroyed) {
 			return;
+		}
 		this.set('_controls',controls);
 	},
 	
@@ -74,11 +76,11 @@ export default Ember.Mixin.create({
 	
 	setDirty : function(dirty) {
 		Ember.run.scheduleOnce('sync',this,function() {
-			if(this._dirty!=dirty) {
+			if(this._dirty!==dirty) {
 				this.set('_dirty',dirty);
 			}
 			dirty=dirty || this.get('controls').filterBy('isDirty', true).get('length')>0;
-			if(this.isDirty!=dirty) {
+			if(this.isDirty!==dirty) {
 				this.setFlag('isDirty',dirty);
 			}
 		});
@@ -98,11 +100,11 @@ export default Ember.Mixin.create({
 				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
 				return;
 			}
-			if(this._valid!=valid) {				
+			if(this._valid!==valid) {				
 				this.set('_valid',valid);
 			}
-			valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0
-			if(valid!=this.isValid) {
+			valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
+			if(valid!==this.isValid) {
 				this.setFlag('isValid',valid);
 				this.notifyChange();
 			}
@@ -120,16 +122,18 @@ export default Ember.Mixin.create({
 //	}
 	destroy : function() {
 		var controls=this.get('controls');
-		if(controls)
+		if(controls) {
 			controls.invoke('destroy');
+		}
 		this._super();
 	},
 	
 	_reset:function(modelChanged) {
 		this._super(modelChanged);
 		var controls=this.get('controls');
-		if(controls)
+		if(controls) {
 			controls.invoke('_reset',modelChanged);
+		}
 	},
 	
 });
