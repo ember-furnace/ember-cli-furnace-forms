@@ -12,6 +12,12 @@ export default Ember.Mixin.create({
 		component.set('value',this.get('value'));
 	},
 	
+	actions : {
+		
+		onChange:function() {
+			
+		}
+	},
 	init: function() {
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in 
@@ -71,7 +77,7 @@ export default Ember.Mixin.create({
 	}.observes('property'),
 	
 	
-	_valueObserver:function() {
+	_valueObserver:Ember.observer('value',function() {
 		this._apply();
 		var value=this.get('value');
 		var dirty=false;
@@ -92,8 +98,9 @@ export default Ember.Mixin.create({
 			
 		} 
 		this.setDirty(dirty);
+		this.send('onChange');
 		this.notifyChange();
-	}.observes('value'),
+	}),
 	
 	_apply: function() {
 		if(this.property!==null) {
