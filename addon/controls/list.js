@@ -98,9 +98,9 @@ export default Control.extend(ControlSupport,{
 	}),
 	
 	
-//	_controlDirtyObserver: Ember.observer('itemControls.@each.isDirty',function(){		
-//		this.setDirty(this._dirty);
-//	}),
+	_valueObserver:Ember.observer('value,value.@each',function() {
+		this._super();
+	}),
 	
 	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
 	
