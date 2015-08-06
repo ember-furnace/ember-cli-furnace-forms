@@ -5,7 +5,6 @@
  * @submodule furnace-forms
  */
 import Panel from './panel';
-import Lookup from 'furnace-forms/utils/lookup-class';
 import Proxy from 'furnace-forms/proxy';
 import Ember from 'ember';
 /**
@@ -37,14 +36,14 @@ var Form = Panel.extend({
 		
 		this._validationCache=validations;
 		this._messageCache=messages;	
-	
+		var setControlMessages=function(control){
+			control.setMessages(messages[name].toArray(),silent);
+		};
 		for(var name in validations) {
 			if(this._controlsByPath[name]!==undefined) {				
 				this._controlsByPath[name].invoke('setValid',validations[name]);
 				if(messages[name]!==undefined) {
-					this._controlsByPath[name].forEach(function(control){
-						control.setMessages(messages[name].toArray(),silent);
-					});
+					this._controlsByPath[name].forEach(setControlMessages);
 				}
 				else { 
 					this._controlsByPath[name].invoke('setMessages',null);
@@ -56,10 +55,11 @@ var Form = Panel.extend({
 	_name: Ember.computed.oneWay('_modelName'),
 	
 	_modelPath : Ember.computed('_form,_name',function() {
-		if(!this._form)
+		if(!this._form) {
 			return this.get('_name');
-		else 
+		} else { 
 			return this._panel.get('_path');
+		}
 		return '';
 	}),
 	
@@ -77,10 +77,12 @@ var Form = Panel.extend({
 		
 		reset : function(action) {
 			this._reset();
-			if(this._observer)
+			if(this._observer) {
 				this._observer.run();
-			if(action)
-				this.send(action,form);
+			}
+			if(action) {
+				this.send(action,this);
+			}
 		},
 		
 		submit: function(action) {
@@ -116,8 +118,9 @@ var Form = Panel.extend({
 	
 	_registerControl: function(control,prefix) {
 		var name= this.get('_modelName');
-		if(prefix)
+		if(prefix) {
 			name+='.'+prefix;
+		}
 		// We should register ourself nameless. If there is a parent it should register with our name.
 		if(control!==this) {
 			// If a control has path, register it with that path
@@ -129,20 +132,25 @@ var Form = Panel.extend({
 				name+='.'+control.get('_name');
 			}
 		} else {
-			if(!name)
+			if(!name) {
 				name='form';
+			}
 		} 
 			
 		Ember.assert("Could not determine name for control "+control,name);
-		if(this._controlsByPath[name]===undefined)
+		if(this._controlsByPath[name]===undefined) {
 			this._controlsByPath[name]=Ember.A();
+		}
 		
 		this._controlsByPath[name].pushObject(control);
 		
-		if(this._validationCache[name]!==undefined)
+		if(this._validationCache[name]!==undefined) {
 			control.setValid(this._validationCache[name]);
-		if(this._messageCache[name]!==undefined) 
+		}
+		
+		if(this._messageCache[name]!==undefined) { 
 			control.setMessages(this._messageCache[name],true);
+		}
 		
 		if(this._form) {
 			if(control===this) { 
@@ -156,8 +164,10 @@ var Form = Panel.extend({
 	
 	_unregisterControl: function(control,prefix) {
 		var name= this.get('_modelName');
-		if(prefix)
+		if(prefix) {
 			name+='.'+prefix;
+		}
+		
 		if(control!==this) {
 			if(control._path) {
 				name+='.'+control._path;
@@ -167,14 +177,15 @@ var Form = Panel.extend({
 				name+='.'+control.get('_name');
 			}
 		}else {
-			if(!name)
+			if(!name) {
 				name='form';
+			}
 		} 
 		
 		Ember.warn(this+" cannot unregister control "+control+" with name "+name,this._controlsByPath[name]!==undefined);
-		if(this._controlsByPath[name]!==undefined)
+		if(this._controlsByPath[name]!==undefined) {
 			this._controlsByPath[name].removeObject(control);
-		else {
+		} else {
 			console.log(this._controlsByPath);
 		}
 		if(this._form) {
@@ -187,9 +198,9 @@ var Form = Panel.extend({
 	},
 	
 	_proxy : function() {
-		var properties={}
+		var properties={};
 		this.get('inputControls').forEach(function(control) {
-			properties[control._name]=Ember.computed(function(key) {
+			properties[control._name]=Ember.computed(function() {
 				return control.get('value');
 			}).volatile();
 		});
@@ -211,10 +222,11 @@ var Form = Panel.extend({
 		var validator=this.get('_validator');
 		var promisses=Ember.A();
 		if(this._panel && this._panel._isFormOption) {
-			if(!this._panel.get('selected'))
+			if(!this._panel.get('selected')) {
 				return new Ember.RSVP.Promise(function(resolve) {
 					resolve(true);
 				});
+			}
 		}
 		if(!validator) {
 			return new Ember.RSVP.Promise(function(resolve) {
@@ -240,7 +252,7 @@ var Form = Panel.extend({
 //							validator=validator.get(path);
 //						if(validator) {
 							path=modelName+'.'+path;
-							promisses.pushObject(validator.validate(target,modelName,null,[path]))
+							promisses.pushObject(validator.validate(target,modelName,null,[path]));
 //						}					
 					}
 					if(input instanceof Form) {
@@ -347,8 +359,10 @@ var Form = Panel.extend({
 				this._observer = validator.observe(this,'for',function(result,sender,key) {
 					var silent=sender===null || sender===form;
 					// If our target model changed, immediate show validations unless it's a new model
-					if(silent && ((form.get('for.isDirty')===true || form.get('for.isDirty')===undefined) && !form.get('for.isNew')))
+					if(silent && ((form.get('for.isDirty')===true || (form.get('for.isDirty')===undefined && form.get('isDirty'))) && !form.get('for.isNew'))) {
 						silent=false;
+					}
+//					
 //					Ember.debug(form);
 //					console.log('Ran validation',sender ? sender.toString() : null,key,silent);
 //					console.log(result.get('validations'));
@@ -359,8 +373,9 @@ var Form = Panel.extend({
 					form._setValidations(result,silent);
 					
 					// We only want to receive changed status on next run, so reset the result if it has finished
-					if(result.hasFinished())
+					if(result.hasFinished()) {
 						result.reset();
+					}
 				}, this.get('_modelName'));
 				
 			
