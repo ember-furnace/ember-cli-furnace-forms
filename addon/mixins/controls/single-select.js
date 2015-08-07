@@ -57,10 +57,10 @@ export default Ember.Mixin.create({
 	}),
 
 	init: function() {
+		Ember.warn('No options support for single-select',OptionsSupport.detect(this));	
 		this._super();
 		this._valueObserver();
 		this._selectedIndexObserver();
-		Ember.warn('No options support for single-select',OptionsSupport.detect(this));	
 	},
 	
 	getOption: function(index) {
@@ -79,7 +79,7 @@ export default Ember.Mixin.create({
 	
 	selectedIndex : 0,
 	
-	_valueObserver: Ember.observer('value,_options',function() {
+	_valueObserver: Ember.observer('value,_options.@each.selected',function() {
 		this._super();
 		var option=this.getOption();
 		if(!option || this.get('value')!==option.value) {
