@@ -16,6 +16,8 @@ import Ember from 'ember';
  * @protected
  */
 var Form = Panel.extend({
+	_isForm : true,
+	
 	_component: 'form',
 	
 	_componentType: 'forms',
@@ -157,7 +159,7 @@ var Form = Panel.extend({
 				this._form._registerForm(control);
 			}
 			else {
-				this._form._registerControl(control, this._panel._path);
+				this._form._registerControl(control, this._panel._path || this._name);
 			}
 		}
 	},
@@ -192,7 +194,7 @@ var Form = Panel.extend({
 			if(control===this) { 
 				this._form._unregisterForm(control);
 			} else {
-				this._form._unregisterControl(control, this._panel._path);
+				this._form._unregisterControl(control, this._panel._path|| this._name);
 			}
 		}
 	},
