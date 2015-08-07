@@ -45,7 +45,7 @@ export default Control.extend(ControlSupport,{
 		Ember.run.later(this,this._loadItemControls);
 	},
 
-	itemControls : Ember.computed('_itemControls,sortProperties.@each',function() {
+	itemControls : Ember.computed('_itemControls,_itemControls.@each,sortProperties.@each',function() {
 		if(!this._itemControls) {
 			return Ember.A();
 		}
