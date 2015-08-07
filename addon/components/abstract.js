@@ -217,7 +217,8 @@ export default Ember.Component.extend({
 				this.set('caption',this.get('control.caption'));
 			}
 			else { 
-				var name=this.get('control._panel._modelName') ? this.get('control._panel._modelName')+'.'+this.get('control._name') : this.get('control._name');
+				var prefix=this.get('control._form._modelName') ? this.get('control._form._modelName') + '.' : '';
+				var name=prefix+ ((this.get('control._panel._path')  ? this.get('control._panel._path') + '.' : '') + this.get('control._name'));
 				this.set('caption',name);
 			}
 		}
