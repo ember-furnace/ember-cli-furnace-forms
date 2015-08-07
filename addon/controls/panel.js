@@ -39,9 +39,6 @@ export default Control.extend(ControlSupport,{
 //			}
 //		}
 		this._super();		
-		if(this._panel && this.get('for')===this.get('_panel.for')) {
-			this.set('_path',this.get('_panel._path'));
-		}	
 	},
 	
 	actions: {
