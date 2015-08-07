@@ -49,13 +49,16 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		if(enabled!==this._enabled) {
 			this.set('_enabled',enabled);
 		}
-		enabled = this._enabled && (!this._panel || this._panel.isEnabled);
-		if(enabled) {
-			this.send('onEnabled');
-		} else {
-			this.send('onDisabled');
+		var isEnabled = this._enabled && (!this._panel || this._panel.get('isEnabled'));
+		if(isEnabled!=this.get('isEnabled')) {
+			if(isEnabled) {
+				this.send('onEnabled');
+			} else {
+				this.send('onDisabled');
+			}
+			
+			this.setFlag('isEnabled',enabled);
 		}
-		this.setFlag('isEnabled',enabled);
 	},
 			
 	_panelEnabledObserver:Ember.observer('_panel.isEnabled',function() {
@@ -145,9 +148,13 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	_getPath: function() {
 		// Temporary work arround to give lists a proper path
-		if(!this['for'] || this._isList) {
+		// Temporary work arround to make sure forms dont get an absolute path
+		if(!this['for'] || this._isList || (this.get('for')!==this.get('_panel.for') && !this._isForm)) {
 			return (this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name');
-		}
+		} else if(this._panel && this.get('for')===this.get('_panel.for')) {
+			return this.get('_panel._path');
+		}	
+
 	},
 	
 	getFor : function(path) {
