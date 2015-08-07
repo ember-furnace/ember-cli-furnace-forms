@@ -26,7 +26,12 @@ function computedControl(type,options) {
 		if(!this.__controls) {
 			this.__controls={};
 		}
+
 		if(!this.__controls[key]) {
+			if(this.__controls[key]===null) {
+				return null;
+			}
+			this.__controls[key]=null;
 			this.__controls[key]=getControl.call(this,key,options._controlType,options);
 		}			
 		return this.__controls[key];
