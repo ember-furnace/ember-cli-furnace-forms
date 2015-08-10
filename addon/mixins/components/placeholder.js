@@ -12,8 +12,8 @@ export default Ember.Mixin.create({
 				this.set('placeholder',this.get('control.placeholder'));
 			}
 			else { 
-				var prefix=this.get('control._form._modelName') ? this.get('control._form._modelName') + '.' : '';
-				var name=prefix+ ((this.get('control._panel._path')  ? this.get('control._panel._path') + '.' : '') + this.get('control._name'));
+				var prefix=this.get('control._panel._modelName') ? this.get('control._panel._modelName') + '.' : '';
+				var name=prefix+ this.get('control._name');
 				this.set('placeholder',name+"Placeholder");
 			}
 		}
