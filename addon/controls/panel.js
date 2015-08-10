@@ -68,7 +68,10 @@ export default Control.extend(ControlSupport,{
 			return this.get('_panel._modelName');
 		}
 		else if(this.get('for')) {
-			return getName(this.get('for'));
+			var name= getName(this.get('for'),true);
+			if(name)
+				return name;
+			return this.get('_panel._modelName')+'.'+this._name;
 		}
 		else {
 			return null;
