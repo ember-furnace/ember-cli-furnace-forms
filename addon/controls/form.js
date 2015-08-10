@@ -456,6 +456,29 @@ var Form = Panel.extend({
 			_syncToSource : false,
 		});
 		return this;
-	}
+	},
+	model : function() {
+		switch(arguments.length) {
+			case 2:
+				this.reopen({
+					_modelName : arguments[0],
+					'for' : arguments[1]
+				});
+				break;
+			case 1:
+				if(typeof arguments[0]==='string') {
+					this.reopen({
+						_modelName : arguments[0]
+					});
+				} else {
+					this.reopen({
+						'for' : arguments[0]
+					});
+				}
+				break;
+		}
+		return this;
+		
+	},
 });
 export default Form;

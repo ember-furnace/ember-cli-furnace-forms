@@ -91,15 +91,31 @@ var Helpers= Ember.Mixin.create({
 			this._meta.options._syncToSource=false;
 			return this;
 		}
+		var model=function() {
+			switch(arguments.length) {
+				case 2:
+					this._meta.options['_modelName']=arguments[0];
+					this._meta.options['for']=arguments[1];
+					break;
+				case 1:
+					if(typeof arguments[0]==='string') {
+						this._meta.options['_modelName']=arguments[0];
+					} else {
+						this._meta.options['for']=arguments[0];
+					}
+					break;
+					
+			}
+			return this;
+		}
+		
 		
 		if(arguments.length===1) {
 			if(typeof arguments[0]==='string') {
 				control= getControl( 'form:'+arguments[0]);
 				control.async=async;
-				control.for=function(optionFor) {
-					this._meta.options['for']=optionFor;
-					return this;
-				}
+				control.for=model;
+				control.model=model;
 				return control;
 			}
 			options=arguments[0];
@@ -107,10 +123,8 @@ var Helpers= Ember.Mixin.create({
 			if(typeof arguments[1]==='string') {
 				control = getControl(arguments[1],{_modelName:arguments[0]});
 				control.async=async;
-				control.for=function(optionFor) {
-					this._meta.options['for']=optionFor;
-					return this;
-				}
+				control.for=model;
+				control.model=model;
 				return control;
 			}
 			options=arguments[1];
