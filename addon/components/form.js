@@ -18,6 +18,8 @@ import getName from 'furnace-forms/utils/get-name';
 export default Panel.extend({
 	tagName: 'form',
 	
+	defaultLayout: 'forms/form',
+	
 	classNameBindings: ['_modelClass'],
 	
 	_modelClass : Ember.computed('control._modelName',function() {
@@ -26,28 +28,32 @@ export default Panel.extend({
 	
 	attributeBindings: ['type'],
 	
-	layoutName: function() {
-		if(!this.get('container')) {
-			return null;
+	layouts: Ember.computed('targetObject,for',function() {
+		var name;
+		var ret=Ember.A();	
+		name=getName(this.get('targetObject'),true);
+		if(name) {
+			ret.pushObject((name+'/form').replace(/\./g,'/'));
 		}
-		var name=getName(this.get('targetObject'),true)+'/form';
-		if(name!==null)
-			name=name.replace(/\./g,'/');
-		if(!this.get('container').lookup('template:'+name)) {
-			if(getName(this.get('for'),true)) {
-				name=getName(this.get('for')).replace(/\./g,'/')+'/form';
+		
+		if(this.constructor.typeKey) {
+			name=getName(this.get('for'),true);
+			if(name) {
+				ret.pushObject(name.replace(/\./g,'/')+'/form');
 			}
-			if(!name || !this.get('container').lookup('template:'+name)) {
-				if(this.get('control._modelName')) {
-					name=this.get('control._modelName').replace(/\./g,'/')+'/form';
-				}
-				if(!name || !this.get('container').lookup('template:'+name)) {
-					name='forms/form';
-				}
-			}
+			ret.pushObject(this.get('control._modelName').replace(/\./g,'/')+'/form');
+			
+			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+			if(layoutName===this.constructor.typeKey) {
+				ret.pushObject( 'forms/'+layoutName);
+			} else {
+				ret.pushObject(layoutName+'/'+this.control._componentType);
+			}						
 		}
-		return name ;
-	}.property('targetObject','for'),
+		ret.pushObject(this.get('defaultLayout'));
+		return ret;
+	}),
+	
 	
 	init: function() {
 		this._super();
