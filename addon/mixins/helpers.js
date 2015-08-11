@@ -53,6 +53,11 @@ var Helpers= Ember.Mixin.create({
 		return getControl('control:input',options);
 	},
 	
+	number : function(decoratorName,options) {
+		options=getOptions(arguments,'number');
+		return getControl('control:input',options).number();
+	},
+	
 	list : function(decoratorName,options) {
 		options=getOptions(arguments,'list');
 		return getControl('control:list',options);

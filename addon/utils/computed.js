@@ -7,6 +7,7 @@ import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 import Conditions from 'furnace-forms/utils/conditions';
 import Options from 'furnace-forms/utils/options';
 import Item from 'furnace-forms/utils/item';
+import Number from 'furnace-forms/utils/number';
 
 function getMeta(options) {
 	options._mixin={};
@@ -44,6 +45,7 @@ function computedControl(type,options) {
 	control.on=Conditions;
 	control.options=Options;
 	control.item=Item;
+	control.number=Number;
 	return control;
 }
 

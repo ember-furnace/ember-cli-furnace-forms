@@ -28,6 +28,7 @@ export function initialize(container, application) {
 	application.register('forms:view',Forms.Components.View);
 	
 	application.register('input:text',Forms.Inputs.Text);
+	application.register('input:number',Forms.Inputs.Number);
 	application.register('input:textarea',Forms.Inputs.TextArea);
 
 	application.register('input:button',Forms.Inputs.Button);
