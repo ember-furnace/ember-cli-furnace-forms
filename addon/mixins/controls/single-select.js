@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import OptionsSupport from './options-support';
-
+import getControl from 'furnace-forms/utils/get-control';
 export default Ember.Mixin.create({
 	optionControl : null,
 	
@@ -45,13 +45,18 @@ export default Ember.Mixin.create({
 			var control=this.get("controls").findBy('index',this.get('selectedIndex'));
 			if(control) {
 				ret = control.get('optionControl');
-				if(ret) {
-					this.set('showOptionControl',true);
-				}
-				else { 
-					this.set('showOptionControl',false);
-				}
 			}
+		} else if(option && option.control) {
+			var options=option.control._meta.options;
+			options['for']=this.get('value');
+			options._path=this._panel._path;
+			ret = getControl.call(this,'value',option.control._meta.options._controlType,options);
+		}
+		if(ret) {
+			this.set('showOptionControl',true);
+		}
+		else { 
+			this.set('showOptionControl',false);
 		}
 		this.set('optionControl',ret);
 	}),

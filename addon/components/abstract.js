@@ -249,7 +249,9 @@ export default Ember.Component.extend({
 	_controlMessageObserver : Ember.observer('_focus,_showDelayedMessages', function() {
 		var messages=this.__controlMessages;
 		var source = null;
-		
+		if(!this.control) {			
+			return;
+		}
 		var focus=this.get('_focus');
 		if(!focus) {
 			source= this.get('control._controlMessages').filter(function(message) {
@@ -346,7 +348,11 @@ export default Ember.Component.extend({
 	hasPrerequisites : Ember.computed.alias('control.hasPrerequisites'),
 	
 	willDestroy : function() {
-		this.control.unregisterComponent(this);
+		if(this.control) {
+			this.control.unregisterComponent(this);
+		} else {
+			Ember.warn(this+" control went missing. This is known to happen when the Ember Inspector causes optionControls to load while they shouldn't according to the used layout. We are now leaking memory")
+		}
 		this._super();
 //		if(this.get('targetObject.'+this._name) instanceof Control) {
 //			this.set('targetObject.'+this._name+'.content',null);
