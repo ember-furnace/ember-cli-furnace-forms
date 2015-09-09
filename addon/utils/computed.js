@@ -30,6 +30,7 @@ function computedControl(type,options) {
 
 		if(!this.__controls[key]) {
 			if(this.__controls[key]===null) {
+				Ember.warn('furnace-forms: trying to access control "'+key+'" but its currently being initialized');
 				return null;
 			}
 			this.__controls[key]=null;
