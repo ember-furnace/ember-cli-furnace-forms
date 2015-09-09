@@ -52,8 +52,7 @@ export default Ember.Mixin.create({
 									_self.set('_options',options);
 								}
 							}
-						});
-						return this.get('_options');
+						});						
 					} else {
 						if(value!==undefined) {
 							this.set('_options',value);
@@ -61,6 +60,7 @@ export default Ember.Mixin.create({
 							this.set('_options',options);
 						}
 					}
+					this._super();
 				})
 			});
 			this._optionsObserver();
