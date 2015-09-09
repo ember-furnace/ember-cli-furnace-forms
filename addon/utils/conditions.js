@@ -15,7 +15,7 @@ export default function(props,fn) {
 		}		
 		if(arguments.length===1) {
 			options._conditionFn=function() {
-				var props=this._conditionProps.split(',');		
+				var props=this._conditionProps.split(',');
 				for(var i=0; i<props.length;i++) {
 					var prop=this.get(props[i]);
 					if(prop instanceof Control) {
@@ -41,7 +41,10 @@ export default function(props,fn) {
 			};
 		}
 		else {
-			options._conditionFn=function() {				
+			options._conditionFn=function() {	
+				this.get('conditionProperties').forEach(function(property) {
+					this.get(property);
+				},this);
 				return fn.call(this._form);
 			}
 		}
