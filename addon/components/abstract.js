@@ -368,6 +368,11 @@ export default Ember.Component.extend({
 		return this.control.getFor(key);
 	},
 	
-	
+	getForm: function(key) {
+		if(key) {
+			return this._form.get(key);
+		}
+		return this._form;
+	}
 	
 });
