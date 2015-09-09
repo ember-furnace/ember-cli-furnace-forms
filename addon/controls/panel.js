@@ -97,6 +97,19 @@ export default Control.extend(ControlSupport,{
 		}
 	},
 	
+	
+	_registerControl : function(control) {
+		if(this._path !== this._panel._path) {
+			this._form._registerControl(control);
+		}
+	},
+	
+	_unregisterControl : function(control) {
+		if(this._path !== this._panel._path) {
+			this._form._registerControl(control);
+		}
+	},
+	
 	_reset:function(modelChanged) {
 		this._super(modelChanged);
 	},
