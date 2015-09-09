@@ -95,7 +95,7 @@ var Helpers= Ember.Mixin.create({
 			this._meta.options._syncFromSource=false;
 			this._meta.options._syncToSource=false;
 			return this;
-		}
+		};
 		var model=function() {
 			switch(arguments.length) {
 				case 2:
@@ -112,8 +112,13 @@ var Helpers= Ember.Mixin.create({
 					
 			}
 			return this;
-		}
-		
+		};
+		var validation=function(options) {
+			if(options['detached']) {
+				this._meta.options['_validationDetached']=true;
+			}
+			return this;
+		};
 		
 		if(arguments.length===1) {
 			if(typeof arguments[0]==='string') {
@@ -121,6 +126,7 @@ var Helpers= Ember.Mixin.create({
 				control.async=async;
 				control.for=model;
 				control.model=model;
+				control.validation=validation;
 				return control;
 			}
 			options=arguments[0];
@@ -130,6 +136,7 @@ var Helpers= Ember.Mixin.create({
 				control.async=async;
 				control.for=model;
 				control.model=model;
+				control.validation=validation;
 				return control;
 			}
 			options=arguments[1];
