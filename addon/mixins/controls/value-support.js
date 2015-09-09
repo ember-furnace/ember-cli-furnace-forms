@@ -3,7 +3,7 @@ export default Ember.Mixin.create({
 	_orgValue : null,
 	_orgArray : null,
 	
-	property: null,
+	property: undefined,
 	
 	value:null,
 	
@@ -25,9 +25,11 @@ export default Ember.Mixin.create({
 //			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
 //			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
 			var propertyName= '_panel.'+(this._panel['for']  ? 'for.' : 'value.')+this.get('_name');
-			this.reopen({
-				property:Ember.computed.alias(propertyName)
-			});
+			if(this.property===undefined) {
+				this.reopen({
+					property:Ember.computed.alias(propertyName)
+				});
+			}
 			var property=this.get('property');
 			if(Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
