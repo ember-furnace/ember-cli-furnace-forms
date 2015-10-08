@@ -69,6 +69,19 @@ export default Panel.extend({
 		return this.control.get('for');
 	}),
 	
+	didInsertElement : function() {
+		this._super();
+		this.$().on('submit',function(e) {
+			e.preventDefault();
+			return false;
+		});
+	},
+	
+	willClearRender : function() {
+		this._super();
+		this.$().off('submit');
+	},
+	
 	type : Ember.computed(function() {
 		return Ember.String.camelize(this.control.constructor.typeKey);
 	}),
