@@ -244,6 +244,8 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 //			console.log(component+" component registered to "+this+", updating messages");			
 			component._controlMessageObserver();
 		}
+		this.send('onComponent',component);
+		
 	},
 	
 	unregisterComponent:function(component) {
