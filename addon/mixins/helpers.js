@@ -147,6 +147,26 @@ var Helpers= Ember.Mixin.create({
 		return Form.extend(options);
 	},
 	
+	computed : function(depKeys,getset) {
+		depKeys=depKeys.split(',');
+		for(var i =0;i<depKeys.length;i++) {
+			depKeys[i]='_form.'+depKeys[i];			
+		}		
+		
+		return Ember.computed(depKeys.join(','),{
+			set:getset.set,
+			get : function() {
+				depKeys.forEach(function(property) {
+					this.get(property);
+				},this);
+				if(getset.get) {
+					return getset.get.apply(this._form);
+				}
+				return undefined;
+			}
+		});
+	},
+	
 	attr: function(key) {
 		var meta={
 				type: 'form-attr',
