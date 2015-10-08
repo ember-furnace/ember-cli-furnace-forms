@@ -161,6 +161,7 @@ export default Ember.Mixin.create({
 				});
 			}
 			else {				
+				this._setOrgValue(property);
 				this.set('value',property);
 			}
 		}
