@@ -63,9 +63,13 @@ export default Ember.Mixin.create({
 					this._super();
 				})
 			});
-			this._optionsObserver();
+			
 		}
 	},
+	
+	_initOptions : Ember.on('init',function() {
+		this._optionsObserver();
+	}),
 	
 	_loadOptionControls : Ember.observer('_options,_options.@each',function() {
 		if(this._controlsLoaded===true) {

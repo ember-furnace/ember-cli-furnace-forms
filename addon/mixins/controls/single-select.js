@@ -84,12 +84,12 @@ export default Ember.Mixin.create({
 	
 	selectedIndex : 0,
 	
-	_valueObserver: Ember.observer('value,_options.@each.selected',function() {
+	_valueObserver: Ember.observer('value',function() {
 		this._super();
 		this._updateSelected();
 	}),
 	
-	_updateSelected : function() {
+	_updateSelected : Ember.observer('_options.@each.selected',function() {
 		var option=this.getOption();
 		if(!option || this.get('value')!==option.value) {
 			if(this.get('_options')) {
@@ -100,7 +100,7 @@ export default Ember.Mixin.create({
 		} else if(option && !option.get('selected')){
 			this._selectedIndexObserver();
 		}
-	},
+	}),
 	
 	_optionsObserver: Ember.observer('_options.@each',function() {
 //		this._valueObserver();
