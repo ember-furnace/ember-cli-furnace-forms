@@ -23,7 +23,9 @@ export default Ember.Mixin.create({
 		onBlur : function() {
 			
 		},
-		
+		onComponent:function() {
+			
+		},
 		reset : function(action) {
 			this._reset();
 		},
