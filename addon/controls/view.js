@@ -24,7 +24,7 @@ export default Control.extend({
 	init : function() {
 		this._super();
 		// If we do not have a name, we're an anonymous option without a counterpart in
-		if(this.get('_name')!==null) {
+		if(this.get('_name')!==null && this.value===undefined) {
 			var propertyName='_panel.for.'+this.get('_name');
 			
 			var property=this.get('_panel.for.');
