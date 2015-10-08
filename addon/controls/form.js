@@ -218,7 +218,7 @@ var Form = Panel.extend({
 	}.property('for'),
 	
 	validationDetached : Ember.computed('isEnabled,_validationDetached',function() {
-		return this.get('isEnabled') && !this.get('_validaitonDetached');
+		return !this.get('isEnabled') || this.get('_validationDetached');
 	}),
 	
 	_validationDetached:false,
