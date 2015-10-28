@@ -50,14 +50,14 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			this.set('_enabled',enabled);
 		}
 		var isEnabled = this._enabled && (!this._panel || this._panel.get('isEnabled'));
-		if(isEnabled!=this.get('isEnabled')) {
+				
+		if(isEnabled!==this.get('isEnabled')) {
 			if(isEnabled) {
 				this.send('onEnabled');
 			} else {
 				this.send('onDisabled');
 			}
-			
-			this.setFlag('isEnabled',enabled);
+			this.setFlag('isEnabled',isEnabled);
 		}
 	},
 			
@@ -102,8 +102,10 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	setFlag:function(property,value) {
-		this.set(property,value);
-		this._components.invoke('set',property,value);
+		if(this.get(property)!==value) {
+			this.set(property,value);
+			this._components.invoke('set',property,value);
+		}
 	},
 	
 	init:function() {		

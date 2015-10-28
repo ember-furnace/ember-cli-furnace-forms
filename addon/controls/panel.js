@@ -38,7 +38,8 @@ export default Control.extend(ControlSupport,{
 //				});
 //			}
 //		}
-		this._super();		
+		
+		this._super();
 	},
 	
 	actions: {
@@ -56,9 +57,12 @@ export default Control.extend(ControlSupport,{
 		}
 		this.setFlag('isEnabled',this._enabled && (!this._panel || (this.get('_panel.isEnabled') && this.get('_panel.hasPrerequisites')!==false)));
 	},
-	_panelEnabledObserver:Ember.observer('_panel.hasPrerequisites,_panel.isEnabled',function() {
+	
+	_panelPrerequisitesObserver:Ember.observer('_panel._condition',function() {
 		this.setEnabled(this._enabled);
 	}),
+	
+
 	
 	_modelName : Ember.computed('for',function(key,value) {
 		if(value)  {
