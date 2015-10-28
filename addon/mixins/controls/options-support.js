@@ -37,6 +37,7 @@ export default Ember.Mixin.create({
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
 					if(!this.get('_form.for')) {
+						Ember.warn('furnace-forms: '+this+' not loading options, form model not ready');
 						return;
 					}
 					var options=this.get('_options');
@@ -68,7 +69,9 @@ export default Ember.Mixin.create({
 	},
 	
 	_initOptions : Ember.on('init',function() {
-		this._optionsObserver();
+		if(this.get('_form.for')) {
+			this._optionsObserver();
+		}
 	}),
 	
 	_loadOptionControls : Ember.observer('_options,_options.@each',function() {
