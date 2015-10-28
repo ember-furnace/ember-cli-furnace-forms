@@ -131,13 +131,13 @@ export default Ember.Mixin.create(ControlSupport,{
 	 */
 	isEnabled: true,
 	
-	setEnabled: function(enabled) {		
-		if(enabled!=this._enabled) {
-			this.set('_enabled',enabled);
-		}
-		this.set('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
-	},
-	
+//	setEnabled: function(enabled) {		
+//		if(enabled!=this._enabled) {
+//			this.set('_enabled',enabled);
+//		}
+//		this.set('isEnabled',this._enabled && (!this._panel || this._panel.isEnabled));
+//	},
+//	
 	_getPath: function() {
 		return (this.get('_panel._path') ? this.get('_panel._path')+'.'+this._name: this._name);
 	},
