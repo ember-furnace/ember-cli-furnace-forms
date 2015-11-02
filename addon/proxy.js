@@ -62,7 +62,12 @@ var Proxy = Ember.Object.extend({
 			return undefined;
 		if(keys.length===1) {
 			if (this._syncFromSource || !(key in this._cache)) {
-				this._cache[key] = this._content.get(key);
+				var value=this._content.get(key);
+				if(Ember.PromiseProxyMixin.detect(value)) {
+					return value;
+				} else {
+					this._cache[key] = value;
+				}
 			}
 			return this._cache[key];
 		}

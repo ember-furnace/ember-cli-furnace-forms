@@ -24,21 +24,11 @@ export default Control.extend(ControlSupport,{
 	
 	'for' : null,
 	
+	_model : Ember.computed.alias('for'),
+	
 	modelName: Ember.computed.alias('_modelName'),
 	
 	init: function() {
-//		if(this['for']===null) {
-//			if(this.get('_panel.for.'+this._name)) {
-//				this.reopen({
-//					'for': Ember.computed.alias('_panel.for.'+this._name)
-//				});
-//			} else {
-//				this.reopen({
-//					'for': Ember.computed.alias('_panel.for')
-//				});
-//			}
-//		}
-		
 		this._super();
 	},
 	
@@ -64,15 +54,15 @@ export default Control.extend(ControlSupport,{
 	
 
 	
-	_modelName : Ember.computed('for',function(key,value) {
+	_modelName : Ember.computed('_model',function(key,value) {
 		if(value)  {
 			return value;
 		}	
-		if(this.get('for')===this.get('_panel.for')) {
+		if(this.get('_model')===this.get('_panel._model')) {
 			return this.get('_panel._modelName');
 		}
-		else if(this.get('for')) {
-			var name= getName(this.get('for'),true);
+		else if(this.get('_model')) {
+			var name= getName(this.get('_model'),true);
 			if(name)
 				return name;
 			return this.get('_panel._modelName')+'.'+this._name;
@@ -96,8 +86,8 @@ export default Control.extend(ControlSupport,{
 	_apply:function() {
 		this._super();
 		this.get('inputControls').invoke('_apply');
-		if((!this._form || this.get('for')!==this._form.get('for')) && this.get('for') instanceof Proxy) {
-			this.get('for')._apply();
+		if((!this._form || this.get('_model')!==this._form.get('_model')) && this.get('_model') instanceof Proxy) {
+			this.get('_model')._apply();
 		}
 	},
 	
@@ -128,22 +118,22 @@ export default Control.extend(ControlSupport,{
 //				options['for']=Ember.computed.alias('_panel.for');
 //			} else
 			
-			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('for'))) {
-				if(options._panel.get('for') instanceof DS.ManyArray) {
-					options['for']=Ember.computed('_panel.for',function() {
-						if(!this.get('_panel.for')) {
+			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('_model'))) {
+				if(options._panel.get('_model') instanceof DS.ManyArray) {
+					options['for']=Ember.computed('_panel._model',function() {
+						if(!this.get('_panel._model')) {
 							return undefined;
 						}
-						return this.get('_panel.for').objectAt(this._name);
+						return this.get('_panel._model').objectAt(this._name);
 					});
 				} else {
-					options['for']=Ember.computed.alias('_panel.for.'+options._name);
+					options['for']=Ember.computed.alias('_panel._model.'+options._name);
 				}
 			}
-			else if(options._panel.get('for') && options._panel.get('for.'+options._name)!==undefined) {
-				options['for']=Ember.computed.alias('_panel.for.'+options._name);
+			else if(options._panel.get('_model') && options._panel.get('_model.'+options._name)!==undefined) {
+				options['for']=Ember.computed.alias('_panel._model.'+options._name);
 			} else {
-				options['for']=Ember.computed.alias('_panel.for');						
+				options['for']=Ember.computed.alias('_panel._model');						
 			}
 		}
 		mixins.push(options);

@@ -11,7 +11,7 @@ export default Ember.Mixin.create({
 	init : function() {
 		this._super();
 		// "for" or "value" might not be available yet
-		if(!this.get('for')) {
+		if(!this.get('_model')) {
 			Ember.run.later(this,this._loadControls);
 		} else {
 			this._loadControls();
@@ -111,7 +111,7 @@ export default Ember.Mixin.create({
 		});
 	},
 	
-	_controlValidObserver: Ember.observer('_controls.@each.isValid',function(){
+	_controlValidObserver: Ember.observer('controls.@each.isValid',function(sender){
 		this.setValid(this._valid);
 	}),
 	

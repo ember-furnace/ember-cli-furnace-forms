@@ -9,7 +9,7 @@ export default Ember.Mixin.create({
 		if(typeof this._conditionFn==='function') {
 			// Do not schedule this, causes all kinds of syncing issues
 			this.reopen({
-				_conditionObserver:Ember.observer(this._conditionProps+',_form.for',function() {
+				_conditionObserver:Ember.observer(this._conditionProps+',_form._model',function() {
 					this.set('_condition',this._conditionFn());
 				}).on('init')
 			});

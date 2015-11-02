@@ -33,13 +33,13 @@ export default Ember.Mixin.create({
 		this._super();
 		this.set('_optionControls',Ember.A());
 		if(this._optionFn) {			
-			var optionProps=this._optionProps ? this._optionProps+',_form.for' : '_form.for';
+			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';			
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
-					if(!this.get('_form.for')) {
+					if(!this.get('_form._model')) {
 						Ember.warn('furnace-forms: '+this+' not loading options, form model not ready');
 						return;
-					}
+					}	
 					var options=this.get('_options');
 					var newOptions=Ember.A();
 					var value = this._optionFn(newOptions,options);
@@ -69,9 +69,9 @@ export default Ember.Mixin.create({
 	},
 	
 	_initOptions : Ember.on('init',function() {
-		if(this.get('_form.for')) {
+		if(this.get('_form._model')) {
 			this._optionsObserver();
-		}
+		} 
 	}),
 	
 	_loadOptionControls : Ember.observer('_options,_options.@each',function() {

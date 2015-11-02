@@ -105,7 +105,7 @@ export default Control.extend(ControlSupport,{
 	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
 	
 	// We alias the for property for panels and forms
-	'for' : Ember.computed.alias('value'),
+	'_model' : Ember.computed.alias('value'),
 	
 	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_itemControls.@each.isDirty',function(){		
 		this._super();

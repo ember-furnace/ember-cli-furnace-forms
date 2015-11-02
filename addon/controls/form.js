@@ -215,7 +215,7 @@ var Form = Panel.extend({
 //			return this._form.get("_validator."+this._path);
 //		}		
 		return this.constructor.typeKey;
-	}.property('for'),
+	}.property('_model'),
 	
 	validationDetached : Ember.computed('isEnabled,_validationDetached',function() {
 		return !this.get('isEnabled') || this.get('_validationDetached');
@@ -225,7 +225,7 @@ var Form = Panel.extend({
 	
 	_validate : function(paths) {
 		var form=this;
-		var target=this.get('for');			
+		var target=this.get('_model');			
 		var modelName=this.get('_modelName');
 		var validator=this.get('_validator');
 		var promisses=Ember.A();
@@ -251,7 +251,7 @@ var Form = Panel.extend({
 				if(input) {
 					paths.removeObject(path);
 					validator=input.get('_form._validator');
-					target=input.get('_form.for');
+					target=input.get('_form._model');
 					path=input.get('_path');
 					if(path) {
 						Ember.assert('No target for validation of path ' + path + " in form " +form,target);
@@ -331,6 +331,8 @@ var Form = Panel.extend({
 	
 	'for' : null,
 	
+	_model : Ember.computed.alias('for'),
+	
 	init : function() {
 		this._forms=Ember.A();
 		this._controlsByPath={};
@@ -338,70 +340,75 @@ var Form = Panel.extend({
 		this._messageCache={};
 		
 		if(!this._syncFromSource || !this._syncToSource) {
-			var _for=this.get('for') ;
 			this.reopen({
-				'for' : Ember.computed(function(key,value) {
-							if(value) {
-								if(!this._syncFromSource || !this._syncToSource) {
-									return Proxy.create({_content:value,
-										_syncFromSource: this._syncFromSource,
-										_syncToSource: this._syncToSource});
-								}
-								return value;						
-							}
-							return null;
-						}),
+				_asyncObserver : Ember.observer('for',function() {
+					var model=this.get('for');
+					if(this.get('_model') instanceof Proxy) {
+						this.get('_model').destroy();
+					}
+					if(model) {
+						if(!this._syncFromSource || !this._syncToSource) {							
+							model= Proxy.create({_content:model,
+								_syncFromSource: this._syncFromSource,
+								_syncToSource: this._syncToSource});
+						}										
+					}						
+					this.set('_model',model);
+				}),
+				_model : null,
 			});
-			this.set('for',_for);
+			this._asyncObserver();
 		} 
 		
 		this._super();
 		this.set('_path',null);		
 		
 //		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
-		Ember.run.scheduleOnce('afterRender',this,function() {
-			var validator=this.get('_validator');
-			// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
-			if(validator && (!this._form || !(this._form.get("_validator."+this._path) instanceof validator.constructor))) {
-				var form= this;
-				this._observer = validator.observe(this,'for',function(result,sender,key) {
-					var silent=sender===null || sender===form;
-					// If our target model changed, immediate show validations unless it's a new model
-					if(silent && ((form.get('for.isDirty')===true || (form.get('for.isDirty')===undefined && form.get('isDirty'))) && !form.get('for.isNew'))) {
-						silent=false;
-					}
-//					
-//					Ember.debug(form);
-//					console.log('Ran validation',sender ? sender.toString() : null,key,silent);
-//					console.log(result.get('validations'));
-//					console.log(result.get('messages'));
-//					Ember.debug(sender);
-//					console.log('--------------');
-					
-					form._setValidations(result,silent);
-					
-					// We only want to receive changed status on next run, so reset the result if it has finished
-					if(result.hasFinished()) {
-						result.reset();
-					}
-				}, this.get('_modelName'));
-				
-			
-				if(this.get('for')) {
-					this._currentFor=this.get('for');
-					this._observer.run();
-				}
-			}
-		});
+		Ember.run.scheduleOnce('afterRender',this,this._setupValidator);
 	},
 	
-	_currentFor : undefined,
+	_setupValidator : function() {
+		var validator=this.get('_validator');
+		// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
+		if(validator && (!this._form || !(this._form.get("_validator."+this._path) instanceof validator.constructor))) {
+			var form= this;
+			this._observer = validator.observe(this,'_model',function(result,sender,key) {
+				var silent=sender===null || sender===form;
+				// If our target model changed, immediate show validations unless it's a new model
+				if(silent && ((form.get('_model.isDirty')===true || (form.get('_model.isDirty')===undefined && form.get('isDirty'))) && !form.get('_model.isNew'))) {
+					silent=false;
+				}
+//				
+//				Ember.debug(form);
+//				console.log('Ran validation',sender ? sender.toString() : null,key,silent);
+//				console.log(result.get('validations'));
+//				console.log(result.get('messages'));
+//				Ember.debug(sender);
+//				console.log('--------------');
+				
+				form._setValidations(result,silent);
+				
+				// We only want to receive changed status on next run, so reset the result if it has finished
+				if(result.hasFinished()) {
+					result.reset();
+				}
+			}, this.get('_modelName'));
+			
+		
+			if(this.get('_model')) {
+				this._currentModel=this.get('_model');
+				this._observer.run();
+			}
+		}
+	},
 	
-	_forObserver : Ember.observer('for',function(){
+	_currentModel : undefined,
+	
+	_modelObserver : Ember.observer('_model',function(){
 		// Only reset if 'for' actually changed
-		if(this.get('for')!==this._currentFor) {
+		if(this.get('_model')!==this._currentModel) {
 			this._reset(true);
-			this._currentFor=this.get('for');
+			this._currentModel=this.get('_model');
 		}
 	}),
 	

@@ -24,7 +24,7 @@ export default Ember.Mixin.create({
 		if(this.get('_name')!==null) {
 //			Ember.warn("No attribute in target model for input "+this._name+" (path "+this._path+")",this.get('_panel.for.'+this.get('_name'))!==undefined);
 //			if(this.get('_panel.for.'+this.get('_name'))!==undefined) {
-			var propertyName= '_panel.'+(this._panel['for']  ? 'for.' : 'value.')+this.get('_name');
+			var propertyName= '_panel.'+(this._panel['_model']  ? '_model.' : 'value.')+this.get('_name');
 			if(this.property===undefined) {
 				this.reopen({
 					property:Ember.computed.alias(propertyName)
@@ -57,21 +57,20 @@ export default Ember.Mixin.create({
 //		if(!this.get('_form._syncToSource')) {
 //			this._setOrgValue(this.get('property'));
 //		}
-//		if(this.get('_name') && this.get('_form._syncFromSource') && this.get('value')!==this.get('property')) {
-		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
 		Ember.run.once(this,function() {
-//			
 			var property=this.get('property');
 			if(Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
-				property.then(function(propertyValue){
-					control.set('value',propertyValue);
+				property.then(function(property){
+					if( control.get('value')!==property) {
+						control.set('value',property);
+					}
 				});
 			}
 			else {
 				if( this.get('value')!==property) {
-					this.set('value',this.get('property'));
+					this.set('value',property);
 				}
 			}
 		});
@@ -106,43 +105,41 @@ export default Ember.Mixin.create({
 	
 	_apply: function() {
 		if(this.property!==null) {
-			Ember.run.scheduleOnce('sync',this,function(){
-				var property=this.get('property');
-				var value=this.get('value');
-				this._components.invoke('set','value',this.get('value'));
+			var property=this.get('property');
+			var value=this.get('value');
+			this._components.invoke('set','value',this.get('value'));
+			
+			if(Ember.Enumerable.detect(property)) {
+				var dirty=false;
+				if(value.get('length')!==property.get('length')) {
+					dirty=true;
+				}
+				else {
+					value.forEach(function(value) {
+						if(!property.contains(value)) {
+							dirty=true;
+						}
+					});
+					property.forEach(function(property) {
+						if(!value.contains(property)) {
+							dirty=true;
+						}
+					});						
+				}
+				if(dirty) {
+					property.clear();
+					property.pushObjects(value);
+				}
 				
-				if(Ember.Enumerable.detect(property)) {
-					var dirty=false;
-					if(value.get('length')!==property.get('length')) {
-						dirty=true;
-					}
-					else {
-						value.forEach(function(value) {
-							if(!property.contains(value)) {
-								dirty=true;
-							}
-						});
-						property.forEach(function(property) {
-							if(!value.contains(property)) {
-								dirty=true;
-							}
-						});						
-					}
-					if(dirty) {
-						property.clear();
-						property.pushObjects(value);
-					}
-					
+			}
+			else if(value!==property) {
+				try{
+					this.set('property',value);
 				}
-				else if(value!==property) {
-					try{
-						this.set('property',value);
-					}
-					catch(e) {
-						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel.for')+") could not update its corresponding property to the new value: "+e);
-					}
+				catch(e) {
+					Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel._model')+") could not update its corresponding property to the new value: "+e);
 				}
-			});
+			}
 		}
 	},
 	
@@ -151,13 +148,16 @@ export default Ember.Mixin.create({
 			var property=this.get('property');
 			if(Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
-				this._setOrgValue(null);
-				this.set('value',null);
-				property.then(function(propertyValue){
+				// We no longer nullify value and orgValue, this triggers observers which might not trigger again if our promise returns
+				// in the same runloop
+				property.then(function(property){
 					if(modelChanged) {
-						control._setOrgValue(propertyValue);
+						control._setOrgValue(property);
 					}
-					control.set('value',propertyValue);
+					if(control.get('value')!==property) {
+						control.set('value',property);
+					}
+					
 				});
 			}
 			else {				

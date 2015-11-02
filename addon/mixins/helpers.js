@@ -170,7 +170,7 @@ var Helpers= Ember.Mixin.create({
 	attr: function(key) {
 		var meta={
 				type: 'form-attr',
-				key: 'for.'+key
+				key: '_model.'+key
 			};		
 		return  Ember.computed.alias(meta.key).meta(meta);
 //				function(key,value) {

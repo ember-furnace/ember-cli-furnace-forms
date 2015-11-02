@@ -135,8 +135,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	_didReset : false,
 	
 	_reset: function() {
-		this.setFlag('isValid',null);
-		this.set('_valid',null);
+// This breaks already set validation, our value might not change by a reset so may not trigger a new validation		
+//		this.setFlag('isValid',null);
+//		this.set('_valid',null);
 		this._didReset=true;		
 	},
 	
@@ -151,21 +152,24 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	_getPath: function() {
 		// Temporary work arround to give lists a proper path
 		// Temporary work arround to make sure forms dont get an absolute path
-		if(!this['for'] || this._isList || (this.get('for')!==this.get('_panel.for') && !this._isForm)) {
+		if(!this['_model'] || this._isList || (this.get('_model')!==this.get('_panel._model') && !this._isForm)) {
 			return (this.get('_panel._path') ? this.get('_panel._path')+ "." : '')+this.get('_name');
-		} else if(this._panel && this.get('for')===this.get('_panel.for')) {
+		} else if(this._panel && this.get('_model')===this.get('_panel._model')) {
 			return this.get('_panel._path');
 		}	
 
 	},
 	
-	getFor : function(path) {
+	getFor : function(path) {		
 		var model=null;
-		if(this['for'])
-			model = this.get('for');			
-		else
-			model = this.getForm().get('for');
-		if(!model) {			
+		if(this['_model'])
+			model = this.get('_model');			
+		else {
+			if(this.getForm()) {
+				model = this.getForm().get('_model');
+			}
+		}
+		if(!model) {		
 			Ember.warn('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
 			return undefined;
 		}

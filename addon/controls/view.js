@@ -27,11 +27,11 @@ export default Control.extend({
 		if(this.get('_name')!==null && this.value===undefined) {
 			var propertyName='_panel.for.'+this.get('_name');
 			
-			var property=this.get('_panel.for.');
+			var property=this.get('_panel._model.');
 			if(property instanceof DS.ManyArray) {
 				this.reopen({
-					value: Ember.computed('_panel.for,_panel.for.@each',function() {
-						return this.get('_panel.for').objectAt(this._name);
+					value: Ember.computed('_panel._model,_panel._model.@each',function() {
+						return this.get('_panel._model').objectAt(this._name);
 					})
 				});
 			}

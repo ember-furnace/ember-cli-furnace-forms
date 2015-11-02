@@ -24,11 +24,18 @@ export default Ember.Mixin.create(ControlSupport,{
 	_component: null,
 	
 	actions :{
-		select : function() {
-			Ember.run.later(this,function() {
-				this._panel.select(this._option.index,!this.get('selected'));
-			});
-		}
+//		select : function() {
+//			Ember.run.later(this,function() {
+//				this._panel.select(this._option.index,!this.get('selected'));
+//			});
+//		}
+	},
+	
+	select : function() {
+		var selected=!this.get('selected');
+		Ember.run.later(this,function() {
+			this._panel.select(this._option.index,selected);
+		});
 	},
 	
 	_name : 'option',
@@ -79,7 +86,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	
 	setValid : function(valid) {
-		Ember.run.once(this,function() {
+		Ember.run.scheduleOnce('sync',this,function() {
 			if(this.isDestroyed) {
 				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
 				return;
@@ -102,11 +109,12 @@ export default Ember.Mixin.create(ControlSupport,{
 	_input : null,
 	
 	init: function() {
+		// Our controls may depend on our value. Set it before calling our super function
+		this.set('value',this.get('_option.value'));
 		this._super();
 		if(this.caption instanceof Ember.ComputedProperty && this.get('caption')===null) {
 			this.set('caption',this.value);
 		}
-		this.set('value',this.get('_option.value'));
 	},
 	
 	registerComponent:function(component) {
@@ -145,6 +153,8 @@ export default Ember.Mixin.create(ControlSupport,{
 	_optionEnabledObserver:Ember.observer('_panel.isEnabled',function() {
 		this.setEnabled(this._enabled);
 	}),
+	
+	_model : Ember.computed.alias('for'),
 	
 	// We alias the for property for panels and forms
 	'for' : Ember.computed(function() {

@@ -30,7 +30,7 @@ export default Input.extend(CheckedSupport,{
 	click : function(event) {
 		var target=event.toElement || event.target;
 		if(target.id===this.get('inputId')) {
-			this.send('select');
+			this.control.select();
 		}
 	}
 });
