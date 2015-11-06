@@ -1,11 +1,11 @@
 
 {{#each message in errors}}
-	<message {{bind-attr class="message.type message.visible:visible:hidden"}}>{{i18n message attributes=message.attributes}}</message>
+	<message class="{{message.type}} {{if message.visible 'visible' 'hidden'}}">{{i18n message attributes=message.attributes}}</message>
 {{/each}}
 {{#each message in warnings}}
-	<message {{bind-attr class="message.type message.visible:visible:hidden"}}>{{i18n message attributes=message.attributes}}</message>
+	<message class="{{message.type}} {{if message.visible 'visible' 'hidden'}}">{{i18n message attributes=message.attributes}}</message>
 {{/each}}
 {{#each message in notices}}
-	<message {{bind-attr class="message.type message.visible:visible:hidden"}}>{{i18n message attributes=message.attributes}}</message>
+	<message class="{{message.type}} {{if message.visible 'visible' 'hidden'}}">{{i18n message attributes=message.attributes}}</message>
 {{/each}}
 

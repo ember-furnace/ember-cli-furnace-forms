@@ -56,14 +56,16 @@ var Form = Panel.extend({
 	
 	_name: Ember.computed.oneWay('_modelName'),
 	
-	_modelPath : Ember.computed('_form,_name',function() {
-		if(!this._form) {
-			return this.get('_name');
-		} else { 
-			return this._panel.get('_path');
+	_modelPath : Ember.computed('_form,_name',{
+		get : function() {
+			if(!this._form) {
+				return this.get('_name');
+			} else { 
+				return this._panel.get('_path');
+			}
+			return '';
 		}
-		return '';
-	}),
+	}).readOnly(),
 	
 	
 	_controlsByPath: null,
@@ -199,27 +201,21 @@ var Form = Panel.extend({
 		}
 	},
 	
-	_proxy : function() {
-		var properties={};
-		this.get('inputControls').forEach(function(control) {
-			properties[control._name]=Ember.computed(function() {
-				return control.get('value');
-			}).volatile();
-		});
-		return Ember.ObjectProxy.extend(properties).create({content: this['for']});
-	}.property('for'),
-	
-	validator : function() {
-		// Always return our validator name, regardless of parent form validators
-//		if(this._form && this._form.get("_validator."+this._path)) {
-//			return this._form.get("_validator."+this._path);
-//		}		
-		return this.constructor.typeKey;
-	}.property('_model'),
-	
-	validationDetached : Ember.computed('isEnabled,_validationDetached',function() {
-		return !this.get('isEnabled') || this.get('_validationDetached');
+	validator : Ember.computed('_model',{
+		get  :function() {
+			// 	Always return our validator name, regardless of parent form validators
+			return this.constructor.typeKey;
+		},
+		set : function(key,value) {
+			return value;
+		}
 	}),
+	
+	validationDetached : Ember.computed('isEnabled,_validationDetached',{
+		get : function() {
+			return !this.get('isEnabled') || this.get('_validationDetached');
+		}
+	}).readOnly(),
 	
 	_validationDetached:false,
 	
@@ -425,15 +421,6 @@ var Form = Panel.extend({
 		this.send('submit',action);
 	},
 	
-//	unregisterComponent:function(component) {
-//		this._super(component);
-//		if(this._components.length===0) {
-//			Ember.run.later(this,function(){
-//				this.destroy();
-//			});
-//		}
-//	},
-	
 	destroy: function() {
 		if(this._observer) {
 			this._observer.destroy();
@@ -446,20 +433,6 @@ var Form = Panel.extend({
 		return component.extend({_debugContainerKey : this._debugContainerKey});
 	},
 	
-//	getComponentClass : function(context,contextName) {
-//		var component=this._component
-//		if(typeof component ==="string") {
-//			component = Lookup.call(context,this._component,'form');
-//		}
-//		if(this._extend) {
-//			var typeKey=component.typeKey;
-//			component= component.extend(this._extend);
-//			component.typeKey=typeKey;
-//		}		
-//
-//		return component;
-//		
-//	},
 	
 }).reopenClass({
 	async : function() {

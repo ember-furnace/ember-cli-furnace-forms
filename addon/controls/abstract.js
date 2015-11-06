@@ -28,8 +28,13 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	_for : null,
 	
-	decorator: Ember.computed('_component,_componentType',function() {
-		return this.get('_componentType')+'.'+this.get('_component');
+	decorator: Ember.computed('_component,_componentType', {
+		get : function() {
+			return this.get('_componentType')+'.'+this.get('_component');
+		},
+		set : function(key,value) {
+			return value;
+		}
 	}),
 	
 	caption: undefined,

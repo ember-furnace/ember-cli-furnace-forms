@@ -18,17 +18,14 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-//	// Initialize the condition so observers get notified and our condition will observe its condition properties
-//	_initCondition : Ember.on('init',function() {
-//		console.log('init condition '+this,this.get('hasPrerequisites'));
-//	}),
-	
 	hasPrerequisites : Ember.computed.alias('_condition'),
 
-	conditionProperties: Ember.computed('_conditionProps',function() {		
-		if(!this._conditionProps) {
-			return null;
+	conditionProperties: Ember.computed('_conditionProps',{
+		get : function() {		
+			if(!this._conditionProps) {
+				return null;
+			}
+			return Ember.A(this._conditionProps.split(','));
 		}
-		return Ember.A(this._conditionProps.split(','));
 	}).readOnly().volatile(),
 });

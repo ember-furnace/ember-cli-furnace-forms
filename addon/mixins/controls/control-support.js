@@ -3,29 +3,30 @@ import Action from 'furnace-forms/controls/action';
 export default Ember.Mixin.create({
 	_controls : null,
 	
-//	_path : null,
-	
-	_controlPromise : null,
-	
-	
 	init : function() {
 		this._super();
 		// "for" or "value" might not be available yet
-		if(!this.get('_model')) {
-			Ember.run.later(this,this._loadControls);
-		} else {
-			this._loadControls();
-		}
+//		if(!this.get('_model')) {
+//			Ember.run.later(this,this._loadControls);
+//		} else {
+//			this._loadControls();
+//		}
 	},
 	
-	controls: Ember.computed('_controls',function() {
-		if(this._controls===null) {
-			return Ember.A();
+	controls: Ember.computed('_controls',{
+		get : function() {
+			if(this._controls===null) {
+				this._loadControls();
+			}
+			return this._controls;
 		}
-		return this._controls;
 	}).readOnly(),
 	
 	_loadControls : function() {
+		if(!this.get('_model')) {
+			Ember.run.later(this,this._loadControls);
+			return;
+		}
 		var control=this;
 		var controls=Ember.A();
 		if(this.isDestroyed) {
@@ -40,34 +41,40 @@ export default Ember.Mixin.create({
 			return;
 		}
 		this.set('_controls',controls);
+		// Fixes issue with isValid flags not propegating
+		this._controlValidObserver();
 	},
 	
-	inputControls: Ember.computed('_controls',function() {
-	    var ret = Ember.A();
-	    if(this._controls===null) {
-	    	return ret;
-	    }
-	    var self = this;
-	    this.constructor.eachComputedProperty(function(name, meta) {
-			if (meta.type==='form-control' && !(self.get(name) instanceof Action)) {
-				ret.pushObject(self.get(name));
-			}
-	    });
-		return ret;
+	inputControls: Ember.computed('_controls',{
+		get : function() {
+		    var ret = Ember.A();
+		    if(this._controls===null) {
+		    	this._loadControls();
+		    }
+		    var self = this;
+		    this.constructor.eachComputedProperty(function(name, meta) {
+				if (meta.type==='form-control' && !(self.get(name) instanceof Action)) {
+					ret.pushObject(self.get(name));
+				}
+		    });
+			return ret;
+		}
 	}).readOnly(),
 	
-	actionControls: Ember.computed('_controls',function() {
-		var ret = Ember.A();
-		if(this._controls===null) {
-	    	return ret;
-		}
-		var self = this;
-		this.constructor.eachComputedProperty(function(name, meta) {
-			if (meta.type==='form-control' && (self.get(name) instanceof Action)) {
-				ret.pushObject(self.get(name));
+	actionControls: Ember.computed('_controls',{
+		get : function() {
+			var ret = Ember.A();
+			if(this._controls===null) {
+				this._loadControls();
 			}
-		});
-		return ret;
+			var self = this;
+			this.constructor.eachComputedProperty(function(name, meta) {
+				if (meta.type==='form-control' && (self.get(name) instanceof Action)) {
+					ret.pushObject(self.get(name));
+				}
+			});
+			return ret;
+		}
 	}).readOnly(),
 	
 //	_dirty : false,

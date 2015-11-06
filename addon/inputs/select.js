@@ -25,9 +25,11 @@ export default Input.extend(Placeholder,{
 		}
 	},
 	
-	disabled : Ember.computed('isEnabled',function() {
-		return !this.get('isEnabled');
-	}),
+	disabled : Ember.computed('isEnabled',{
+		get :function() {
+			return !this.get('isEnabled');
+		}		
+	}).readOnly(),
 	
 	selectionChanged : function() {
 		Ember.run.later(this,function() {

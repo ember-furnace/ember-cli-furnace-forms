@@ -27,8 +27,14 @@ export default Control.extend(CheckedSupport,{
 		return this.elementId+'Input';
 	}.property('elementId'),
 		
-	checked : Ember.computed('value', function(property,value) {
-		if(value !== undefined) {
+	checked : Ember.computed('value', {
+		get : function() {
+			if(this.get('value')===this.checkedValue) {
+				return true;
+			}
+			return false;
+		},
+		set : function(key,value) {
 			if(value===true) {
 				this.set('value',this.get('checkedValue'));
 			} else {
@@ -36,9 +42,6 @@ export default Control.extend(CheckedSupport,{
 			}
 			return value;
 		}
-		if(this.get('value')===this.checkedValue)
-			return true;
-		return false;
 	}),
 	
 	init: function() {

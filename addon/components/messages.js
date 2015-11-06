@@ -22,12 +22,14 @@ export default Ember.Component.extend({
 	
 	
 	
-	showClass : Ember.computed('show',function() {
-		if(this.show) {
-			return 'visible';
+	showClass : Ember.computed('show',{
+		get : function() {
+			if(this.show) {
+				return 'visible';
+			}
+			return 'hidden';
 		}
-		return 'hidden';
-	}),
+	}).readOnly(),
 	
 	_showObserver : function(sender,key,value) {
 		this.set('show',sender.get('_showMessages'));

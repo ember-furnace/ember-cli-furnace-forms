@@ -24,11 +24,6 @@ export default Ember.Mixin.create(ControlSupport,{
 	_component: null,
 	
 	actions :{
-//		select : function() {
-//			Ember.run.later(this,function() {
-//				this._panel.select(this._option.index,!this.get('selected'));
-//			});
-//		}
 	},
 	
 	select : function() {
@@ -59,29 +54,33 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	caption : Ember.computed.alias('_option.caption'),
 	
-	showOptionControl : Ember.computed('optionControl,selected',function() {
-		this._controlValidObserver();
-		var optionControl=this.get('optionControl');
-		if(optionControl) {
-			if(this.get('selected')) {
-				optionControl.setEnabled(true);
-				return true;
-			}
-			optionControl.setEnabled(false);
-		} 
-		return false;
-	}),
+	showOptionControl : Ember.computed('optionControl,selected', {
+		get : function() {
+			this._controlValidObserver();
+			var optionControl=this.get('optionControl');
+			if(optionControl) {
+				if(this.get('selected')) {
+					optionControl.setEnabled(true);
+					return true;
+				}
+				optionControl.setEnabled(false);
+			} 
+			return false;
+		}
+	}).readOnly(),
 	
 	_optionControl : null,
 	
-	optionControl : Ember.computed('_option.control',function() {
-		// @TODO: should probably destroy existing control
-		if(this._optionControl === null && this._option.control) {
-			var options=this._option.control._meta.options;
-			options.caption=Ember.computed.alias('_panel.caption');
-			this._optionControl= getControl.call(this,'value',options._controlType,options);
+	optionControl : Ember.computed('_option.control',{
+		get : function() {
+			// @TODO: should probably destroy existing control
+			if(this._optionControl === null && this._option.control) {
+				var options=this._option.control._meta.options;
+				options.caption=Ember.computed.alias('_panel.caption');
+				this._optionControl= getControl.call(this,'value',options._controlType,options);
+			}
+			return this._optionControl;
 		}
-		return this._optionControl;
 	}).meta({type : 'form-control'}),
 	
 	
@@ -157,8 +156,10 @@ export default Ember.Mixin.create(ControlSupport,{
 	_model : Ember.computed.alias('for'),
 	
 	// We alias the for property for panels and forms
-	'for' : Ember.computed(function() {
-		return this;
-	}),
+	'for' : Ember.computed({
+		get : function() {
+			return this;
+		}
+	}).readOnly(),
 	
 });

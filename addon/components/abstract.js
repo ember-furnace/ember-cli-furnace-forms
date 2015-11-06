@@ -21,18 +21,23 @@ export default Ember.Component.extend({
 	
 	control: null,
 	
-	_nameClass : Ember.computed('control._name',function() {
-		var name=this.get('control._name');		
-		if(typeof name==='string')
-			return name.replace(/\./g,'-');
-	}),
-	
-	_focusClass : function() {
-		if(this.get('_focus')===true) {
-			return 'focus';
+	_nameClass : Ember.computed('control._name',{
+		get : function() {
+			var name=this.get('control._name');		
+			if(typeof name==='string')
+				return name.replace(/\./g,'-');
 		}
-		return null;
-	}.property('_focus'),
+	}).readOnly(),
+	
+	_focusClass : Ember.computed('_focus',{
+		get : function() {
+			if(this.get('_focus')===true) {
+				return 'focus';
+			}
+			return null;
+		}
+	}).readOnly(),
+
 	
 	caption: I18n.computed(null),
 	
@@ -100,15 +105,17 @@ export default Ember.Component.extend({
 	 * @type String
 	 * @private
 	 */
-	_validClass : function() {
-		var valid=this.get('isValid');
-		if(valid===false) {
-			return 'invalid';
+	_validClass : Ember.computed('isValid',{
+		get  : function() {
+			var valid=this.get('isValid');
+			if(valid===false) {
+				return 'invalid';
+			}
+			else if(valid===true) {
+				return 'valid';
+			}
 		}
-		else if(valid===true) {
-			return 'valid';
-		}
-	}.property('isValid'),
+	}).readOnly(),
 	
 	/**
 	 * CSS class for enabled
@@ -116,12 +123,14 @@ export default Ember.Component.extend({
 	 * @type String
 	 * @private
 	 */
-	_enabledClass : function() {
-		if(this.get('isEnabled')===false) {
-			return 'disabled';
+	_enabledClass :  Ember.computed('isEnabled',{
+		get  : function() {
+			if(this.get('isEnabled')===false) {
+				return 'disabled';
+			}
+			return null;
 		}
-		return null;
-	}.property('isEnabled'),
+	}).readOnly(),
 	
 	
 	/**
@@ -225,14 +234,14 @@ export default Ember.Component.extend({
 		}
 	},
 	
-	_enabledObserver: function() {
+	_enabledObserver:Ember.observer('isEnabled',function() {
 		if(this.get('isEnabled') && (this.hasError || this.hasWarning || this.hasNotice)) {
 			this.set('_showMessages',true);
 		}
 		else {
 			this.set('_showMessages',false);
 		}
-	}.observes('isEnabled'),
+	}),
 	
 	_showDelayedMessages : true,
 	
@@ -304,21 +313,23 @@ export default Ember.Component.extend({
 	 * - Finally defaultLayout (panel, text)
 	 */
 	
-	layouts: Ember.computed(function() {
-		var ret=Ember.A();		
-		ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayout'))).replace(/\./g,'/'));
-		if(this.constructor.typeKey) {
-			ret.pushObject((this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/'));			
-			var layoutName=this.constructor.typeKey.replace(/\./g,'/');
-			if(layoutName===this.constructor.typeKey) {
-				ret.pushObject( 'forms/'+layoutName);
-			} else {
-				ret.pushObject(layoutName+'/'+this.control._componentType);
-			}						
+	layouts: Ember.computed({
+		get : function() {
+			var ret=Ember.A();		
+			ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayout'))).replace(/\./g,'/'));
+			if(this.constructor.typeKey) {
+				ret.pushObject((this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/'));			
+				var layoutName=this.constructor.typeKey.replace(/\./g,'/');
+				if(layoutName===this.constructor.typeKey) {
+					ret.pushObject( 'forms/'+layoutName);
+				} else {
+					ret.pushObject(layoutName+'/'+this.control._componentType);
+				}						
+			}
+			ret.pushObject(this.get('defaultLayout'));
+			return ret;
 		}
-		ret.pushObject(this.get('defaultLayout'));
-		return ret;
-	}),
+	}).readOnly(),
 	
 	layoutName: function() {
 		var layoutName=null;
@@ -341,9 +352,9 @@ export default Ember.Component.extend({
 		
 	}.property(),
 	
-	_focusObserver : function() {		
+	_focusObserver : Ember.observer('_focus',function() {		
 		this.set('_showDelayedMessages',false);
-	}.observes('_focus'),
+	}),
 	
 	hasPrerequisites : Ember.computed.alias('control.hasPrerequisites'),
 	

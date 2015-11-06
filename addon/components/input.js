@@ -28,21 +28,26 @@ export default Control.extend({
 	value: null,
 	
 	
-	_valueObserver:function() {
-		if(this.get('value')!==this.get('control.value'))
+	_valueObserver:Ember.observer('value',function() {
+		if(this.get('value')!==this.get('control.value')) {
 			this.set('control.value',this.get('value'));
-	}.observes('value'),
+		}
+	}),
 	
 	inputInsert:function() {
 		this.set('targetObject.inputId',this.elementId);
 	},
 	
-	disabledAttr:function() {
-		return this.get('isEnabled') ? null : 'disabled';
-	}.property('isEnabled'),
+	disabledAttr:Ember.computed('isEnabled',{
+		get :function() {
+			return this.get('isEnabled') ? null : 'disabled';
+		}
+	}).readOnly(),
 
 	
-	type : Ember.computed(function() {
-		return Ember.String.camelize(this.constructor.typeKey);
-	}),
+	type : Ember.computed({ 
+		get  :function() {
+			return Ember.String.camelize(this.constructor.typeKey);
+		}
+	}).readOnly(),
 });

@@ -20,7 +20,7 @@ export default Input.extend(Placeholder,{
 	
 	_delayedMessageTimer : null,
 	
-	_delayedMessageObserver : function() {
+	_delayedMessageObserver : Ember.observer('value,hasFocus',function() {
 		if(this._delayedMessageTimer) {
 			Ember.run.cancel(this._delayedMessageTimer);
 		}
@@ -32,7 +32,7 @@ export default Input.extend(Placeholder,{
 				this.set('_showDelayedMessages',true);
 			},2000);
 		}
-	}.observes('value,hasFocus'),
+	}),
 	
 	_reset:function(modelChanged) {
 		this._super(modelChanged);

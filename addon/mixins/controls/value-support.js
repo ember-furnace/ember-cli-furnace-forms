@@ -50,7 +50,7 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	_propertyObserver:function() {
+	_propertyObserver:Ember.observer('property',function() {
 		
 		// If we sync to the source, do not update the _orgValue so we keep a reliable dirty flag
 		// If we're not syncing to the source, something else updated it and we should be dirty accordingly, so update _orgValue 
@@ -75,7 +75,7 @@ export default Ember.Mixin.create({
 			}
 		});
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
-	}.observes('property'),
+	}),
 	
 	
 	_valueObserver:Ember.observer('value',function() {

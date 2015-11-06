@@ -21,14 +21,4 @@ export default Control.extend(ValueSupport,{
 	
 	_componentType : 'input',
 	
-	
-	init:function() {
-		this._super();
-		
-		
-		
-	},
-	
-	
-	
 });

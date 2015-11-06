@@ -4,11 +4,13 @@ import getControl from 'furnace-forms/utils/get-control';
 
 export default Ember.Mixin.create({
 	
-	_options : Ember.computed(function(key,value){
-		if(value) {
+	_options : Ember.computed({
+		get : function(key,value){
+			return Ember.A();
+		},
+		set : function(key,value) {
 			return this._updateOptions(value);
 		}
-		return Ember.A();
 	}),
 	
 	_optionFn : null,
@@ -104,45 +106,32 @@ export default Ember.Mixin.create({
 		}
 	}),
 	
-	optionControls : Ember.computed('_optionControls.@each,sortProperties.@each',function() {
-		if(!this._controlsLoaded) {
-			this._controlsLoaded=true;
-			this._loadOptionControls();
+	optionControls : Ember.computed('_optionControls.@each,sortProperties.@each',{
+		get : function() {
+			if(!this._controlsLoaded) {
+				this._controlsLoaded=true;
+				this._loadOptionControls();
+			}
+			
+			if(!this._optionControls) {
+				return Ember.A();
+			}
+			var content = this._optionControls;
+			var isSorted = this.get('isSorted');
+			var self = this;
+			if (content && isSorted) {
+				content = content.slice();
+				content.sort(function(item1, item2) {
+		          return self.orderBy(item1, item2);
+				});			
+				return Ember.A(content);
+			}
+			
+			return content;
 		}
-		
-		if(!this._optionControls) {
-			return Ember.A();
-		}
-		var content = this._optionControls;
-		var isSorted = this.get('isSorted');
-		var self = this;
-		if (content && isSorted) {
-			content = content.slice();
-			content.sort(function(item1, item2) {
-	          return self.orderBy(item1, item2);
-			});			
-			return Ember.A(content);
-		}
-		
-		return content;
 	}).readOnly(),
 	
 	controls: Ember.computed.union('_controls','_optionControls').readOnly(),
-	
-	
-//	controls: Ember.computed('_options',function() {
-//		var ret = Ember.A();
-//		var self = this;
-//		this._controlsLoaded=true;
-//		this.get('_options').forEach(function(option,index) {
-//			ret.pushObject(getControl.call(self,index,Option,{_panel:self,
-//																	_option:option}));
-//		});
-//		return ret;
-//	}).readOnly(),
-	
-	
-	
 	
 	_updateOptions : function(newOptions) {		
 		if(!newOptions || !newOptions.length) {

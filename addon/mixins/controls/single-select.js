@@ -87,12 +87,14 @@ export default Ember.Mixin.create({
 		return this.get('_options')[index];			
 	},
 	
-	selectedOption : Ember.computed(function(key,value) {
-		if(value) {
-			this.set('value',value.get('value'));
+	selectedOption : Ember.computed({
+		get : function(key,value) {
+			if(value) {
+				this.set('value',value.get('value'));
+			}
+			return this.getOption();
 		}
-		return this.getOption();
-	}),
+	}).readOnly(),
 	
 	selectedIndex : 0,
 	
@@ -153,10 +155,10 @@ export default Ember.Mixin.create({
 		this._super(modelChanged);
 	},
 	
-	_controlValidObserver : function() {
+	_controlValidObserver : Ember.observer('optionControl,optionControl.isValid',function() {
 		Ember.run.once(this,function() {
 			this.setValid(this._valid);
 		});
-	}.observes('optionControl,optionControl.isValid'),
+	}),
 		
 });

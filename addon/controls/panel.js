@@ -54,32 +54,39 @@ export default Control.extend(ControlSupport,{
 	
 
 	
-	_modelName : Ember.computed('_model',function(key,value) {
-		if(value)  {
+	_modelName : Ember.computed('_model',{
+		get : function(key,value) {
+			if(value)  {
+				return value;
+			}	
+			if(this.get('_model')===this.get('_panel._model')) {
+				return this.get('_panel._modelName');
+			}
+			else if(this.get('_model')) {
+				var name= getName(this.get('_model'),true);
+				if(name)
+					return name;
+				return this.get('_panel._modelName')+'.'+this._name;
+			}
+			else {
+				return null;
+			}
+		},
+		set : function(key,value) {
 			return value;
-		}	
-		if(this.get('_model')===this.get('_panel._model')) {
-			return this.get('_panel._modelName');
-		}
-		else if(this.get('_model')) {
-			var name= getName(this.get('_model'),true);
-			if(name)
-				return name;
-			return this.get('_panel._modelName')+'.'+this._name;
-		}
-		else {
-			return null;
 		}
 	}),
 	
-	_targetName : function() {
-		if(this.get('targetObject')) {
-			return getName(this.get('targetObject'));
+	_targetName : Ember.computed('targetObject',{
+		get : function() {
+			if(this.get('targetObject')) {
+				return getName(this.get('targetObject'));
+			}
+			else {
+				return null;
+			}
 		}
-		else {
-			return null;
-		}
-	}.property('targetObject'),
+	}).readOnly(),
 	
 	caption : null,
 	

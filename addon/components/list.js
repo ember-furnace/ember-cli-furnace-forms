@@ -22,8 +22,10 @@ export default Input.extend({
 	
 	controls : Ember.computed.alias('control.controls'),
 	
-	type : Ember.computed(function() {
-		return Ember.String.camelize(this.constructor.typeKey);
-	}),
+	type : Ember.computed({
+		get : function() {
+			return Ember.String.camelize(this.constructor.typeKey);
+		}
+	}).readOnly(),
 	
 });

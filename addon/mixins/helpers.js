@@ -173,21 +173,6 @@ var Helpers= Ember.Mixin.create({
 				key: '_model.'+key
 			};		
 		return  Ember.computed.alias(meta.key).meta(meta);
-//				function(key,value) {
-//			var meta = this.constructor.metaForProperty(key);
-//			console.log(key,this.get(meta.key));
-//			if(this.get(meta.key)===undefined) {
-//				var _key=key;
-//				this.addObserver(meta.key,this,function(sender,key){
-//					this.notifyPropertyChange(_key);
-//				});
-//				return value;
-//			}
-//			if(value!==undefined) {
-//				this.set(meta.key,value);
-//			}
-//			return this.get(meta.key);
-//		}).meta(meta);
 	},
 	
 	option: function(value,caption,control) {

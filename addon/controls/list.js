@@ -45,22 +45,24 @@ export default Control.extend(ControlSupport,{
 		Ember.run.later(this,this._loadItemControls);
 	},
 
-	itemControls : Ember.computed('_itemControls,_itemControls.@each,sortProperties.@each',function() {
-		if(!this._itemControls) {
-			return Ember.A();
+	itemControls : Ember.computed('_itemControls,_itemControls.@each,sortProperties.@each',{
+		get  : function() {
+			if(!this._itemControls) {
+				return Ember.A();
+			}
+			var content = this._itemControls;
+			var isSorted = this.get('isSorted');
+			var self = this;
+			if (content && isSorted) {
+				content = content.slice();
+				content.sort(function(item1, item2) {
+		          return self.orderBy(item1, item2);
+				});			
+				return Ember.A(content);
+			}
+			
+			return content;
 		}
-		var content = this._itemControls;
-		var isSorted = this.get('isSorted');
-		var self = this;
-		if (content && isSorted) {
-			content = content.slice();
-			content.sort(function(item1, item2) {
-	          return self.orderBy(item1, item2);
-			});			
-			return Ember.A(content);
-		}
-		
-		return content;
 	}).readOnly(),
 	
 	_loadItemControls : Ember.observer('value,value.@each',function() {
