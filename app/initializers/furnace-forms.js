@@ -1,9 +1,8 @@
 import Lookup from 'furnace-forms/utils/lookup-class';
-import FormHelper from 'furnace-forms/helpers/form';
-//import CompatFormHelper from 'furnace-forms/compat/helpers/form';
-import ControlHelper from 'furnace-forms/helpers/control';
-import MessagesHelper from 'furnace-forms/helpers/messages';
-//import CompatInputHelper from 'furnace-forms/compat/helpers/input';
+import RegisterFormHelper from 'furnace-forms/helpers/form';
+import RegisterControlHelper from 'furnace-forms/helpers/control';
+//import ControlHelper from 'furnace-forms/helpers/control';
+//import MessagesHelper from 'furnace-forms/helpers/messages';
 
 import Forms from 'furnace-forms';
 
@@ -45,21 +44,36 @@ export function initialize(container, application) {
 	application.register('input:check-option',Forms.Inputs.CheckOption);
 	
 	application.register('input:submit',Forms.Inputs.Submit);
-	application.register('component:forms.messages',Forms.Components.Messages);
+	application.register('component:form-messages',Forms.Components.Messages);
+	application.register('component:f-messages',Forms.Components.Messages);
 	
 	application.inject('route','formFor','form:lookup');
 	application.inject('model','formFor','form:lookup');
 	application.inject('controller','formFor','form:lookup');
-	if(Ember.HTMLBars) {
-		Ember.HTMLBars._registerHelper('form',FormHelper);
-		Ember.HTMLBars._registerHelper('f-control',ControlHelper);
-		Ember.HTMLBars._registerHelper('f-messages',MessagesHelper);
-		 
-	}
-	else {
-		Ember.Handlebars.registerHelper('form',CompatFormHelper);
-		Ember.Handlebars.registerHelper('finput',CompatInputHelper);
-	}
+	
+	Ember.ComponentLookup.reopen({
+		componentFor: function(name,container) {
+			if(name.indexOf(':')>-1) {
+				var factory= container.lookupFactory(name);
+				if(factory && !factory.typeKey) {
+					name=name.substring(name.indexOf(':')+1);
+					factory.typeKey=name;
+				}
+				return factory;
+			}
+			return this._super(name,container);
+		},
+		layoutFor : function(name,container) {
+			if(name.indexOf(':')>-1) {
+				name=name.substring(name.indexOf(':')+1);
+				return container.lookupFactory('template:'+name);
+			}
+			return this._super(name,container);
+		}
+	});
+	
+	RegisterFormHelper();
+	RegisterControlHelper();
 };
 
 export default {

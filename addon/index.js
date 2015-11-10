@@ -26,6 +26,8 @@ export default Ember.Namespace.extend(Helpers, {
 	
 	Controls : Controls,
 	
+	Form : Controls.Form,
+	
 	Components : Components,
 
 	Inputs : Inputs,

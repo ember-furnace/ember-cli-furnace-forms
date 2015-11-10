@@ -30,7 +30,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	decorator: Ember.computed('_component,_componentType', {
 		get : function() {
-			return this.get('_componentType')+'.'+this.get('_component');
+			return this.get('_componentType')+':'+this.get('_component');
 		},
 		set : function(key,value) {
 			return value;

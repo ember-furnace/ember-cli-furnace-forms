@@ -1,42 +1,27 @@
-/**
- * @module furnace
- * @submodule furnace-forms
- */
-import Ember from "ember";
-import getName from 'furnace-forms/utils/get-name';
-import boundControl from './bound-control';
+import Ember from 'ember';
 
-/**
- * @method f-control
- * @for Furnace.Forms.helpers
- * @param {Furnace.Forms.Control.Abstract} ControlProxy
- * @param {Hash} options
- * @return {String} HTML string  
- */
-export default function controlHelper(params, hash, options, env) {
-	Ember.assert('You need to specify a control from your form',params[0]);
-	var view = env.data.view;
-	var control =params[0].value();
-	var dynamic=hash['dynamic']!==undefined ? hash['dynamic'] : false;
-	
-	if(dynamic)
-		delete hash['dynamic'];
-	
-	Ember.assert('Control not found',control);
-	if(dynamic) {
-		Ember.assert('A dynamic control display is required but the component helper is not avaiable!',env.helpers.component!==undefined);
-		boundControl.call(this,[params[0]],hash,options,env);
-	}
-	else {
+var require = Ember.__loader.require;
+var registerKeyword = require('ember-htmlbars/keywords').registerKeyword;
+var componentKeyword = require('ember-htmlbars/keywords/component').default;
+var assign = require('ember-metal/merge').assign;
+var controlKeyWord = {
+	setupState(lastState, env, scope, params, hash) {
+		var control=env.hooks.getValue(params[0]);
 		if(!control._component) {			
-			control._component=view.get('controller.optionType');
-		}
-		var component = control.getComponentClass();
-		hash.control=control;
-		hash._debugContainerKey = component + control.get('_name');
-		Ember.warn('Control ('+control._name+') does not specify a component, nothing will be rendered',component);
-		if(!component)
-			return;
-		env.helpers.view.helperFunction.call(this,[component],hash,options,env);
-	}
+			control._component=env.view.optionType;
+		}		
+		let componentPath = control.get('decorator');
+		hash.control=control;		
+		return assign({}, lastState, { componentPath, isComponentHelper: true });
+	},
+
+	render: componentKeyword.render,
+
+	rerender: componentKeyword.renderer
+};
+
+export default function() {
+	registerKeyword('f-control',controlKeyWord);
+	registerKeyword('form-control',controlKeyWord);
 }
+
