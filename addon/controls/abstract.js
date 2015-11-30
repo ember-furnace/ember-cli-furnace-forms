@@ -139,10 +139,12 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	_didReset : false,
 	
-	_reset: function() {
-// This breaks already set validation, our value might not change by a reset so may not trigger a new validation		
-//		this.setFlag('isValid',null);
-//		this.set('_valid',null);
+	_reset: function(modelChanged) {
+// This breaks already set validation, our value might not change by a reset so may not trigger a new validation
+		if(modelChanged) {
+			this.setFlag('isValid',null);
+			this.set('_valid',null);
+		}
 		this._didReset=true;		
 	},
 	
