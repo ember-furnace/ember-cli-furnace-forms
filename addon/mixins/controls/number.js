@@ -21,6 +21,22 @@ export default Ember.Mixin.create({
 		}
 	},
 	
+	_minMaxObserver : Ember.observer('min,max',function() {
+		var value=this.get('value');
+		var min=this.get('min');
+		var max=this.get('max');
+		Ember.assert("furnace-forms: maximum is smaller than minimum",((min===null || max===null) || !(min>max)));
+		if(min!==null && value<min) {
+			this.set('value',min);
+			return;
+		}
+		if(max!==null && value>max) {
+			this.set('value',max);
+			return;
+		}
+		
+	}),
+	
 	_valueObserver : Ember.observer('value',function() {
 		this._super();
 		var value=this.get('value');
