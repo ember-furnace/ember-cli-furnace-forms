@@ -204,19 +204,30 @@ export default Ember.Component.extend({
 		}		
 		return classes.join(" ");
 	}.property('hasError,hasWarning,hasNotice'),
-	
-	
+		
 	hasError: false,
 	
 	hasWarning: false,
 	
 	hasNotice: false,
 	
+	_registeredControl : null,
+	
+	_registerControl : function() {
+		if(this._registeredControl!==this.control) {
+			if(this._registeredControl) {
+				this._registeredControl.unregisterComponent(this);
+			}
+			this.get('control').registerComponent(this);
+			this._registeredControl=this.control;
+		}
+	},
+	
 	init : function() {
 		this._super();
 		this.set('_controlMessages',Ember.A());
 		Ember.assert('A form component ('+this+') initialized without a control!',this.control);
-		this.control.registerComponent(this);
+		this._registerControl();
 		this.set('target',this.control);
 		
 		if( this.caption instanceof Ember.ComputedProperty  && this.get('caption')===null) {
@@ -254,6 +265,10 @@ export default Ember.Component.extend({
 //	_warnings : Ember.computed.filterBy('_controlMessages','type','warning'),
 //
 //	_notices : Ember.computed.filterBy('_controlMessages','type','notice'),
+	
+	_controlObserver : Ember.observer('control',function() {
+		this._registerControl();
+	}),
 	
 	_controlMessageObserver : Ember.observer('_focus,_showDelayedMessages', function() {
 		var messages=this.__controlMessages;

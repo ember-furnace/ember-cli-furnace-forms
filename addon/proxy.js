@@ -4,16 +4,24 @@ var Proxy = Ember.Object.extend({
 	
 	_syncToSource : true,
 	
+	_refs: null,
+	
 	_proxies : null,
+	
 	_cache : null,
 	
 	_content : null,
 	
+	_top : null,
 	
 	init: function() {
 		this._super();
 		this._proxies={};
 		this._cache={};
+		this._refs={};
+		if(!this._top) {
+			this._refs[this._content]=this;
+		}
 	},
 
 	_contentPropertyDidChange : function (content, contentKey) {
@@ -24,7 +32,7 @@ var Proxy = Ember.Object.extend({
 	},
 	
 	willWatchProperty: function (key) {
-		var keys=key.split('.');		
+		var keys=key.split('.');			
 		if(keys.length===1) {
 			if(this._syncFromSource) {
 				var contentKey = '_content.' + key;
@@ -62,12 +70,19 @@ var Proxy = Ember.Object.extend({
 			return undefined;
 		if(keys.length===1) {
 			if (this._syncFromSource || !(key in this._cache)) {
+				
 				var value=this._content.get(key);
-				if(Ember.PromiseProxyMixin.detect(value)) {
-					return value;
-				} else {
-					this._cache[key] = value;
+				
+				if(value!==null && typeof value==='object') {
+					value=this._lookupProxy(value);
+					if(Ember.PromiseProxyMixin.detect(value)) {
+						var proxy=this;
+						value.addObserver("_content",this,function() {
+							this.propertyDidChange(key);
+						});
+					}
 				}
+				this._cache[key] = value;
 			}
 			return this._cache[key];
 		}
@@ -77,18 +92,46 @@ var Proxy = Ember.Object.extend({
 	
 	_getProxy : function(key) {
 		if(!this._proxies[key]) {
-			this._proxies[key]=Proxy.create({
-				_content:this._content.get(key),
-				_syncFromSource:this._syncFromSource,
-				_syncToSource:this._syncToSource
-				
-			});
+			this._proxies[key]=this._lookupProxy(this._content.get(key));
 		}
 		return this._proxies[key];
 	},
 	
+	_lookupProxy : function(content) {
+		if(this._top) {
+			return this._top._lookupProxy(content);
+		}
+		if(this._refs[content]!==undefined) {
+			return this._refs[content];
+		}
+		
+		var proxy;
+		if(Ember.PromiseProxyMixin.detect(content)) {
+			proxy = Proxy.extend(Ember.PromiseProxyMixin).create({
+				_top: this,
+				_syncFromSource:this._syncFromSource,
+				_syncToSource:this._syncToSource,
+				promise : content.then(function(value){
+					proxy.set('_content',value);						
+					return value;
+				}),
+				_content : null,						
+			});
+		} else {
+			proxy = Proxy.create({
+				_top: this,
+				_content:content,
+				_syncFromSource:this._syncFromSource,
+				_syncToSource:this._syncToSource
+				
+			});		
+		}
+		this._refs[content]=proxy;
+		return proxy;
+	},
+	
 	_contentDidChange: Ember.observer('_content', function() {
-	    Ember.assert("Can't set Proxy's content to itself", get(this, '_content') !== this);
+	    Ember.assert("Can't set Proxy's content to itself", this.get('_content') !== this);
 	    this._reset();
 	}),
 	
@@ -117,6 +160,7 @@ var Proxy = Ember.Object.extend({
 		for(var i in this._proxies) {
 			this._proxies[i].destroy();
 		}
+		this._super();
 	},
 	
 });

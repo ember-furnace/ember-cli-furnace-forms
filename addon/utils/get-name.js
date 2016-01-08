@@ -28,7 +28,7 @@ export default function(object,silent) {
 //	}
 
 	if(!silent)
-		Ember.warn('Unable to determine form for type '+(typeof object),objectName);
+		Ember.warn('Unable to determine form for type '+(typeof object),objectName,{id:'furnace-forms:name-lookup'});
 	
 	return objectName;
 };

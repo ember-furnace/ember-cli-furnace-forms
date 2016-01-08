@@ -97,7 +97,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	setDirty: function(dirty) {
 		this._didReset=false;
-		Ember.run.once(this,function() {
+		Ember.run.scheduleOnce('sync',this,function() {
 			if(dirty!==this._dirty) {
 				this.setFlag('isDirty',dirty);
 				this.set('_dirty',dirty);						
@@ -113,7 +113,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		}
 	},
 	
-	init:function() {		
+	init:function() {	
 		this._super();	
 		this.set('_controlMessages',Ember.A());
 		this.set('_components',Ember.A());		
@@ -167,7 +167,22 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 
 	},
 	
-	getFor : function(path) {		
+	hasModel : function() {
+		var model=null;
+		if(this['_model'])
+			model = this.get('_model');			
+		else {
+			if(this.getForm()) {
+				model = this.getForm().get('_model');
+			}
+		}
+		if(!model) {
+			return false;
+		}
+		return true;
+	},
+	
+	getModel : function(path) {		
 		var model=null;
 		if(this['_model'])
 			model = this.get('_model');			
@@ -177,13 +192,17 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			}
 		}
 		if(!model) {		
-			Ember.warn('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model);
+			Ember.warn('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model,{id:'furnace-forms:control.model-missing'});
 			return undefined;
 		}
 		if(path) {
 			return model.get(path);
 		}
 		return model;
+	},
+	
+	getFor : function(path) {
+		return this.getModel(path);
 	},
 	
 	getTarget : function() {

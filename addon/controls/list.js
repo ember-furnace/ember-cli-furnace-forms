@@ -36,16 +36,16 @@ export default Control.extend(ControlSupport,{
 	
 	isSorted: Ember.computed.notEmpty('sortProperties'),
 	
-	orderBy:Ember.SortableMixin.mixins[1].properties.orderBy,
-	sortFunction:Ember.SortableMixin.mixins[1].properties.sortFunction,
+//	orderBy:Ember.Enumerable.mixins[0].properties.sortBy,
+//	sortFunction:Ember.SortableMixin.mixins[1].properties.sortFunction,
 	
 	init : function() {
 		this.set('_itemControls',Ember.A());
 		this._super();
-		Ember.run.later(this,this._loadItemControls);
+		this._loadItemControls();
 	},
 
-	itemControls : Ember.computed('_itemControls,_itemControls.@each,sortProperties.@each',{
+	itemControls : Ember.computed('_itemControls,_itemControls.[],sortProperties.[]',{
 		get  : function() {
 			if(!this._itemControls) {
 				return Ember.A();
@@ -54,54 +54,55 @@ export default Control.extend(ControlSupport,{
 			var isSorted = this.get('isSorted');
 			var self = this;
 			if (content && isSorted) {
-				content = content.slice();
-				content.sort(function(item1, item2) {
-		          return self.orderBy(item1, item2);
-				});			
-				return Ember.A(content);
+//				content = content.slice();
+//				content.sort(function(item1, item2) {
+//		          return self.orderBy(item1, item2);
+//				});			
+				return contents.sortBy.apply(contents,this.sortProperties);
 			}
 			
 			return content;
 		}
 	}).readOnly(),
 	
-	_loadItemControls : Ember.observer('value,value.@each',function() {
-		Ember.run.scheduleOnce('sync',this,function() {
-			var control=this;
-			var value=this.get('value');
-					
-			var itemControls=this._itemControls;
-			var oldControls=itemControls.toArray();
-			
-			Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
-			if(this.isDestroying) {
-				return;
-			}
-			if(Ember.Enumerable.detect(value)) {	
-				value.forEach(function(value,index) {
-					var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
-					if(oldControl) {
-						oldControls.removeObject(oldControl);
-					} else {
-						var options=control._itemControl._meta.options;	
-						options['for']=null;
-						itemControls.pushObject(getControl.call(control,index,options._controlType,options));
-					}
-					
-				});
-			}
-			if(oldControls) {
-				oldControls.forEach(function(oldControl) {
-					itemControls.removeObject(oldControl);
-					oldControl.destroy();
-				});
-			}
-		});
-	}),
+	_loadItemControls : function() {
+		var control=this;
+		var value=this.get('value');
+				
+		var itemControls=this._itemControls;
+		var oldControls=itemControls.toArray();
+		
+		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
+		if(this.isDestroying) {
+			return;
+		}
+		if(Ember.Enumerable.detect(value)) {	
+			value.forEach(function(value,index) {
+				var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
+				if(oldControl) {
+					oldControls.removeObject(oldControl);
+				} else {
+					var options=control._itemControl._meta.options;	
+					options['for']=null;
+					itemControls.pushObject(getControl.call(control,index,options._controlType,options));
+				}
+				
+			});
+		}
+		if(oldControls) {
+			oldControls.forEach(function(oldControl) {
+				itemControls.removeObject(oldControl);
+				oldControl.destroy();
+			});
+		}
+	},
 	
 	
-	_valueObserver:Ember.observer('value,value.@each',function() {
+	_valueObserver:Ember.observer('value,value.[]',function() {
 		this._super();
+		Ember.run.scheduleOnce('sync',this,function() {
+			this._loadItemControls();
+		});
 	}),
 	
 	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
@@ -109,11 +110,11 @@ export default Control.extend(ControlSupport,{
 	// We alias the for property for panels and forms
 	'_model' : Ember.computed.alias('value'),
 	
-	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_itemControls.@each.isDirty',function(){		
+	_controlDirtyObserver: Ember.observer('_controls.[].isDirty,_itemControls.@each.isDirty',function(){		
 		this._super();
 	}),
 	
-	_controlValidObserver: Ember.observer('_controls.@each.isValid,_itemControls.@each.isValid',function(){
+	_controlValidObserver: Ember.observer('_controls.[].isValid,_itemControls.@each.isValid',function(){
 		this._super();
 	}),
 	

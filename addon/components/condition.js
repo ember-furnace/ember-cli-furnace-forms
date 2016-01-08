@@ -28,7 +28,7 @@ export default Input.extend({
 	
 	init : function() {
 		this._super();
-		Ember.warn('You did not specify a condition for the control rendering the conditionpanel '+this.get('name'),this.get('hasPrerequisites')!==null);
+		Ember.warn('You did not specify a condition for the control rendering the conditionpanel '+this.get('name'),this.get('hasPrerequisites')!==null,{id:'furnace-forms:component.condition.not-specified'});
 	} 
 	
 //	render : function(buffer) {

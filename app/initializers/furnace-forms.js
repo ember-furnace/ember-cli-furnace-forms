@@ -9,7 +9,7 @@ import Forms from 'furnace-forms';
 import Ember from 'ember';
 
 
-export function initialize(container, application) {
+export function initialize(application) {
 	
 	application.register('form:lookup',Lookup, {instantiate:false});
 	
@@ -51,26 +51,26 @@ export function initialize(container, application) {
 	application.inject('model','formFor','form:lookup');
 	application.inject('controller','formFor','form:lookup');
 	
-	Ember.ComponentLookup.reopen({
-		componentFor: function(name,container) {
-			if(name.indexOf(':')>-1) {
-				var factory= container.lookupFactory(name);
-				if(factory && !factory.typeKey) {
-					name=name.substring(name.indexOf(':')+1);
-					factory.typeKey=name;
-				}
-				return factory;
-			}
-			return this._super(name,container);
-		},
-		layoutFor : function(name,container) {
-			if(name.indexOf(':')>-1) {
-				name=name.substring(name.indexOf(':')+1);
-				return container.lookupFactory('template:'+name);
-			}
-			return this._super(name,container);
-		}
-	});
+//	Ember.ComponentLookup.reopen({
+//		componentFor: function(name,container) {
+//			if(name.indexOf(':')>-1) {
+//				var factory= container.lookupFactory(name);
+//				if(factory && !factory.typeKey) {
+//					name=name.substring(name.indexOf(':')+1);
+//					factory.typeKey=name;
+//				}
+//				return factory;
+//			}
+//			return this._super(name,container);
+//		},
+//		layoutFor : function(name,container) {
+//			if(name.indexOf(':')>-1) {
+//				name=name.substring(name.indexOf(':')+1);
+//				return container.lookupFactory('template:'+name);
+//			}
+//			return this._super(name,container);
+//		}
+//	});
 	
 	RegisterFormHelper();
 	RegisterControlHelper();

@@ -21,9 +21,12 @@ export default Input.extend(Placeholder,{
 	
 	actions : {
 		selectionChanged : function(newIndex) {
-			this.send('onSelect',newIndex);
+			if(newIndex)
+				this.control.select(newIndex);
 		}
 	},
+	
+	selectedIndex : Ember.computed.alias('control.selectedIndex'),
 	
 	disabled : Ember.computed('isEnabled',{
 		get :function() {

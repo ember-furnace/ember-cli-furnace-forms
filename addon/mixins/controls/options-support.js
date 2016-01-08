@@ -2,6 +2,7 @@ import Ember from 'ember';
 import Option from 'furnace-forms/controls/option';
 import getControl from 'furnace-forms/utils/get-control';
 
+
 export default Ember.Mixin.create({
 	
 	_options : Ember.computed({
@@ -28,20 +29,23 @@ export default Ember.Mixin.create({
 	
 	isSorted: Ember.computed.notEmpty('sortProperties'),
 	
-	orderBy:Ember.SortableMixin.mixins[1].properties.orderBy,
-	sortFunction:Ember.SortableMixin.mixins[1].properties.sortFunction,
+//	orderBy:Ember.SortableMixin.mixins[1].properties.orderBy,
+//	sortFunction:Ember.SortableMixin.mixins[1].properties.sortFunction,
 	
 	init : function() {
 		this._super();
 		this.set('_optionControls',Ember.A());
 		if(this._optionFn) {			
-			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';			
+			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
-					if(!this.get('_form._model')) {
-						Ember.warn('furnace-forms: '+this+' not loading options, form model not ready');
+					if(this.get('_form._model')===undefined) {
+						Ember.warn('furnace-forms: '+this+' not loading options, form model not ready',false,{id:'furnace-forms:control.options-support.no-model'});
 						return;
 					}	
+					if(!this.hasModel()) {
+						return;
+					}
 					var options=this.get('_options');
 					var newOptions=Ember.A();
 					var value = this._optionFn(newOptions,options);
@@ -71,12 +75,12 @@ export default Ember.Mixin.create({
 	},
 	
 	_initOptions : Ember.on('init',function() {
-		if(this.get('_form._model')) {
+		if(this.hasModel()) {			
 			this._optionsObserver();
 		} 
 	}),
 	
-	_loadOptionControls : Ember.observer('_options,_options.@each',function() {
+	_loadOptionControls : Ember.observer('_options,_options.[]',function() {
 		if(this._controlsLoaded===true) {
 			var control=this;
 			var options=this.get('_options');
@@ -106,7 +110,7 @@ export default Ember.Mixin.create({
 		}
 	}),
 	
-	optionControls : Ember.computed('_optionControls.@each,sortProperties.@each',{
+	optionControls : Ember.computed('_optionControls.[],sortProperties.[]',{
 		get : function() {
 			if(!this._controlsLoaded) {
 				this._controlsLoaded=true;
@@ -120,11 +124,11 @@ export default Ember.Mixin.create({
 			var isSorted = this.get('isSorted');
 			var self = this;
 			if (content && isSorted) {
-				content = content.slice();
-				content.sort(function(item1, item2) {
-		          return self.orderBy(item1, item2);
-				});			
-				return Ember.A(content);
+//				content = content.slice();
+//				content.sort(function(item1, item2) {
+//		          return self.orderBy(item1, item2);
+//				});			
+				return content.sortBy.apply(content,this.sortProperties);
 			}
 			
 			return content;

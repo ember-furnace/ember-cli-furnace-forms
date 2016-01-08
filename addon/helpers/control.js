@@ -2,8 +2,8 @@ import Ember from 'ember';
 
 var require = Ember.__loader.require;
 var registerKeyword = require('ember-htmlbars/keywords').registerKeyword;
-var componentKeyword = require('ember-htmlbars/keywords/component').default;
-var assign = require('ember-metal/merge').assign;
+var componentKeyword = require('ember-htmlbars/keywords/element-component').default || require('ember-htmlbars/keywords/component').default;
+var assign = require('ember-metal/merge').assign || require('ember-metal/assign').default;
 var controlKeyWord = {
 	setupState(lastState, env, scope, params, hash) {
 		var control=env.hooks.getValue(params[0]);
@@ -17,11 +17,17 @@ var controlKeyWord = {
 
 	render: componentKeyword.render,
 
-	rerender: componentKeyword.renderer
+	rerender: function(morph,env) {
+		componentKeyword.rerender.apply(this,arguments);
+		if (morph.buildChildEnv) {
+	        return morph.buildChildEnv(morph.getState(), env);
+	    }
+		return;
+	}
 };
 
 export default function() {
-	registerKeyword('f-control',controlKeyWord);
+	registerKeyword('f-control', controlKeyWord);
 	registerKeyword('form-control',controlKeyWord);
 }
 

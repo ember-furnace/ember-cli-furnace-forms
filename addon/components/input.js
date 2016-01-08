@@ -23,7 +23,11 @@ export default Control.extend({
 	defaultLayout: 'forms/input',
 	
 	
-	inputId: null,
+	inputId: Ember.computed('elementId',{
+		get : function() {
+			return this.elementId+'-input';
+		}
+	}),
 
 	value: null,
 	
@@ -35,7 +39,7 @@ export default Control.extend({
 	}),
 	
 	inputInsert:function() {
-		this.set('targetObject.inputId',this.elementId);
+		Ember.deprecate('Furnace-forms: the use of input insert is deprecated',false,{id:'furnace-forms:component.input-insert'});
 	},
 	
 	disabledAttr:Ember.computed('isEnabled',{

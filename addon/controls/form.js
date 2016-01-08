@@ -186,7 +186,7 @@ var Form = Panel.extend({
 			}
 		} 
 		
-		Ember.warn(this+" cannot unregister control "+control+" with name "+name,this._controlsByPath[name]!==undefined);
+		Ember.warn(this+" cannot unregister control "+control+" with name "+name,this._controlsByPath[name]!==undefined,{id:'furnace-forms:control.form.unregister'});
 		if(this._controlsByPath[name]!==undefined) {
 			this._controlsByPath[name].removeObject(control);
 		} else {
@@ -336,27 +336,11 @@ var Form = Panel.extend({
 		this._messageCache={};
 		
 		if(!this._syncFromSource || !this._syncToSource) {
-			this.reopen({
-				_asyncObserver : Ember.observer('for',function() {
-					var model=this.get('for');
-					if(this.get('_model') instanceof Proxy) {
-						this.get('_model').destroy();
-					}
-					if(model) {
-						if(!this._syncFromSource || !this._syncToSource) {							
-							model= Proxy.create({_content:model,
-								_syncFromSource: this._syncFromSource,
-								_syncToSource: this._syncToSource});
-						}										
-					}						
-					this.set('_model',model);
-				}),
-				_model : null,
-			});
 			this._asyncObserver();
 		} 
 		
 		this._super();
+		
 		this.set('_path',null);		
 		
 //		var targetObject=this._syncToSource ? this['for'] : this.get('_proxy');
@@ -371,7 +355,7 @@ var Form = Panel.extend({
 			this._observer = validator.observe(this,'_model',function(result,sender,key) {
 				var silent=sender===null || sender===form;
 				// If our target model changed, immediate show validations unless it's a new model
-				if(silent && ((form.get('_model.isDirty')===true || (form.get('_model.isDirty')===undefined && form.get('isDirty'))) && !form.get('_model.isNew'))) {
+				if(silent && ((form.get('_model.hasDirtyAttributes')===true || (form.get('_model.hasDirtyAttributes')===undefined && form.get('isDirty'))) && !form.get('_model.isNew'))) {
 					silent=false;
 				}
 //				
@@ -440,6 +424,26 @@ var Form = Panel.extend({
 			_syncFromSource : false,
 			
 			_syncToSource : false,
+			
+			_asyncObserver : Ember.observer('for',function() {
+				if(this._syncFromSource && this._syncToSource) { 
+					return;
+				}
+				var model=this.get('for');
+				if(this.get('_model') instanceof Proxy) {
+					this.get('_model').destroy();
+				}
+				if(model) {
+					if(!this._syncFromSource || !this._syncToSource) {							
+						model= Proxy.create({_content:model,
+							_syncFromSource: this._syncFromSource,
+							_syncToSource: this._syncToSource});
+					}										
+				}						
+				this.set('_model',model);
+			}),
+			
+			_model : null
 		});
 		return this;
 	},

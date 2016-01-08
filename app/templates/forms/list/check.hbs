@@ -1,6 +1,6 @@
 <label  {{bind-attr for=inputId}}>{{caption}}</label>
 <options>
-	{{#each control in optionControls}}
+	{{#each optionControls as |control|}}
 		{{f-control control}}
 	{{/each}}
 </options>

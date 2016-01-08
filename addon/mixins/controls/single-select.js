@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import OptionsSupport from './options-support';
 import getControl from 'furnace-forms/utils/get-control';
+import Proxy from 'furnace-forms/proxy';
 export default Ember.Mixin.create({
 	optionControl : null,
 	
@@ -12,9 +13,13 @@ export default Ember.Mixin.create({
 		},
 	},
 	
-	select: function(index) {
-		this.set('value',this.get('_options')[index-1].value);
-		
+	select: function(index) {	
+		if(index==="0") {
+			this.set('value',null);
+		} else {
+			Ember.assert('furnace-forms: no option with index '+index,this.get('_options')[index-1]);
+			this.set('value',this.get('_options')[index-1].value);
+		}
 		this.get("_options").invoke('set','selected',false);
 		var option=this.get("_options").findBy('index',index);
 		if(option) {
@@ -74,7 +79,7 @@ export default Ember.Mixin.create({
 	}),
 
 	init: function() {
-		Ember.warn('No options support for single-select',OptionsSupport.detect(this));	
+		Ember.warn('No options support for single-select',OptionsSupport.detect(this),{id:'furnace-forms:control.options-support-missing'});	
 		this._super();
 		this._updateSelected();
 		this._selectedIndexObserver();
@@ -103,11 +108,15 @@ export default Ember.Mixin.create({
 		this._updateSelected();
 	}),
 	
-	_updateSelected : Ember.observer('_options.@each.selected',function() {
+	_updateSelected : Ember.observer('_options.[].selected',function() {
 		var option=this.getOption();
 		if(!option || this.get('value')!==option.value) {
 			if(this.get('_options')) {
-				option = this.get('_options').findBy('value',this.get('value'));
+				var value=this.get('value');
+				if(value instanceof Proxy)
+					value=value._content;
+				
+				option = this.get('_options').findBy('value',value);
 				this.set('selectedIndex',this.get('_options').indexOf(option)+1);
 			}
 			
@@ -116,7 +125,7 @@ export default Ember.Mixin.create({
 		}
 	}),
 	
-	_optionsObserver: Ember.observer('_options.@each',function() {
+	_optionsObserver: Ember.observer('_options.[]',function() {
 //		this._valueObserver();
 		this._selectedIndexObserver();
 	}),

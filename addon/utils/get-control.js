@@ -27,8 +27,8 @@ export default function getControl(name,type,options) {
 	}
 	else {
 		if(mixins.length) {
-			mixins.push(options);
-			return type.createWithMixins.apply(type,mixins);
+			
+			return type.extend.apply(type,mixins).create(options);
 		} else {		
 			try {
 				return type.create(options);

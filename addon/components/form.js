@@ -22,6 +22,10 @@ export default Panel.extend({
 	
 	classNameBindings: ['_modelClass'],
 	
+	_rootControl : false,
+	
+	_forStreamSubscriber: null,
+	
 	_modelClass : Ember.computed('control._modelName', {
 		get :function() {
 			return this.get('control._modelName').replace(/\./g,'-');
@@ -92,6 +96,16 @@ export default Panel.extend({
 	willClearRender : function() {
 		this._super();
 		this.$().off('submit');
+	},
+	
+	destroy : function() {
+		this._super();
+		if(this._rootControl) {
+			this.control.destroy();
+		}
+		if(this._forStreamSubscriber) {
+			this._forStreamSubscriber();
+		}
 	},
 	
 	type : Ember.computed({

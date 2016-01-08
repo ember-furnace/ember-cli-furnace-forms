@@ -1,11 +1,11 @@
 
-{{#each message in errors}}
+{{#each errors as |message|}}
 	<message class="{{message.type}} {{if message.visible 'visible' 'hidden'}}">{{i18n message attributes=message.attributes}}</message>
 {{/each}}
-{{#each message in warnings}}
+{{#each warnings as |message|}}
 	<message class="{{message.type}} {{if message.visible 'visible' 'hidden'}}">{{i18n message attributes=message.attributes}}</message>
 {{/each}}
-{{#each message in notices}}
+{{#each notices as |message|}}
 	<message class="{{message.type}} {{if message.visible 'visible' 'hidden'}}">{{i18n message attributes=message.attributes}}</message>
 {{/each}}
 

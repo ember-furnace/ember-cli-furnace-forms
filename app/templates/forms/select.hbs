@@ -1,17 +1,12 @@
-<label  {{bind-attr for=inputId}}>{{caption}}</label>
-{{view "select"
-       content=control.options
-       optionValuePath="content.index"
-       optionLabelPath="content.caption"
-       value=control.selectedIndex
-       prompt=placeholder
-       disabled=disabled
-       change=selectionChanged
-       didInsertElement=inputInsert
-       targetObject=this 
-       focus-in="focus" 
-       focus-out="blur"
-       }}
+<label for={{inputId}}>{{caption}}</label>
+<select id={{inputId}} disabled={{disabled}} onchange={{action 'selectionChanged' value="target.value"}} {{action 'focus' on='focus-in'}} {{action 'blur' on='focus-out'}}>
+	{{#if placeholder}}
+		<option value="0">{{placeholder}}</option>
+	{{/if}}
+	{{#each control.options key="@index" as |option|}}
+		<option value={{option.index}} selected={{eq option.index selectedIndex}}>{{option.caption}}</option>
+	{{/each}}
+</select>
 {{#if control.showOptionControl}}
 	{{f-control control.optionControl dynamic=true}}
 {{/if}}

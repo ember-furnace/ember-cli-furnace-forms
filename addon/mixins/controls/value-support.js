@@ -43,10 +43,7 @@ export default Ember.Mixin.create({
 				this.set('value',this.get('property'));
 				this._setOrgValue(this.get('property'));
 			}
-//			}
-//			else {
-//				this._setOrgValue(this.get('value'));
-//			}
+
 		}
 	},
 	
@@ -133,11 +130,25 @@ export default Ember.Mixin.create({
 				
 			}
 			else if(value!==property) {
-				try{
-					this.set('property',value);
-				}
-				catch(e) {
-					Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel._model')+") could not update its corresponding property to the new value: "+e);
+				if(Ember.PromiseProxyMixin.detect(property)) {
+					var control=this;
+					property.then(function(propertyValue) {
+						if(value!==propertyValue) {
+							try{
+								control.set('property',value);
+							}
+							catch(e) {
+								Ember.warn(control.toString()+" (in panel "+control._panel.toString()+" with target "+control.get('_panel._model')+") could not update its corresponding property to the new value: "+e);
+							}
+						}
+					});
+				} else {
+					try{
+						this.set('property',value);
+					}
+					catch(e) {
+						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel._model')+") could not update its corresponding property to the new value: "+e);
+					}
 				}
 			}
 		}

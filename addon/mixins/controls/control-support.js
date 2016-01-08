@@ -34,7 +34,10 @@ export default Ember.Mixin.create({
 		}
 		control.constructor.eachComputedProperty(function(name, meta) {		
 			if (meta.type==='form-control') {
-				controls.pushObject(control.get(name));
+				let _control=control.get(name);
+				if(_control) {
+					controls.pushObject(_control);
+				}
 			}
 		});		
 		if(this.isDestroyed) {
@@ -93,7 +96,7 @@ export default Ember.Mixin.create({
 		});
 	},
 	
-	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty',function(){		
+	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty',function(){			
 		this.setDirty(this._dirty);
 	}),
 	

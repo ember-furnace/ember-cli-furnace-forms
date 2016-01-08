@@ -15,11 +15,15 @@ export default function(props,fn) {
 		}		
 		if(arguments.length===1) {
 			options._conditionFn=function() {
+				if(!this.hasModel()) {
+					return false;
+				}
+				
 				var props=this._conditionProps.split(',');
 				for(var i=0; i<props.length;i++) {
 					var prop=this.get(props[i]);
 					if(prop instanceof Control) {
-						Ember.warn('Condition check on control "'+props[i]+'" but the control is not available (yet)!',prop.content!==null);
+						Ember.warn('Condition check on control "'+props[i]+'" but the control is not available (yet)!',prop.content!==null,{id:'furnace-forms.conditions-control-initializing'});
 						if(Conditional.detect(prop) && prop.get('hasPrerequisites') ===false) {
 							return false;
 						} else if(ValueSupport.detect(prop) && !prop.get('value') ){
@@ -45,6 +49,9 @@ export default function(props,fn) {
 				this.get('conditionProperties').forEach(function(property) {
 					this.get(property);
 				},this);
+				if(!this.hasModel()) {
+					return false;
+				}
 				return fn.call(this._form);
 			}
 		}
