@@ -14,15 +14,15 @@ var formKeyword = {
 		let named=null;
 		var forObject = null;
 		if(hash['for']) {
-			forObject=env.hooks.getValue(hash['for']);
+			forObject=env.hooks.getValue(hash['for']);			
 		}
 		else {
 			forObject=target;
 		}
 		
 		if(params[0]) {
-			if(typeof params[0]==='string') {
-				named=params[0];			
+			if(typeof env.hooks.getValue(params[0])==='string') {
+				named=env.hooks.getValue(params[0]);			
 			}
 		} 
 		
