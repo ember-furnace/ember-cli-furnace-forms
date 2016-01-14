@@ -18,7 +18,7 @@ import getName from 'furnace-forms/utils/get-name';
 export default Panel.extend({
 	tagName: 'form',
 	
-	defaultLayout: 'forms/form',
+	defaultLayoutName: 'forms/form',
 	
 	classNameBindings: ['_modelClass'],
 	
@@ -57,10 +57,10 @@ export default Panel.extend({
 				if(layoutName===this.constructor.typeKey) {
 					ret.pushObject( 'forms/'+layoutName);
 				} else {
-					ret.pushObject(layoutName+'/'+this.control._componentType);
+					ret.pushObject(layoutName+'/'+this.control._decoratorType);
 				}						
 			}
-			ret.pushObject(this.get('defaultLayout'));
+			ret.pushObject(this.get('defaultLayoutName'));
 			return ret;
 		}
 	}).readOnly(),

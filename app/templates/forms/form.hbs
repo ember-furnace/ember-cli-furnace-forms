@@ -2,13 +2,13 @@
 	<h2 class="form-caption">{{caption}}</h2>
 {{/if}}
 <controls>
-{{#each control in inputControls}}
-{{f-control control}}
+{{#each inputControls as |control|}}
+	{{f-control control}}
 {{/each}}
 </controls>
 <actions>
-{{#each control in actionControls}}
-{{f-control control}}
+{{#each actionControls as |control|}}
+	{{f-control control}}
 {{/each}}
 </actions>
 {{f-messages}}

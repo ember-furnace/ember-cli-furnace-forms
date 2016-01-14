@@ -16,16 +16,9 @@ import Input from 'furnace-forms/components/input';
  */
 export default Input.extend({
 	
-	attributeBindings: ['type'],
 	
 	optionControls : Ember.computed.alias('control.optionControls'),
 	
 	controls : Ember.computed.alias('control.controls'),
-	
-	type : Ember.computed({
-		get : function() {
-			return Ember.String.camelize(this.constructor.typeKey);
-		}
-	}).readOnly(),
 	
 });

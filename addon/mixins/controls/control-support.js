@@ -125,17 +125,12 @@ export default Ember.Mixin.create({
 		this.setValid(this._valid);
 	}),
 	
-//	willDestroy: function() {
-//		this.get('controls').invoke('destroy');
-//		this.set('_controls',null);
-//		this._super();
-//	}
 	destroy : function() {
-		var controls=this.get('controls');
-		if(controls) {
+		this._super();	
+		var controls=this._controls;
+		if(controls && controls.length) {
 			controls.invoke('destroy');
 		}
-		this._super();
 	},
 	
 	_reset:function(modelChanged) {

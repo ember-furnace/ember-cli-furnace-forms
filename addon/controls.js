@@ -11,6 +11,8 @@ import Panel from './controls/panel';
 import Input from './controls/input';
 import List from './controls/list';
 import Action from './controls/action';
+import Options from './controls/options';
+import Number from './controls/number';
 import View from './controls/view';
 
 /**
@@ -25,6 +27,7 @@ export default Ember.Namespace.extend( {
 	List : List,
 	Action : Action,
 	View : View,
-	
+	Options:Options,
+	Number:Number
 	
 }).create();

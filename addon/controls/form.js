@@ -18,9 +18,9 @@ import Ember from 'ember';
 var Form = Panel.extend({
 	_isForm : true,
 	
-	_component: 'form',
+	_decoratorName: 'form',
 	
-	_componentType: 'forms',
+	_decoratorType: 'form',
 
 	_syncFromSource : true,
 	

@@ -14,6 +14,5 @@ export default Input.extend({
 	
 	selected : Ember.computed.alias('control.selected'),
 	
-	name : Ember.computed.alias('control._panel._name'),
 	
 });

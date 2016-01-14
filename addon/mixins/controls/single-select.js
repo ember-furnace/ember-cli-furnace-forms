@@ -3,6 +3,9 @@ import OptionsSupport from './options-support';
 import getControl from 'furnace-forms/utils/get-control';
 import Proxy from 'furnace-forms/proxy';
 export default Ember.Mixin.create({
+	
+	_decoratorName : 'select',
+	
 	optionControl : null,
 	
 	showOptionControl : false,
@@ -56,13 +59,14 @@ export default Ember.Mixin.create({
 					ret = control.get('optionControl');
 				}
 			} else if(option && option.control) {
-				var options=option.control._meta.options;
-				options['_model']=this.get('value');
+				var meta=option.control._meta;
+				var options={};
+				options['for']=this.get('value');
 				options._path=this._panel._path;
 				if(this.get('optionControl')) {
 					this.get('optionControl').destroy();
 				}
-				ret = getControl.call(this,'value',option.control._meta.options._controlType,options);
+				ret = getControl.call(this,'value',meta,options);
 			}
 			
 			if(ret) {

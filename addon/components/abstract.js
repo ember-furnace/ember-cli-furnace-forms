@@ -6,6 +6,8 @@
  */
 import Ember from 'ember';
 import Control from 'furnace-forms/controls/abstract';
+import Option from 'furnace-forms/mixins/controls/option';
+import MultiSelect from 'furnace-forms/mixins/controls/multi-select';
 import I18n from 'furnace-i18n';
 /**
  * Abstract control component 
@@ -73,7 +75,7 @@ export default Ember.Component.extend({
 	 * @type String
 	 * @private
 	 */
-	name : Ember.computed.alias('control._name'),
+	name : null,
 	
 	/**
 	 * The form to which the control belongs
@@ -218,8 +220,19 @@ export default Ember.Component.extend({
 			if(this._registeredControl) {
 				this._registeredControl.unregisterComponent(this);
 			}
-			this.get('control').registerComponent(this);
+			this.control.registerComponent(this);
+			if(Option.detect(this.control)) {
+				if(MultiSelect.detect(this.control._panel)) {
+					this.set('name',this.get('control._panel._name')+'Option['+this.get('control.index')+']');
+				} else {
+					this.set('name',this.get('control._panel._name')+'Option');
+				}
+			} else {
+				this.set('name',this.get('control._name'));
+			}
+			
 			this._registeredControl=this.control;
+			
 		}
 	},
 	
@@ -314,7 +327,7 @@ export default Ember.Component.extend({
 	}),
 	
 	
-	defaultLayout : Ember.computed.alias('tagName'),
+	defaultLayoutName : Ember.computed.alias('tagName'),
 	
 	/**
 	 * @TODO: Fix layoutname resolution, it is a mess
@@ -331,17 +344,17 @@ export default Ember.Component.extend({
 	layouts: Ember.computed({
 		get : function() {
 			var ret=Ember.A();		
-			ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayout'))).replace(/\./g,'/'));
-			if(this.constructor.typeKey) {
-				ret.pushObject((this.get('control._form._modelName')+'.'+this.constructor.typeKey).replace(/\./g,'/'));			
-				var layoutName=this.constructor.typeKey.replace(/\./g,'/');
-				if(layoutName===this.constructor.typeKey) {
+			ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayoutName'))).replace(/\./g,'/'));
+			if(this.control._decoratorName) {
+				ret.pushObject((this.get('control._form._modelName')+'.'+this.control._decoratorName).replace(/\./g,'/'));			
+				var layoutName=this.control._decoratorName.replace(/\./g,'/');
+				if(layoutName===this.control._decoratorName) {
 					ret.pushObject( 'forms/'+layoutName);
 				} else {
-					ret.pushObject(layoutName+'/'+this.control._componentType);
+					ret.pushObject(layoutName+'/'+this.control._decoratorType);
 				}						
 			}
-			ret.pushObject(this.get('defaultLayout'));
+			ret.pushObject(this.get('defaultLayoutName'));
 			return ret;
 		}
 	}).readOnly(),

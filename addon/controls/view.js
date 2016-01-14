@@ -17,9 +17,9 @@ import Control from './abstract';
  * @protected
  */
 export default Control.extend({
-	_component : 'view',
+	_decoratorName : 'view',
 	
-	_componentType : 'view',
+	_decoratorType : 'view',
 	
 	init : function() {
 		this._super();

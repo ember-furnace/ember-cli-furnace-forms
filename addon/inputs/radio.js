@@ -5,8 +5,7 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Input from 'furnace-forms/components/list';
-import Option from './check-option';
+import Input from 'furnace-forms/components/options';
 
 
 /**
@@ -18,8 +17,9 @@ import Option from './check-option';
  */
 export default Input.extend({
 	
-	optionType : 'check-option',
+	optionType : 'radio-option',
 	
-	defaultLayout: 'forms/list/check',
+	defaultLayoutName: 'forms/list/radio',
 
+	type : 'radio'
 });

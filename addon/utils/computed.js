@@ -6,6 +6,7 @@ import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 
 import Conditions from 'furnace-forms/utils/conditions';
 import Options from 'furnace-forms/utils/options';
+import {singleSelect,multiSelect} from 'furnace-forms/utils/options';
 import Item from 'furnace-forms/utils/item';
 import Number from 'furnace-forms/utils/number';
 
@@ -17,6 +18,10 @@ function getMeta(options) {
 	};
 };
 
+function Decorator(decorator) {
+	this._meta.options._decoratorName=decorator;
+	return this;
+}
 
 function computedControl(type,options) {
 	options=options || {};
@@ -35,7 +40,7 @@ function computedControl(type,options) {
 					return null;
 				}
 				this.__controls[key]=null;
-				this.__controls[key]=getControl.call(this,key,options._controlType,options);
+				this.__controls[key]=getControl.call(this,key,meta);
 			}			
 			return this.__controls[key];
 		}
@@ -43,13 +48,15 @@ function computedControl(type,options) {
 	
 	control.meta(meta);
 		
-
 	control.cond=Conditions;
 	control.on=Conditions;
 	control.options=Options;
+	control.singleSelect=singleSelect;
+	control.multiSelect=multiSelect;
 	control.item=Item;
 	control.number=Number;
 	control.readOnly();
+	control.decorator=Decorator;
 	return control;
 }
 

@@ -5,7 +5,7 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Input from 'furnace-forms/components/list';
+import Input from 'furnace-forms/components/input';
 
 
 /**
@@ -17,11 +17,13 @@ import Input from 'furnace-forms/components/list';
  */
 export default Input.extend({
 	
-	defaultLayout: 'forms/list',
+	defaultLayoutName: 'forms/list',
 
 	itemControls : Ember.computed.alias('control.itemControls'),
 	
 	inputControls : Ember.computed.alias('control.inputControls'),
 	
 	actionControls : Ember.computed.alias('control.actionControls'),
+	
+	controls : Ember.computed.alias('control.controls'),
 });

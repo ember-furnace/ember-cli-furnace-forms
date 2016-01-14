@@ -17,8 +17,8 @@ import ValueSupport from 'furnace-forms/mixins/controls/value-support';
  * @protected
  */
 export default Control.extend(ValueSupport,{
-	_component : 'text',
+	_decoratorName : 'input',
 	
-	_componentType : 'input',
+	_decoratorType : 'input',
 	
 });

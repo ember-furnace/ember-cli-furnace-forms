@@ -2,8 +2,11 @@ import Ember from 'ember';
 import Option from 'furnace-forms/controls/option';
 import getControl from 'furnace-forms/utils/get-control';
 
-
 export default Ember.Mixin.create({
+	
+	select: function() {
+		Ember.assert('Select called on control with options-support but selection type was not specified',false);
+	},
 	
 	_options : Ember.computed({
 		get : function(key,value){
@@ -96,7 +99,7 @@ export default Ember.Mixin.create({
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
 				} else {
-					optionControls.pushObject(getControl.call(control,index,Option,{_panel:control,
+					optionControls.pushObject(getControl.call(control,index,{ options:{_controlType:Option}},{_panel:control,
 						_option:option}));
 				}
 				

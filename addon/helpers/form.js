@@ -42,7 +42,7 @@ var formKeyword = {
 			}
 			hash.control=control;
 			hash._rootControl=true;
-			componentPath = control.get('decorator');
+			componentPath = control.get('_decorator');
 			
 		} else {
 			componentPath=lastState.componentPath;

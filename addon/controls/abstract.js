@@ -24,18 +24,23 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	_panel: null,
 	
-	_component: null,
+	_decoratorName: null,
 	
-	_for : null,
+	_decoratorType: null,
 	
-	decorator: Ember.computed('_component,_componentType', {
+	_decorator: Ember.computed('_decoratorName,_decoratorType', {
 		get : function() {
-			return this.get('_componentType')+':'+this.get('_component');
+			Ember.assert('furnace-forms: '+this+' ('+this._name+') does not specify a decorator type or name',this.get('_decoratorName') && this.get('_decoratorType'));
+			return this.get('_decoratorName')+'.'+this.get('_decoratorType')+'-decorator';
 		},
 		set : function(key,value) {
 			return value;
 		}
 	}),
+	
+	decorator : Ember.computed.alias('_decorator').readOnly(),
+	
+	_for : null,
 	
 	caption: undefined,
 	
@@ -150,7 +155,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	notifyChange: function() {
 		if(this._panel) {
-			Ember.run.scheduleOnce('sync',this,function() {
+			Ember.run.scheduleOnce('sync',this,function() {				
 				this._panel.propertyDidChange(this._name);
 			});
 		}
@@ -285,13 +290,11 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	
-	
-	_componentType : 'forms',
-	
 	getComponentClass : function() {	
-		var component=this._component
+		Ember.assert('getComponentClass is no longer support',false);
+		var component=this._decorator;
 		if(typeof component ==="string") {
-			component = Lookup.call(this,this._component,this._componentType);
+			component = Lookup.call(this,this._decoratorName,this._decoratorType);
 		}
 		return component;		
 	},
@@ -312,17 +315,28 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	willDestroy : function() {
-		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
+	    if(!this.isDestroyed) {
+		//this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
+	}
 		this._super();
 	},
 	
 	destroy: function() {
 		this._super();
-//		console.log('destroying control',this.toString(),this._name);
+		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
+		this.set('target',null);
+		this.set('_panel',null);
+		this.set('_form',null);
 //		Ember.warn('Destroying control '+this.toString()+ ' while there are still components attached! '+ (this._components.length),this._components.length===0);
 //		if(this._components.length!==0)
 //			console.trace();
 	},
 	
 	
+}).reopenClass({
+	decorator : function(decorator) {
+		return this.reopen({
+			_decoratorName : decorator
+		});
+	}
 }).extend(Actions);

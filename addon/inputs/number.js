@@ -16,7 +16,7 @@ import Text from 'furnace-forms/inputs/text';
  */
 export default Text.extend({
 	
-	defaultLayout: 'forms/number',
+	defaultLayoutName: 'forms/number',
 	
 	format : Ember.computed.alias('control.format'),
 	

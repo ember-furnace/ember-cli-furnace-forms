@@ -12,7 +12,8 @@ export default function(props,fn) {
 		
 		for(var i =0;i<length;i++) {
 			_props[i]='_form.'+_props[i];			
-		}		
+		}
+
 		if(arguments.length===1) {
 			options._conditionFn=function() {
 				if(!this.hasModel()) {

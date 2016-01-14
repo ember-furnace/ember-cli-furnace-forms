@@ -16,8 +16,9 @@ import Ember from 'ember';
  * @protected
  */
 export default Control.extend({
-	_componentType : 'input',
-	_component : 'button',
+	_decoratorType : 'input',
+	
+	_decoratorName : 'button',
 	
 	dispatch : function() {
 		if(!this.get('isEnabled')) {

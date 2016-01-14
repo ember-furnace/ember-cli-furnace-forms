@@ -20,14 +20,7 @@ import getControl from 'furnace-forms/utils/get-control';
 export default Control.extend(ControlSupport,{
 	_isList : true,
 	
-	_component : 'list',
-	
-	_componentType : 'input',
-
-	
-	_itemComponent : null,
-	
-	_itemComponentType : 'input',
+	_decoratorName : 'list',
 	
 	_itemControls : null,
 	
@@ -82,9 +75,8 @@ export default Control.extend(ControlSupport,{
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
 				} else {
-					var options=control._itemControl._meta.options;	
-					options['for']=null;
-					itemControls.pushObject(getControl.call(control,index,options._controlType,options));
+					var meta=control._itemControl._meta;						
+					itemControls.pushObject(getControl.call(control,index,meta,{'for' : null}));
 				}
 				
 			});
@@ -120,13 +112,13 @@ export default Control.extend(ControlSupport,{
 	
 }).reopenClass({
 	
-	generate : function(mixins,options) {
+	generate : function(mixins,meta,options) {
 		options=options || {};
 		mixins=mixins || [];
-		mixins.push(options);
+		mixins.push(meta.options);
 		var typeKey=this.typeKey;
-		var component = this.extend.apply(this,mixins);
-		component.typeKey=typeKey;
-		return component;
+		var control = this.extend.apply(this,mixins);
+		control.typeKey=typeKey;
+		return control;
 	}
 });

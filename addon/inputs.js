@@ -14,10 +14,10 @@ import Submit from './inputs/submit';
 import Select from './inputs/select';
 import Checkbox from './inputs/checkbox';
 import List from './inputs/list';
-import RadioList from './inputs/list/radio';
-import RadioOption from './inputs/list/radio-option';
-import CheckList from './inputs/list/check';
-import CheckOption from './inputs/list/check-option';
+import RadioList from './inputs/radio';
+import RadioOption from './inputs/radio-option';
+import CheckList from './inputs/checklist';
+import CheckOption from './inputs/checklist-option';
 
 /**
  * @class Forms

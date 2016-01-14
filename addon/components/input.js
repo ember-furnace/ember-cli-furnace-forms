@@ -20,7 +20,7 @@ export default Control.extend({
 	
 	
 	
-	defaultLayout: 'forms/input',
+	defaultLayoutName: 'forms/input',
 	
 	
 	inputId: Ember.computed('elementId',{
@@ -49,9 +49,9 @@ export default Control.extend({
 	}).readOnly(),
 
 	
-	type : Ember.computed({ 
-		get  :function() {
-			return Ember.String.camelize(this.constructor.typeKey);
+	type : Ember.computed('control',{ 
+		get  :function() {			
+			return Ember.String.camelize(this.control.constructor.typeKey);
 		}
 	}).readOnly(),
 });

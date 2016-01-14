@@ -20,9 +20,11 @@ import Proxy from 'furnace-forms/proxy';
  * @protected
  */
 export default Control.extend(ControlSupport,{
-	_component : 'panel',
-	
 	'for' : null,
+	
+	_decoratorName : 'panel',
+	
+	_decoratorType: 'panel',
 	
 	_model : Ember.computed.alias('for'),
 	
@@ -117,8 +119,9 @@ export default Control.extend(ControlSupport,{
 	
 }).reopenClass({
 	
-	generate : function(mixins,options) {
+	generate : function(mixins,meta,options) {
 		options=options || {};
+		var _options={};
 		mixins=mixins || [];	
 		if(!options['for']) {
 //			if(options._panel && options._panel._isFormOption) {
@@ -127,26 +130,28 @@ export default Control.extend(ControlSupport,{
 			
 			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('_model'))) {
 				if(options._panel.get('_model') instanceof DS.ManyArray) {
-					options['for']=Ember.computed('_panel._model',function() {
+					_options['for']=Ember.computed('_panel._model',function() {
 						if(!this.get('_panel._model')) {
 							return undefined;
 						}
 						return this.get('_panel._model').objectAt(this._name);
 					});
 				} else {
-					options['for']=Ember.computed.alias('_panel._model.'+options._name);
+					_options['for']=Ember.computed.alias('_panel._model.'+options._name);
 				}
 			}
 			else if(options._panel.get('_model') && options._panel.get('_model.'+options._name)!==undefined) {
-				options['for']=Ember.computed.alias('_panel._model.'+options._name);
+				_options['for']=Ember.computed.alias('_panel._model.'+options._name);
 			} else {
-				options['for']=Ember.computed.alias('_panel._model');						
+				_options['for']=Ember.computed.alias('_panel._model');						
 			}
+			delete options['for'];
 		}
-		mixins.push(options);
+		mixins.push(meta.options);
+		mixins.push(_options);
 		var typeKey=this.typeKey;
-		var component = this.extend.apply(this,mixins);
-		component.typeKey=typeKey;
-		return component;
+		var control = this.extend.apply(this,mixins);
+		control.typeKey=typeKey;
+		return control;
 	}
 });

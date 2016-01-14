@@ -15,7 +15,7 @@ import Control from './abstract';
  * @extends Furnace.Forms.Components.Abstract
  */
 export default Control.extend({
-	defaultLayout: 'forms/view',
+	defaultLayoutName: 'forms/view',
 	
 	
 	value:Ember.computed.alias('control.value'),

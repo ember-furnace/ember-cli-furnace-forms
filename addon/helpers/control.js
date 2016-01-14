@@ -7,10 +7,10 @@ var assign = require('ember-metal/merge').assign || require('ember-metal/assign'
 var controlKeyWord = {
 	setupState(lastState, env, scope, params, hash) {
 		var control=env.hooks.getValue(params[0]);
-		if(!control._component) {			
-			control._component=env.view.optionType;
+		if(!control._decoratorName) {			
+			control._decoratorName=env.view.optionType;
 		}		
-		let componentPath = control.get('decorator');
+		let componentPath = control.get('_decorator');
 		hash.control=control;		
 		return assign({}, lastState, { componentPath, isComponentHelper: true });
 	},

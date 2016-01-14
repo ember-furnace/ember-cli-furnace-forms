@@ -2,7 +2,6 @@ import Ember from 'ember';
 import OptionsSupport from './options-support';
 import Form from 'furnace-forms/controls/form';
 import Forms from 'furnace-forms';
-import getControl from 'furnace-forms/utils/get-control';
 
 export default Ember.Mixin.create({
 	actions : {
@@ -13,6 +12,8 @@ export default Ember.Mixin.create({
 			
 		},
 	},
+	
+	_decoratorName : 'check',
 	
 	select: function(index,selected) {
 		if(selected) {

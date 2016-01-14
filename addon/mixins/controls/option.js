@@ -19,9 +19,9 @@ import I18n from 'furnace-i18n';
 export default Ember.Mixin.create(ControlSupport,{
 	_isFormOption: true,
 	
-	_componentType : 'input',
+	_decoratorType : 'input',
 	
-	_component: null,
+	_decoratorName: null,
 	
 	actions :{
 	},
@@ -75,9 +75,10 @@ export default Ember.Mixin.create(ControlSupport,{
 		get : function() {
 			// @TODO: should probably destroy existing control
 			if(this._optionControl === null && this._option.control) {
-				var options=this._option.control._meta.options;
-				options.caption=Ember.computed.alias('_panel.caption');
-				this._optionControl= getControl.call(this,'value',options._controlType,options);
+				var meta=this._option.control._meta;				
+				this._optionControl= getControl.call(this,'value',meta,{
+					caption: Ember.computed.alias('_panel.caption')	
+				});
 			}
 			return this._optionControl;
 		}

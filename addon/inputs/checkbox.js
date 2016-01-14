@@ -19,7 +19,7 @@ export default Control.extend(CheckedSupport,{
 	checkedValue:true,
 	uncheckedValue: null,
 	
-	defaultLayout: 'forms/checkbox',
+	defaultLayoutName: 'forms/checkbox',
 	
 	name : Ember.computed.alias('_name'),
 	

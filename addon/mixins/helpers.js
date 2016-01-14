@@ -30,8 +30,9 @@ function getOptions(args,defaultType) {
 	} else {
 		type=args[0];
 		options=args[1]
-	}		
-	options._component = type;
+	}
+	// Deprecated, we now use decorator attribute which we don't overwrite here 
+	options._decoratorName = type;
 	return options;
 }
 
@@ -48,35 +49,98 @@ var Helpers= Ember.Mixin.create({
 		return getControl('control:'+control,options);
 	},
 	
-	input : function(decoratorName,options) {
+	input : function(name,options) {
+		switch(name) {
+			case undefined:
+				return this.text();
+			case 'check':
+				Ember.deprecate('furnace-forms: the "check" input is deprecated, use "checklist" instead',{id:'furnace-forms:input.check'});
+				arguments[0]='checklist';
+				name='checklist';
+			case 'radio':
+			case 'checklist':
+			case 'button':
+			case 'checkbox':
+			case 'number':
+			case 'password':
+			case 'select':
+			case 'submit':
+			case 'text':
+			case 'textarea':
+				return this[name].apply(this,arguments); 
+		}
+		return getControl('input:'+name,options);
+	},
+	
+	text : function(decoratorName,options) {
 		options=getOptions(arguments,'text');
-		return getControl('control:input',options);
+		return getControl('input:default',options);
+	},
+	
+	password : function(decoratorName,options) {
+		options=getOptions(arguments,'password');
+		return getControl('input:default',options);
+	},
+	
+	textarea : function(decoratorName,options) {
+		options=getOptions(arguments,'textarea');
+		return getControl('input:default',options);
+	},
+	
+	checkbox : function(decoratorName,options) {
+		options=getOptions(arguments,'checkbox');
+		return getControl('input:default',options);
 	},
 	
 	number : function(decoratorName,options) {
 		options=getOptions(arguments,'number');
-		return getControl('control:input',options).number();
+		return getControl('input:number',options);
+	},
+	
+	options : function(decoratorName,options) {
+		options=getOptions(arguments,'radio');
+		return getControl('input:options',options);
+	},
+	
+	radio : function(decoratorName,options) {
+		options=getOptions(arguments,'radio');
+		return getControl('input:options',options).singleSelect();
+	},
+	
+	select : function(decoratorName,options) {
+		options=getOptions(arguments,'select');
+		return getControl('input:options',options).singleSelect();
+	},
+	
+	checklist : function(decoratorName,options) {
+		options=getOptions(arguments,'checklist');
+		return getControl('input:options',options).multiSelect();
 	},
 	
 	list : function(decoratorName,options) {
 		options=getOptions(arguments,'list');
-		return getControl('control:list',options);
+		return getControl('input:list',options);
 	},
 	
 	action : function(decoratorName,options) {
 		options=getOptions(arguments,'button');
-		return getControl('control:action',options);
+		return getControl('input:action',options);
+	},
+	
+	button : function(decoratorName,options) {
+		options=getOptions(arguments,'button');
+		return getControl('input:action',options);
 	},
 	
 	submit : function(decoratorName,options) {
 		options=getOptions(arguments,'submit');
 		options=options || {};		
-		return getControl('control:action',options);
+		return getControl('input:action',options);
 	},
 	
 	panel : function(decoratorName,options) {
 		options=getOptions(arguments,'panel');
-		return getControl('control:panel',options);
+		return getControl('panel:default',options);
 	},
 	
 	view : function(decoratorName,options) {
@@ -85,7 +149,7 @@ var Helpers= Ember.Mixin.create({
 //		if(options._component!=='view')
 //			options.layoutName=options._component.replace(/\./g,'/');
 //		options._component='view';
-		return getControl('control:view',options);
+		return getControl('view:default',options);
 	},
 	
 	form: function() {
