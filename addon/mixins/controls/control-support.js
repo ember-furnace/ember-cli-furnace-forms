@@ -22,9 +22,15 @@ export default Ember.Mixin.create({
 		}
 	}).readOnly(),
 	
+	_modelObserver : Ember.observer('_model',function() {
+		this._super.apply(this,arguments);
+		if(this._controls===null) {
+			this._loadControls();
+		}
+	}),
+	
 	_loadControls : function() {
-		if(!this.get('_model')) {
-			Ember.run.later(this,this._loadControls);
+		if(!this.get('_model')) {		   
 			return;
 		}
 		var control=this;
