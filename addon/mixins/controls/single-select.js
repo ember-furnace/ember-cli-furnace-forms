@@ -23,12 +23,14 @@ export default Ember.Mixin.create({
 			Ember.assert('furnace-forms: no option with index '+index,this.get('_options')[index-1]);
 			this.set('value',this.get('_options')[index-1].value);
 		}
-		this.get("_options").invoke('set','selected',false);
-		var option=this.get("_options").findBy('index',index);
-		if(option) {
-			option.set('selected',true);
-		}
-		this._valueObserver();
+//		this.get("_options").invoke('set','selected',false);
+		
+//		var option=this.get("_options").findBy('index',index);
+//		if(option) {
+//			option.set('selected',true);
+//		}
+		
+//		this._valueObserver();
 		this.send('onSelect',index);
 	},
 	
@@ -36,6 +38,7 @@ export default Ember.Mixin.create({
 	
 	_selectedIndexObserver:Ember.observer('selectedIndex', function() {
 		var option = this.getOption();
+		
 		if(option && option.value!==this.get('value')) {
 			this.set('value',option.value);				
 		}
@@ -108,8 +111,13 @@ export default Ember.Mixin.create({
 	selectedIndex : 0,
 	
 	_valueObserver: Ember.observer('value',function() {
+		let selectedOption=this.get("_options").findBy('value',this.get('value'));
+		let index=0;
+		if(selectedOption) {
+			index=selectedOption.index;
+		}
+		this.set('selectedIndex',index);
 		this._super();
-		this._updateSelected();
 	}),
 	
 	_updateSelected : Ember.observer('_options.[].selected',function() {
