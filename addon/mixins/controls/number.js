@@ -21,8 +21,7 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	_valueObserver : Ember.observer('value',function() {
-		this._super();
+	_checkValue: function() {
 		var value=this.get('value');
 		if(isNaN(value)) {
 			if(this.get('min')!==null) {
@@ -50,6 +49,14 @@ export default Ember.Mixin.create({
 				}
 				break;
 		}
-		
+	},
+	
+	_constraintObserver : Ember.observer('min,max,real',function() {
+		this._checkValue();
+	}),
+	
+	_valueObserver : Ember.observer('value',function() {
+		this._checkValue();
+		this._super();				
 	}),
 });
