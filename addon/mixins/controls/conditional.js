@@ -7,13 +7,14 @@ export default Ember.Mixin.create({
 	init:function() {
 		this._super();
 		if(typeof this._conditionFn==='function') {
-			// Do not schedule this, causes all kinds of syncing issues
+			// Do not schedule this, causes all kinds of syncing issues			
 			var fn=function() {				
 				this.set('_condition',this._conditionFn());
 			};
 			(this._conditionProps+',_form._model').split(',').forEach(function(key){
 				this.addObserver(key,this,fn);
 			},this);
+			fn.call(this);
 		}
 	},
 	
