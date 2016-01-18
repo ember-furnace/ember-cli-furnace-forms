@@ -407,11 +407,15 @@ export default Ember.Component.extend({
 		return this.control.getFor(key);
 	},
 	
+	getModel: function(key) {
+		return this.control.getModel(key);
+	},
+	
 	getForm: function(key) {
 		if(key) {
-			return this._form.get(key);
+			return this.control._form.get(key);
 		}
-		return this._form;
+		return this.control._form;
 	}
 	
 });
