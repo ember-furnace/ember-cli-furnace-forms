@@ -42,7 +42,10 @@ export default Ember.Mixin.create({
 		if(option && !option.get('selected')) {
 			this.get("_options").invoke('set','selected',false);
 			option.set('selected',true);
+		} else if(!option) {
+			this.get("_options").invoke('set','selected',false);
 		}
+		
 		if(this._controlForOption!==option) {
 			this._controlForOption=option;
 			if(this._controlsLoaded) {
