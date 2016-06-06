@@ -122,12 +122,11 @@ export default Control.extend(ControlSupport,{
 	generate : function(mixins,meta,options) {
 		options=options || {};
 		var _options={};
-		mixins=mixins || [];	
-		if(!options['for']) {
+		mixins=mixins || [];
+		if(!options['for'] && !meta.options['for']) {
 //			if(options._panel && options._panel._isFormOption) {
 //				options['for']=Ember.computed.alias('_panel.for');
 //			} else
-			
 			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('_model'))) {
 				if(options._panel.get('_model') instanceof DS.ManyArray) {
 					_options['for']=Ember.computed('_panel._model',function() {

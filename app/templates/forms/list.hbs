@@ -1,13 +1,13 @@
 <label for={{inputId}}>{{caption}}</label>
-{{#each control in itemControls}}
+{{#each itemControls as |control|}}
 {{f-control control}}
 {{/each}}
 
-{{#each control in inputControls}}
+{{#each inputControls as |control|}}
 {{f-control control}}
 {{/each}}
 
-{{#each control in actionControls}}
+{{#each actionControls as |control|}}
 {{f-control control}}
 {{/each}}
 {{f-messages}}
