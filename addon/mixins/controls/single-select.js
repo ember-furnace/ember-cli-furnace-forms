@@ -142,22 +142,20 @@ export default Ember.Mixin.create({
 		this._selectedIndexObserver();
 	}),
 	
-	setValid: function(valid) {
-		Ember.run.once(this,function() {
-			if(this.optionControl && valid && this.get('optionControl.isValid')===false) {
-				var isValid=this.get('isValid');		
-				this.setFlag('isValid',false);
-				this.set('_valid',valid);
-				if(isValid===true) {
-					this.notifyChange();
-				}
-			}
-			else if(valid!==this._valid || valid!==this.isValid) {	
-				this.setFlag('isValid',valid);
-				this.set('_valid',valid);
+	_syncValid: function(valid) {
+		if(this.optionControl && valid && this.get('optionControl.isValid')===false) {
+			var isValid=this.get('isValid');		
+			this.setFlag('isValid',false);
+			this.set('_valid',valid);
+			if(isValid===true) {
 				this.notifyChange();
 			}
-		});
+		}
+		else if(valid!==this._valid || valid!==this.isValid) {	
+			this.setFlag('isValid',valid);
+			this.set('_valid',valid);
+			this.notifyChange();
+		}
 	},
 	
 	_apply : function() {

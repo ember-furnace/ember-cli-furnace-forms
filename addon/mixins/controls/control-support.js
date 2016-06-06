@@ -50,8 +50,10 @@ export default Ember.Mixin.create({
 			return;
 		}
 		this.set('_controls',controls);
+
 		// Fixes issue with isValid flags not propegating
-		this._controlValidObserver();
+		// Sets form to valid before validation was run, so disable this 
+		//this._controlValidObserver();
 	},
 	
 	inputControls: Ember.computed('_controls',{
@@ -91,15 +93,17 @@ export default Ember.Mixin.create({
 //	isDirty : false,
 	
 	setDirty : function(dirty) {
-		Ember.run.scheduleOnce('sync',this,function() {
-			if(this._dirty!==dirty) {
-				this.set('_dirty',dirty);
-			}
-			dirty=dirty || this.get('controls').filterBy('isDirty', true).get('length')>0;
-			if(this.isDirty!==dirty) {
-				this.setFlag('isDirty',dirty);
-			}
-		});
+		Ember.run.scheduleOnce('sync',this,this._syncDirty,dirty);
+	},
+	
+	_syncDirty : function(dirty) {
+		if(this._dirty!==dirty) {
+			this.set('_dirty',dirty);
+		}
+		dirty=dirty || this.get('controls').filterBy('isDirty', true).get('length')>0;
+		if(this.isDirty!==dirty) {
+			this.setFlag('isDirty',dirty);
+		}
 	},
 	
 	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty',function(){			
@@ -109,22 +113,24 @@ export default Ember.Mixin.create({
 //	_valid : null,
 //	
 //	isValid : null,
-	
 	setValid : function(valid) {
-		Ember.run.scheduleOnce('sync',this,function() {
-			if(this.isDestroyed) {
-				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
-				return;
-			}
-			if(this._valid!==valid) {				
-				this.set('_valid',valid);
-			}
-			valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
-			if(valid!==this.isValid) {
-				this.setFlag('isValid',valid);
-				this.notifyChange();
-			}
-		});
+		this._syncValid(valid);
+		//Ember.run.scheduleOnce('sync',this,this._syncValid,valid);
+	},
+	
+	_syncValid : function(valid) {
+		if(this.isDestroyed) {
+			Ember.warn('Attempting to change validity of destroyed object '+this.toString());
+			return;
+		}
+		if(this._valid!==valid) {				
+			this.set('_valid',valid);
+		}
+		valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
+		if(valid!==this.isValid) {
+			this.setFlag('isValid',valid);
+			this.notifyChange();
+		}
 	},
 	
 	_controlValidObserver: Ember.observer('controls.@each.isValid',function(sender){

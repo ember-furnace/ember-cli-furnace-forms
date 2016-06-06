@@ -79,20 +79,21 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	isValid: null,
 	
+	
 	setValid: function(valid) {
-		Ember.run.once(this,function() {
-			if(valid!==this._valid) {	
-				this.setFlag('isValid',valid);
-				if(valid) {
-					this.send('onValid');
-				} else {
-					this.send('onInvalid');
-				}
-				this.set('_valid',valid);
-				this.notifyChange();
+		if(valid!==this._valid) {	
+			this.setFlag('isValid',valid);
+			if(valid) {
+				this.send('onValid');
+			} else {
+				this.send('onInvalid');
 			}
-		});
+			this.set('_valid',valid);
+			this.notifyChange();
+		}
 	},
+	
+	
 		
 	store: Ember.computed.alias('target.store'),
 		
@@ -102,24 +103,33 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	setDirty: function(dirty) {
 		this._didReset=false;
-		Ember.run.scheduleOnce('sync',this,function() {
-			if(dirty!==this._dirty) {
-				this.setFlag('isDirty',dirty);
-				this.set('_dirty',dirty);						
-				this.notifyChange();
-			}
-		});
+		if(dirty!==this._dirty) {
+			this.setFlag('isDirty',dirty);
+			this.set('_dirty',dirty);						
+			this.notifyChange();
+		}
 	},
+	
+	_flags: null, 
 	
 	setFlag:function(property,value) {
 		if(this.get(property)!==value) {
-			this.set(property,value);
-			this._components.invoke('set',property,value);
+			this.set(property,value);			
+			this._flags[property]=value;
+			Ember.run.scheduleOnce('sync',this,this._updateFlags);
+		}
+	},
+	
+	_updateFlags: function() {
+		for(var flag in this._flags) {
+			this._components.invoke('set',flag,this._flags[flag]);			
+			delete this._flags[flag];
 		}
 	},
 	
 	init:function() {	
-		this._super();	
+		this._super();
+		this._flags={};
 		this.set('_controlMessages',Ember.A());
 		this.set('_components',Ember.A());		
 		var control=this;

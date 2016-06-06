@@ -269,8 +269,8 @@ var Form = Panel.extend({
 			});
 			promisses.pushObjects(this._forms.invoke('_validate',paths));
 		} else {
-			promisses.pushObject(validator.validate(target,modelName));
 			promisses.pushObjects(this._forms.filterBy('validationDetached',false).invoke('_validate'));
+			promisses.pushObject(validator.validate(target,modelName));
 		}
 		return Ember.RSVP.all(promisses).then(function(result){
 			var outcome=true;
