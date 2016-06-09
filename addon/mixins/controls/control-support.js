@@ -120,7 +120,7 @@ export default Ember.Mixin.create({
 	
 	_syncValid : function(valid) {
 		if(this.isDestroyed) {
-			Ember.warn('Attempting to change validity of destroyed object '+this.toString());
+			Ember.warn('Attempting to change validity of destroyed object '+this.toString(),false,{id:'furnace-forms:control.control-support.validity-destroyed'});
 			return;
 		}
 		if(this._valid!==valid) {				
@@ -138,11 +138,11 @@ export default Ember.Mixin.create({
 	}),
 	
 	destroy : function() {
-		this._super();	
 		var controls=this._controls;
 		if(controls && controls.length) {
 			controls.invoke('destroy');
 		}
+		this._super();	
 	},
 	
 	_reset:function(modelChanged) {

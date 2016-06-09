@@ -51,7 +51,7 @@ export default Control.extend(ControlSupport,{
 //				content.sort(function(item1, item2) {
 //		          return self.orderBy(item1, item2);
 //				});			
-				return contents.sortBy.apply(contents,this.sortProperties);
+				return content.sortBy.apply(content,this.sortProperties);
 			}
 			
 			return content;
@@ -98,6 +98,13 @@ export default Control.extend(ControlSupport,{
 	}),
 	
 	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
+	
+	destroy: function() {
+		if(this._itemControls) {
+			this._itemControls.invoke('destroy');
+		}
+		this._super();
+	},
 	
 	// We alias the for property for panels and forms
 	'_model' : Ember.computed.alias('value'),
