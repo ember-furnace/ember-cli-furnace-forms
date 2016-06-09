@@ -138,7 +138,7 @@ export default Ember.Mixin.create({
 								control.set('property',value);
 							}
 							catch(e) {
-								Ember.warn(control.toString()+" (in panel "+control._panel.toString()+" with target "+control.get('_panel._model')+") could not update its corresponding property to the new value: "+e);
+								Ember.warn(control.toString()+" (in panel "+control._panel.toString()+" with target "+control.get('_panel._model')+") could not update its corresponding property to the new value: "+e,false,{id:'furnace-forms:control.value-support.apply-exception'});
 							}
 						}
 					});
@@ -147,7 +147,7 @@ export default Ember.Mixin.create({
 						this.set('property',value);
 					}
 					catch(e) {
-						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel._model')+") could not update its corresponding property to the new value: "+e);
+						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel._model')+") could not update its corresponding property to the new value: "+e,false,{id:'furnace-forms:control.value-support.apply-exception'});
 					}
 				}
 			}
