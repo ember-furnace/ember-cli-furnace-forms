@@ -47,15 +47,15 @@ export default Panel.extend({
 				ret.pushObject((name+'/form').replace(/\./g,'/'));
 			}
 			
-			if(this.constructor.typeKey) {
-				name=getName(this.get('for'),true);
+			if(this.control.constructor.typeKey) {
+				name=getName(this.getFor(),true);
 				if(name) {
 					ret.pushObject(name.replace(/\./g,'/')+'/form');
 				}
 				ret.pushObject(this.get('control._modelName').replace(/\./g,'/')+'/form');
 				
-				var layoutName=this.constructor.typeKey.replace(/\./g,'/');
-				if(layoutName===this.constructor.typeKey) {
+				var layoutName=this.control.constructor.typeKey.replace(/\./g,'/');
+				if(layoutName===this.control.constructor.typeKey) {
 					ret.pushObject( 'forms/'+layoutName);
 				} else {
 					ret.pushObject(layoutName+'/'+this.control._decoratorType);
