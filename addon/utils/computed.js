@@ -9,6 +9,7 @@ import Options from 'furnace-forms/utils/options';
 import {singleSelect,multiSelect} from 'furnace-forms/utils/options';
 import Item from 'furnace-forms/utils/item';
 import Number from 'furnace-forms/utils/number';
+import Checked from 'furnace-forms/utils/checked';
 
 function getMeta(options) {
 	options._mixin={};
@@ -55,6 +56,7 @@ function computedControl(type,options) {
 	control.multiSelect=multiSelect;
 	control.item=Item;
 	control.number=Number;
+	control.checked=Checked;
 	control.readOnly();
 	control.decorator=Decorator;
 	return control;
