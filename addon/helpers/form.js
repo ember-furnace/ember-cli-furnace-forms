@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
-import CK from 'furnace-component-keywords';
 
 var require = Ember.__loader.require;
 var registerKeyword = require('ember-htmlbars/keywords').registerKeyword;
