@@ -168,10 +168,13 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	notifyChange: function() {
 		if(this._panel) {
-			Ember.run.scheduleOnce('sync',this,function() {				
-				this._panel.propertyDidChange(this._name);
-			});
+			Ember.run.scheduleOnce('sync',this,this._notifyPanel);
 		}
+	},
+	
+	_notifyPanel: function(){
+		if(this._panel)
+			this._panel.propertyDidChange(this._name);
 	},
 	
 	_getPath: function() {
