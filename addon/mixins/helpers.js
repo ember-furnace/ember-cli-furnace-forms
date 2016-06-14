@@ -1,14 +1,5 @@
 import Ember from 'ember';
-import Control from 'furnace-forms/controls/abstract';
-import Input from 'furnace-forms/controls/input'; 
-import Action from 'furnace-forms/controls/action'; 
-import Panel from 'furnace-forms/controls/panel'; 
-import View from 'furnace-forms/controls/view'; 
 import Form from 'furnace-forms/controls/form';
-import FormComponent from 'furnace-forms/components/form';
-import Lookup from 'furnace-forms/utils/lookup-class';
-
-
 
 import {computedControl} from 'furnace-forms/utils/computed';
 
@@ -29,7 +20,7 @@ function getOptions(args,defaultType) {
 		}
 	} else {
 		type=args[0];
-		options=args[1]
+		options=args[1];
 	}
 	// Deprecated, we now use decorator attribute which we don't overwrite here 
 	options._decoratorName = type;
@@ -55,8 +46,8 @@ var Helpers= Ember.Mixin.create({
 				return this.text();
 			case 'check':
 				Ember.deprecate('furnace-forms: the "check" input is deprecated, use "checklist" instead',{id:'furnace-forms:input.check'});
-				arguments[0]='checklist';
 				name='checklist';
+				return this[name].apply(this,name,options); 
 			case 'radio':
 			case 'checklist':
 			case 'button':

@@ -1,14 +1,12 @@
 import Ember from 'ember';
 import OptionsSupport from './options-support';
-import Form from 'furnace-forms/controls/form';
-import Forms from 'furnace-forms';
 
 export default Ember.Mixin.create({
 	actions : {
-		select : function(index) {
+		select : function() {
 			
 		},
-		unselect : function(index) {
+		unselect : function() {
 			
 		},
 	},

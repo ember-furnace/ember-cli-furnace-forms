@@ -16,8 +16,9 @@ export default Ember.Mixin.create({
 
 	_updateElementValue: function() {
 		 Ember.run.next(this, function() {
-			 if(this.$('#'+get(this,'inputId')))
+			 if(this.$('#'+get(this,'inputId'))) {
 				set(this, 'checked', this.$('#'+get(this,'inputId')).prop('checked'));
+			 }
 		 });
 	},
 	
@@ -25,10 +26,11 @@ export default Ember.Mixin.create({
 		this._super();
 		Ember.run.next(this, function() {
 			var input = this.$('#'+get(this,'inputId'));
-			if(input)
+			if(input) {
 				input.prop('checked',this.get('checked'));
+			}
 		});
 		
 		
 	}
-})
+});

@@ -6,7 +6,6 @@
  */
 import Component from './abstract';
 import Ember from 'ember';
-import getName from 'furnace-forms/utils/get-name';
 
 /**
  * Panel component

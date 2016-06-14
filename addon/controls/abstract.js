@@ -7,7 +7,6 @@
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
 import Actions from 'furnace-forms/mixins/controls/control-actions';
-import I18n from 'furnace-i18n';
 /**
  * Abstract control component proxy 
  * 
@@ -145,7 +144,11 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		}
 
 		this._panelEnabledObserver();
-		this._registerControl ? this._registerControl(this) : this._form._registerControl(this);
+		if(this._registerControl)  {
+			this._registerControl(this);
+		} else {
+			this._form._registerControl(this);
+		}
 	},
 	
 	_apply: function() {
@@ -184,9 +187,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	hasModel : function() {
 		var model=null;
-		if(this['_model'])
+		if(this['_model']) {
 			model = this.get('_model');			
-		else {
+		} else {
 			if(this.getForm()) {
 				model = this.getForm().get('_model');
 			}
@@ -199,9 +202,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	getModel : function(path) {		
 		var model=null;
-		if(this['_model'])
+		if(this['_model']) {
 			model = this.get('_model');			
-		else {
+		} else {
 			if(this.getForm()) {
 				model = this.getForm().get('_model');
 			}
@@ -221,8 +224,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	getTarget : function() {
-		if(this._form)
+		if(this._form) {
 			return this.getForm().get('targetObject');
+		}
 		return this.get('targetObject');
 	},
 	
@@ -241,8 +245,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	setMessages: function(messages,silent) {
 		this._updateMessages(messages,this._controlMessages);		
-		if(this.get('hasPrerequisites')===false || this._components.length===0 || this._didReset)
+		if(this.get('hasPrerequisites')===false || this._components.length===0 || this._didReset) {
 			silent=true;
+		}
 		this._didReset=false;
 		this._messagesSilent=silent;		
 //		console.log("New messages for "+this+" Components: "+this._components.length);
@@ -311,8 +316,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	getComponent : function() {
 		var component=this.getComponentClass();
-		if(!component)
+		if(!component) {
 			return null;
+		}
 		return component.create({container:this.container,
 								control:this,
 								_debugContainerKey : component + this.get('_name')
@@ -333,7 +339,11 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	destroy: function() {
 		this._super();
-		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
+		if(this._unregisterControl) {
+			this._unregisterControl(this);
+		} else {
+			this._form._unregisterControl(this);
+		}
 		this.set('target',null);
 		this.set('_panel',null);
 		this.set('_form',null);

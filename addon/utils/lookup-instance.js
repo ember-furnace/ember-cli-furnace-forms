@@ -1,5 +1,5 @@
 import Ember from 'ember';
-
+import getName from './get-name';
 var Cache={classes : {},instances:{}};
 
 //
@@ -36,8 +36,9 @@ var getInstance=function(container,name,options) {
 
 
 export default function(object,options) {
-	if(object===undefined)
+	if(object===undefined) {
 		object=this;
+	}
 	var container=this.get('container');
 	var name=getName(container,object);
 	return getInstance(container,name,options);

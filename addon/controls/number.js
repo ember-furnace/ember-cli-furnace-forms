@@ -4,7 +4,6 @@
  * @module furnace
  * @submodule furnace-forms
  */
-import Ember from 'ember';
 import Control from './input';
 import NumberMixin from 'furnace-forms/mixins/controls/number';
 

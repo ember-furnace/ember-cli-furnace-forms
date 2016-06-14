@@ -22,8 +22,9 @@ export default Control.extend({
 	
 	dispatch : function() {
 		if(!this.get('isEnabled')) {
-			if(this.get('hasPrerequisites')===false)
+			if(this.get('hasPrerequisites')===false) {
 				this.send('validate');
+			}
 			return;
 		}
 		this.send(this._name,this);		
@@ -31,8 +32,9 @@ export default Control.extend({
 	
 	submit : function() {
 		if(!this.get('isEnabled')) {
-			if(this.get('hasPrerequisites')===false)
+			if(this.get('hasPrerequisites')===false) {
 				this.send('validate');
+			}
 			return;
 		}
 		this.send('submit',this._name);

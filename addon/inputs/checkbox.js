@@ -50,10 +50,11 @@ export default Control.extend(CheckedSupport,{
 	},
 	
 	_checkedObserver: Ember.observer('value',function() {
-		if(this.get('value')===this.checkedValue)
+		if(this.get('value')===this.checkedValue) {
 			this.set('checked',true);
-		else 
+		} else { 
 			this.set('checked',false);
+		}
 		this.$('#'+Ember.get(this,'inputId')).prop('checked',this.get('checked'));
 	}),
 	

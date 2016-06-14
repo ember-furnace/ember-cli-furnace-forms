@@ -26,7 +26,7 @@ export default Ember.Mixin.create({
 		onComponent:function() {
 			
 		},
-		reset : function(action) {
+		reset : function() {
 			this._reset();
 		},
 	}

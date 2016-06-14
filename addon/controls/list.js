@@ -45,13 +45,8 @@ export default Control.extend(ControlSupport,{
 			}
 			var content = this._itemControls;
 			var isSorted = this.get('isSorted');
-			var self = this;
 			if (content && isSorted) {
-//				content = content.slice();
-//				content.sort(function(item1, item2) {
-//		          return self.orderBy(item1, item2);
-//				});			
-				return contents.sortBy.apply(contents,this.sortProperties);
+				return content.sortBy.apply(content,this.sortProperties);
 			}
 			
 			return content;

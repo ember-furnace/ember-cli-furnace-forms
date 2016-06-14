@@ -28,8 +28,9 @@ export default Panel.extend({
 	
 	_modelClass : Ember.computed('control._modelName', {
 		get :function() {
-			if(this.get('control._modelName'))
+			if(this.get('control._modelName')) {
 				return this.get('control._modelName').replace(/\./g,'-');
+			}
 		},
 		set : function(key,value) {
 			return value;

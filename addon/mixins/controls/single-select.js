@@ -11,7 +11,7 @@ export default Ember.Mixin.create({
 	showOptionControl : false,
 	
 	actions : {
-		onSelect : function(index) {
+		onSelect : function() {
 			
 		},
 	},
@@ -128,9 +128,9 @@ export default Ember.Mixin.create({
 		if(!option || this.get('value')!==option.value) {
 			if(this.get('_options')) {
 				var value=this.get('value');
-				if(value instanceof Proxy)
+				if(value instanceof Proxy) {
 					value=value._content;
-				
+				}
 				option = this.get('_options').findBy('value',value);
 				this.set('selectedIndex',this.get('_options').indexOf(option)+1);
 			}
