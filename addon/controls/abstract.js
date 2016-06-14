@@ -173,8 +173,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	_notifyPanel: function(){
-		if(this._panel)
+		if(this._panel) {
 			this._panel.propertyDidChange(this._name);
+		}
 	},
 	
 	_getPath: function() {
