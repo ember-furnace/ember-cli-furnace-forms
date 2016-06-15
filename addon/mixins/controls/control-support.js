@@ -133,7 +133,7 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	_controlValidObserver: Ember.observer('controls.@each.isValid',function(sender){
+	_controlValidObserver: Ember.observer('controls.@each.isValid',function(){
 		this.setValid(this._valid);
 	}),
 	

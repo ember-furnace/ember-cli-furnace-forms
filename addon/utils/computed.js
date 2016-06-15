@@ -1,7 +1,5 @@
 import Ember from 'ember';
-import Panel from 'furnace-forms/controls/panel';
 import getControl from 'furnace-forms/utils/get-control';
-import Control from  'furnace-forms/controls/abstract';
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 
 import Conditions from 'furnace-forms/utils/conditions';
@@ -17,7 +15,7 @@ function getMeta(options) {
 		type: 'form-control',
 		options:options
 	};
-};
+}
 
 function Decorator(decorator) {
 	this._meta.options._decoratorName=decorator;
@@ -29,7 +27,7 @@ function computedControl(type,options) {
 	options._controlType=type;
 	var meta=getMeta(options);
 	var control = Ember.computed({ 
-		get : function(key,value,oldValue) {
+		get : function(key) {
 			Ember.assert("You have assigned a control with key "+key+" to "+this.toString()+" but it has no control-support like a Panel, Form or Option",ControlSupport.detect(this));
 			if(!this.__controls) {
 				this.__controls={};

@@ -1,13 +1,12 @@
 import Conditional from 'furnace-forms/mixins/controls/conditional';
 import ValueSupport from 'furnace-forms/mixins/controls/value-support';
 import Control from 'furnace-forms/controls/abstract';
-import Panel from 'furnace-forms/controls/panel';
+import Ember from 'ember';
 
 
 export default function(props,fn) {
 		var _props=props.split(',');
 		var length=_props.length;
-		var _fn;	
 		var options=this._meta.options;
 		
 		for(var i =0;i<length;i++) {
@@ -54,7 +53,7 @@ export default function(props,fn) {
 					return false;
 				}
 				return fn.call(this._form);
-			}
+			};
 		}
 		options._conditionProps=_props.join(',');
 		options._mixin.conditional=Conditional;

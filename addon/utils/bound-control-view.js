@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import readComponentFactory from 'furnace-forms/utils/read-control-factory';
 var _Metamorph = Ember.__loader.require('ember-views/views/metamorph_view')['_Metamorph'];
 
@@ -7,14 +8,12 @@ var subscribe = Ember.__loader.require('ember-metal/streams/utils')['subscribe']
 var unsubscribe = Ember.__loader.require('ember-metal/streams/utils')['unsubscribe'];
 
 var mergeViewBindings = Ember.__loader.require('ember-htmlbars/system/merge-view-bindings')['default'];
-var EmberError =Ember.__loader.require('ember-metal/error')['default'];
 var ContainerView =Ember.__loader.require('ember-views/views/container_view')['default'];
 
 export default ContainerView.extend(_Metamorph, {
   init:function() {
     this._super.apply(this,arguments);
     var componentNameStream = this._boundComponentOptions.componentNameStream;
-    var container = this.container;
     var view=this;
     this.componentClassStream = chain(componentNameStream, function() {
       return readComponentFactory(componentNameStream, view);
@@ -29,14 +28,15 @@ export default ContainerView.extend(_Metamorph, {
   _updateBoundChildComponent:function() {
 	  var component=this._createNewComponent();
 	  if(component) {
-		  if(this.toArray().length)
+		  if(this.toArray().length) {
 			  this.replace(0, 1, [component]);
-		  else
+		  } else {
 			  this.pushObject(component);
-			  
+		  }
 	  }
-	  else 
+	  else {
 		  this.removeChild(this.objectAt(0));
+	  }
   },
   _createNewComponent:function() {
 	var componentNameStream = this._boundComponentOptions.componentNameStream;
@@ -48,7 +48,7 @@ export default ContainerView.extend(_Metamorph, {
     }
     var hash    = this._boundComponentOptions;           
     var hashForComponent = {};
-    hash['control']=control
+    hash['control']=control;
     var prop;
     for (prop in hash) {
       if (prop === '_boundComponentOptions' || prop === 'componentClassStream') { continue; }

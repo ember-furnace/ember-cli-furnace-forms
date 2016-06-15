@@ -1,5 +1,5 @@
 import Ember from 'ember';
-var Proxy = Ember.Object.extend({
+var _Proxy = Ember.Object.extend({
 	_syncFromSource : true,
 	
 	_syncToSource : true,
@@ -51,23 +51,26 @@ var Proxy = Ember.Object.extend({
 	  
 	setUnknownProperty : function(key,value) {
 		var keys=key.split('.');
-		if(!this._content)
+		if(!this._content) {
 			return undefined;
+		}
 		if(keys.length===1) {
 			this._cache[key] = value;
-			if(this._syncToSource)
+			if(this._syncToSource) {
 				this._content.set(key,value);
+			}
 			this.propertyDidChange(key);
 			return value; 
 		}
-		var key=keys.shift();
+		key=keys.shift();
 		return this._getProxy(key).set(keys.join('.'),value);
 	},
 	
 	unknownProperty : function(key) {
 		var keys=key.split('.');
-		if(!this._content)
+		if(!this._content) {
 			return undefined;
+		}
 		if(keys.length===1) {
 			if (this._syncFromSource || !(key in this._cache)) {
 				
@@ -76,7 +79,6 @@ var Proxy = Ember.Object.extend({
 				if(value!==null && typeof value==='object') {
 					value=this._lookupProxy(value);
 					if(Ember.PromiseProxyMixin.detect(value)) {
-						var proxy=this;
 						value.addObserver("_content",this,function() {
 							this.propertyDidChange(key);
 						});
@@ -86,7 +88,7 @@ var Proxy = Ember.Object.extend({
 			}
 			return this._cache[key];
 		}
-		var key=keys.shift();
+		key=keys.shift();
 		return this._getProxy(key).get(keys.join('.'));
 	},
 	
@@ -107,7 +109,7 @@ var Proxy = Ember.Object.extend({
 		
 		var proxy;
 		if(Ember.PromiseProxyMixin.detect(content)) {
-			proxy = Proxy.extend(Ember.PromiseProxyMixin).create({
+			proxy = _Proxy.extend(Ember.PromiseProxyMixin).create({
 				_top: this,
 				_syncFromSource:this._syncFromSource,
 				_syncToSource:this._syncToSource,
@@ -118,7 +120,7 @@ var Proxy = Ember.Object.extend({
 				_content : null,						
 			});
 		} else {
-			proxy = Proxy.create({
+			proxy = _Proxy.create({
 				_top: this,
 				_content:content,
 				_syncFromSource:this._syncFromSource,
@@ -141,8 +143,9 @@ var Proxy = Ember.Object.extend({
 		}
 		if(!this._syncToSource) {
 			for(var key in this._cache) {
-				if(this._content[key] instanceof Ember.ComputedProperty && this._content[key]._readOnly)
+				if(this._content[key] instanceof Ember.ComputedProperty && this._content[key]._readOnly) {
 					continue;
+				}
 				this._content.set(key,this._cache[key]);
 			}
 		}
@@ -164,4 +167,4 @@ var Proxy = Ember.Object.extend({
 	},
 	
 });
-export default Proxy;
+export default _Proxy;

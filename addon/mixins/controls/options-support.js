@@ -9,7 +9,7 @@ export default Ember.Mixin.create({
 	},
 	
 	_options : Ember.computed({
-		get : function(key,value){
+		get : function(){
 			return Ember.A();
 		},
 		set : function(key,value) {
@@ -125,12 +125,7 @@ export default Ember.Mixin.create({
 			}
 			var content = this._optionControls;
 			var isSorted = this.get('isSorted');
-			var self = this;
 			if (content && isSorted) {
-//				content = content.slice();
-//				content.sort(function(item1, item2) {
-//		          return self.orderBy(item1, item2);
-//				});			
 				return content.sortBy.apply(content,this.sortProperties);
 			}
 			

@@ -5,7 +5,6 @@
  * @submodule furnace-forms
  */
 import Ember from 'ember';
-import Control from 'furnace-forms/controls/abstract';
 import Option from 'furnace-forms/mixins/controls/option';
 import MultiSelect from 'furnace-forms/mixins/controls/multi-select';
 import I18n from 'furnace-i18n';
@@ -26,8 +25,9 @@ export default Ember.Component.extend({
 	_nameClass : Ember.computed('control._name',{
 		get : function() {
 			var name=this.get('control._name');		
-			if(typeof name==='string')
+			if(typeof name==='string') {
 				return name.replace(/\./g,'-');
+			}
 		}
 	}).readOnly(),
 	
@@ -58,7 +58,7 @@ export default Ember.Component.extend({
 	},
 	
 	setFocus: function(focus) {
-		if(focus!=this._focus) {
+		if(focus!==this._focus) {
 			this.set('_focus',focus);
 			this.set('hasFocus',focus);
 		}
@@ -284,7 +284,6 @@ export default Ember.Component.extend({
 	}),
 	
 	_controlMessageObserver : Ember.observer('_focus,_showDelayedMessages', function() {
-		var messages=this.__controlMessages;
 		var source = null;
 		if(!this.control) {			
 			return;
@@ -292,19 +291,21 @@ export default Ember.Component.extend({
 		var focus=this.get('_focus');
 		if(!focus) {
 			source= this.get('control._controlMessages').filter(function(message) {
-				if(message.display==="focus")
+				if(message.display==="focus") {
 					return false;
+				}
 				return true;
 			});
 		} else {
 			var showDelayed=this.get('_showDelayedMessages');
 			source= this.get('control._controlMessages').filter(function(message) {
-				if(message.display==="immediate")
+				if(message.display==="immediate"){
 					return true;
-				if(showDelayed && message.display==='delayed') 
+				} else if(showDelayed && message.display==='delayed') { 
 					return true;
-				if(focus && message.display==='focus') 
+				} else if(focus && message.display==='focus') { 
 					return true;
+				}
 				return false;
 			});
 		}
@@ -390,7 +391,7 @@ export default Ember.Component.extend({
 		if(this.control) {
 			this.control.unregisterComponent(this);
 		} else {
-			Ember.warn(this+" control went missing. This is known to happen when the Ember Inspector causes optionControls to load while they shouldn't according to the used layout. We are now leaking memory")
+			Ember.warn(this+" control went missing. This is known to happen when the Ember Inspector causes optionControls to load while they shouldn't according to the used layout. We are now leaking memory");
 		}
 		this._super();
 //		if(this.get('targetObject.'+this._name) instanceof Control) {

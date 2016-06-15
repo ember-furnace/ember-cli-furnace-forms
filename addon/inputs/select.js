@@ -21,8 +21,9 @@ export default Input.extend(Placeholder,{
 	
 	actions : {
 		selectionChanged : function(newIndex) {
-			if(newIndex)
+			if(newIndex) {
 				this.control.select(newIndex);
+			}
 		}
 	},
 	

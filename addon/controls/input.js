@@ -4,9 +4,7 @@
  * @module furnace
  * @submodule furnace-forms
  */
-import Ember from 'ember';
 import Control from './abstract';
-import Lookup from 'furnace-forms/utils/lookup-class';
 import ValueSupport from 'furnace-forms/mixins/controls/value-support';
 /**
  * Input control component proxy 

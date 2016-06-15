@@ -17,18 +17,19 @@ export default function(object,silent) {
 	} else if(object instanceof Ember.Component) {		
 		objectName=object.get('layoutName');
 	} else if(object instanceof Ember.Object) {
-		if(object.constructor.modelName!==undefined)
+		if(object.constructor.modelName!==undefined) {
 			objectName=object.constructor.modelName;
-		else
+		} else {
 			objectName=object.constructor.typeKey;
+		}
 	} 
 //	else {
 //		Ember.warn('Can not determine form for type '+(typeof object));
 //		console.trace();
 //	}
 
-	if(!silent)
+	if(!silent) {
 		Ember.warn('Unable to determine form for type '+(typeof object),objectName,{id:'furnace-forms:name-lookup'});
-	
+	}
 	return objectName;
-};
+}

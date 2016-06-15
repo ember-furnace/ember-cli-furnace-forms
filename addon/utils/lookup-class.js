@@ -3,8 +3,9 @@ import getName from './get-name';
 var Cache={classes : {},instances:{}};
 
 var getClass=function(container,type,name) {
-	if(type===undefined)
+	if(type===undefined) {
 		type='form';
+	}
 		
 	var Class=Cache.classes[type+":"+name];
 	if(!Class) {
@@ -23,8 +24,9 @@ export default function(object,type) {
 		name=object;
 	}
 	else {
-		if(object===undefined || object===null)
+		if(object===undefined || object===null) {
 			object=this;
+		}
 		name=getName(object);
 	}
 	var container=this.container;

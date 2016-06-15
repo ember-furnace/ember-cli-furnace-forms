@@ -7,12 +7,12 @@ import MultiSelect from 'furnace-forms/mixins/controls/multi-select';
 function singleSelect() {
 	this._meta.options._mixin.optionsType=SingleSelect;
 	return this;
-};
+}
 
 function multiSelect() {
 	this._meta.options._mixin.optionsType=MultiSelect;
 	return this;
-};
+}
 
 export {
 	singleSelect,
@@ -21,6 +21,7 @@ export {
 
 
 export default function inputOptions() {
+	var prop,options,i;
 	if(this instanceof Ember.ComputedProperty) {
 		this._meta.options._mixin.controlSupport=ControlSupport;
 		this._meta.options._mixin.optionsSupport=OptionsSupport;
@@ -33,7 +34,7 @@ export default function inputOptions() {
 			}
 			this._meta.options._optionProps=_props.join(',');
 			return this;
-		}
+		};
 		
 		// TODO: consider deprecating single and multiple
 		this.multiple=multiSelect;
@@ -44,7 +45,7 @@ export default function inputOptions() {
 				this._meta.options._optionFn=arguments[0];
 				return this;
 			} else if(typeof arguments[0]==='string') {
-				var prop=arguments[0];
+				prop=arguments[0];
 				this._meta.options._optionFn=function() {
 					return this.getTarget().get(prop);
 				};
@@ -52,13 +53,13 @@ export default function inputOptions() {
 			}
 		}
 		
-		var options=Ember.A();
-		for(var i=0;i<arguments.length;i++) {
+		options=Ember.A();
+		for(i=0;i<arguments.length;i++) {
 			options.push(arguments[i]);
 		}
 		this._meta.options._optionFn=function() {
 			return options;
-		}
+		};
 		this._meta.options._optionsStatic=true;
 	} else {
 		this.reopenClass({
@@ -86,20 +87,20 @@ export default function inputOptions() {
 			singleSelect: function() {				
 				return this.reopen(SingleSelect);
 			}
-		})
+		});
 		
 		var attrs={};
 		
 		if(arguments.length===1 && typeof arguments[0] ==='function') {
 			attrs._optionFn=arguments[0];
 		} else if(arguments.length===1 && typeof arguments[0]==='string') {
-			var prop=arguments[0];
+			prop=arguments[0];
 			attrs._optionFn = function() {
 				return this.getTarget().get(prop);
 			};				
 		} else {
-			var options=Ember.A();
-			for(var i=0;i<arguments.length;i++) {
+			options=Ember.A();
+			for(i=0;i<arguments.length;i++) {
 				options.push(arguments[i]);
 			}
 			attrs._optionFn=function() {

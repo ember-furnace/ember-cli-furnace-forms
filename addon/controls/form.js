@@ -352,7 +352,7 @@ var Form = Panel.extend({
 		// Initialize validaton if a validator was resolved and we're the root form, or the root form validator has no validation for our path
 		if(validator && (!this._form || !(this._form.get("_validator."+this._path) instanceof validator.constructor))) {
 			var form= this;
-			this._observer = validator.observe(this,'_model',function(result,sender,key) {
+			this._observer = validator.observe(this,'_model',function(result,sender) {
 				var silent=sender===null || sender===form;
 				// If our target model changed, immediate show validations unless it's a new model
 				if(silent && ((form.get('_model.hasDirtyAttributes')===true || (form.get('_model.hasDirtyAttributes')===undefined && form.get('isDirty'))) && !form.get('_model.isNew'))) {

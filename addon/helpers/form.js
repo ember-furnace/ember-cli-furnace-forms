@@ -7,7 +7,7 @@ var registerKeyword = require('ember-htmlbars/keywords').registerKeyword;
 var componentKeyword = require('ember-htmlbars/keywords/element-component').default || require('ember-htmlbars/keywords/component').default;
 var assign = require('ember-metal/merge').assign || require('ember-metal/assign').default;
 
-function formKeywordFactory() {
+function FormKeywordFactory() {
 	this.setupState=function(lastState, env, scope, params, hash) {
 		let view=env.view;
 		let target= env.hooks.getValue(scope.getSelf());
@@ -49,11 +49,11 @@ function formKeywordFactory() {
 		}
 	
 		return assign({}, lastState, { lookupPath,componentPath, isComponentHelper: true });
-	}
+	};
 }
-formKeywordFactory.prototype=componentKeyword;
+FormKeywordFactory.prototype=componentKeyword;
 
-var formKeyword = new formKeywordFactory;
+var formKeyword = new FormKeywordFactory();
 
 /*
 

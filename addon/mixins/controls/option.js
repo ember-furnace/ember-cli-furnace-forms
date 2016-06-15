@@ -7,7 +7,6 @@
 import Ember from 'ember';
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 import getControl from 'furnace-forms/utils/get-control';
-import I18n from 'furnace-i18n';
 /**
  * Input control component proxy 
  * 
@@ -42,11 +41,13 @@ export default Ember.Mixin.create(ControlSupport,{
 	_valueObserver:Ember.observer('value',function() {
 		if(this.get('_option.value')!==this.value) {
 			var selected=this.get('selected');
-			if(selected)
-				this._panel.select(this._option.index,false);
+			if(selected) {
+ 				this._panel.select(this._option.index,false);
+			}
 			this.set('_option.value',this.value);
-			if(selected)
+			if(selected) {
 				this._panel.select(this._option.index,true);
+			}
 		}
 	}),
 	
@@ -91,12 +92,13 @@ export default Ember.Mixin.create(ControlSupport,{
 				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
 				return;
 			}
-			if(this._valid!=valid) {				
+			if(this._valid!==valid) {				
 				this.set('_valid',valid);
 			}
-			if(this.get('selected'))
-				valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0
-			if(valid!=this.isValid) {
+			if(this.get('selected')) {
+				valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
+			}
+			if(valid!==this.isValid) {
 				this.setFlag('isValid',valid);
 				this.notifyChange();
 			}

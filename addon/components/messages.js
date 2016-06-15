@@ -31,12 +31,12 @@ export default Ember.Component.extend({
 		}
 	}).readOnly(),
 	
-	_showObserver : function(sender,key,value) {
+	_showObserver : function(sender) {
 		this.set('show',sender.get('_showMessages'));
 	},
 	
 	
-	_messagesObserver : function(sender,key,value) {
+	_messagesObserver : function(sender) {
 		var source=sender.get('_controlMessages');
 		this._updateMessages(source,this.messages);
 	},
@@ -54,13 +54,13 @@ export default Ember.Component.extend({
 					_messages.forEach(function(message) {
 						Ember.set(item,'attributes',message.attributes);
 						source.removeObject(message);
-					})
+					});
 				}
 			}
 		});
 		if(source) {
 			source.forEach(function(message) {
-				target.pushObject(message)
+				target.pushObject(message);
 				Ember.run.later(function(){
 					Ember.set(message,'visible',true);				
 				});
