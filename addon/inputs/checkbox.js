@@ -16,8 +16,21 @@ import CheckedSupport from 'furnace-forms/mixins/components/checked-support';
  * @extends Furnace.Forms.Components.Input
  */
 export default Control.extend(CheckedSupport,{
-	checkedValue:true,
-	uncheckedValue: null,
+	checkedValue:Ember.computed({
+		get: function() {
+			if(this.control && this.control.hasOwnProperty('_checkedValue'))
+				return this.get('control._checkedValue');
+			return true;
+		}
+	}),
+	
+	uncheckedValue: Ember.computed({
+		get: function() {
+			if(this.control && this.control.hasOwnProperty('_uncheckedValue'))
+				return this.get('control._uncheckedValue');
+			return null;
+		}
+	}),
 	
 	defaultLayoutName: 'forms/checkbox',
 	
@@ -29,7 +42,7 @@ export default Control.extend(CheckedSupport,{
 		
 	checked : Ember.computed('value', {
 		get : function() {
-			if(this.get('value')===this.checkedValue) {
+			if(this.get('value')===this.get('checkedValue')) {
 				return true;
 			}
 			return false;
@@ -50,7 +63,7 @@ export default Control.extend(CheckedSupport,{
 	},
 	
 	_checkedObserver: Ember.observer('value',function() {
-		if(this.get('value')===this.checkedValue) {
+		if(this.get('value')===this.get('checkedValue')) {
 			this.set('checked',true);
 		} else { 
 			this.set('checked',false);
