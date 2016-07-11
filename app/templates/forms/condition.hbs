@@ -2,16 +2,8 @@
 	{{#if caption}}
 		<h3 class="panel-caption">{{caption}}</h3>
 	{{/if}}
-	<controls>
-		{{#each inputControls as |control|}}
-			{{f-control control}}
-		{{/each}}
-	</controls>
+	<controls>{{#each inputControls as |control|}}{{f-control control}}{{/each}}</controls>
 	
-	<actions>
-	{{#each actionControls as |control|}}
-		{{f-control control}}
-	{{/each}}
-	</actions>
+	<actions>{{#each actionControls as |control|}}{{f-control control}}{{/each}}</actions>
 	{{f-messages}}
 {{/if}}
