@@ -18,9 +18,11 @@ export default Control.extend({
 	
 	attributeBindings: ['type'],
 	
-	
+	classNameBindings : ['isEmpty'],
 	
 	defaultLayoutName: 'forms/input',
+	
+	isEmpty: Ember.computed.alias('control.isEmpty'),
 	
 	
 	inputId: Ember.computed('elementId',{
@@ -51,7 +53,10 @@ export default Control.extend({
 	
 	type : Ember.computed('control',{ 
 		get  :function() {			
-			return Ember.String.camelize(this.control.constructor.typeKey);
+			if(this.control.constructor.typeKey!=='default')
+				return Ember.String.camelize(this.control.constructor.typeKey);
+			else
+				return 'input';
 		}
 	}).readOnly(),
 });

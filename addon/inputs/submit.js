@@ -21,6 +21,4 @@ export default Input.extend({
 		}
 	}
 	
-	
-	
 });

@@ -16,6 +16,7 @@ import Input from 'furnace-forms/components/input';
  * @extends Furnace.Forms.Components.Input
  */
 export default Input.extend({
+	type : 'list',
 	
 	defaultLayoutName: 'forms/list',
 

@@ -16,6 +16,8 @@ import CheckedSupport from 'furnace-forms/mixins/components/checked-support';
  * @extends Furnace.Forms.Components.Input
  */
 export default Control.extend(CheckedSupport,{
+	type : 'checkbox',
+	
 	checkedValue:Ember.computed({
 		get: function() {
 			if(this.control && this.control.hasOwnProperty('_checkedValue'))

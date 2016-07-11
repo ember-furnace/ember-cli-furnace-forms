@@ -17,6 +17,8 @@ import Placeholder from 'furnace-forms/mixins/components/placeholder';
  */
 export default Input.extend(Placeholder,{
 	
+	type : 'select',
+	
 	defaultLayoutName: 'forms/select',
 	
 	actions : {

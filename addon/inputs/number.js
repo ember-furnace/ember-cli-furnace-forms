@@ -15,6 +15,7 @@ import Text from 'furnace-forms/inputs/text';
  * @extends Furnace.Forms.Components.Input
  */
 export default Text.extend({
+	type: 'number',
 	
 	defaultLayoutName: 'forms/number',
 	

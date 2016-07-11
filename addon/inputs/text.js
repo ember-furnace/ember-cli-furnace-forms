@@ -16,6 +16,9 @@ import Placeholder from 'furnace-forms/mixins/components/placeholder';
  * @extends Furnace.Forms.Components.Input
  */
 export default Input.extend(Placeholder,{
+	
+	type : 'text',
+	
 	_showDelayedMessages : false,
 	
 	_delayedMessageTimer : null,

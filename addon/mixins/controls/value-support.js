@@ -189,6 +189,15 @@ export default Ember.Mixin.create({
 		} else {
 			this.set('_orgArray',null);
 		}
-	}
+	},
+	
+	isEmpty : Ember.computed('value',{
+		get : function() {
+			if(this.get('value')==="" || this.get('value')===undefined || this.get('value')===null) {
+				return 'empty';
+			}
+			return '';
+		}
+	}).readOnly(),
 	
 });
