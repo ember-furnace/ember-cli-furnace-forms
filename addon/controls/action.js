@@ -27,7 +27,7 @@ export default Control.extend({
 			}
 			return;
 		}
-		this.send(this._name,this);		
+		this.send(this._name,this.getForm(),this);		
 	},
 	
 	submit : function() {
@@ -40,17 +40,4 @@ export default Control.extend({
 		this.send('submit',this._name);
 	},
 	
-	init: function() {
-		this._super();
-		// We should schedule updateEnabled to make sure it not runs before hasPrerequisites may have updated in the current runloop
-		Ember.run.scheduleOnce('sync',this,this.updateEnabled);
-	},
-	
-	updateEnabled:Ember.observer('hasPrerequisites',function() {
-		if(this.get('hasPrerequisites')!==false) {
-			this.setEnabled(true);					
-		} else {
-			this.setEnabled(false);			
-		}
-	}),
 });

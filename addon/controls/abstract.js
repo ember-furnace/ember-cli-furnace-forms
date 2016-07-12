@@ -7,6 +7,10 @@
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
 import Actions from 'furnace-forms/mixins/controls/control-actions';
+import Conditional from 'furnace-forms/mixins/controls/conditional';
+import {
+	defaultCondition,	
+	getProps } from 'furnace-forms/utils/conditions';
 /**
  * Abstract control component proxy 
  * 
@@ -362,5 +366,28 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		return this.reopen({
 			_decoratorName : decorator
 		});
-	}
+	},
+	
+	on : function(props,fn) {
+		props=getProps(props);
+		var _conditionFn;
+		if(arguments.length===1) {
+			_conditionFn=defaultCondition;
+		}
+		else {
+			_conditionFn=function customCondition() {	
+				this.get('conditionProperties').forEach(function(property) {
+					this.get(property);
+				},this);
+				if(!this.hasModel()) {
+					return false;
+				}
+				return fn.call(this._form);
+			};
+		}
+		return this.extend(Conditional,{
+			_conditionProps: props.join(','),
+			_conditionFn: _conditionFn
+		});
+	},
 }).extend(Actions);

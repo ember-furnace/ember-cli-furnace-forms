@@ -35,48 +35,57 @@ export default Ember.Mixin.create({
 				var control=this;
 				
 				property.then(function(propertyValue){
-					control.set('value',propertyValue);
+					control.addObserver('property',control._propertyObserver);
 					control._setOrgValue(propertyValue);
+					control.set('value',propertyValue);
 				});
 			}
 			else {
-				this.set('value',this.get('property'));
+				this.addObserver('property',this._propertyObserver);
 				this._setOrgValue(this.get('property'));
+				this.set('value',this.get('property'));
 			}
 
 		}
 	},
 	
-	_propertyObserver:Ember.observer('property',function() {
+	// We no longer schedule or observe this directly, observer will be initialized when the initialization completes (with resolved property promise)
+	_propertyObserver:function() {
 		
 		// If we sync to the source, do not update the _orgValue so we keep a reliable dirty flag
 		// If we're not syncing to the source, something else updated it and we should be dirty accordingly, so update _orgValue 
 //		if(!this.get('_form._syncToSource')) {
 //			this._setOrgValue(this.get('property'));
 //		}
+		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
-		Ember.run.once(this,function() {
-			var property=this.get('property');
-			if(Ember.PromiseProxyMixin.detect(property)) {
-				var control=this;
-				property.then(function(property){
-					if( control.get('value')!==property) {
-						control.set('value',property);
-					}
-				});
-			}
-			else {
-				if( this.get('value')!==property) {
-					this.set('value',property);
+		var property=this.get('property');
+		if(Ember.PromiseProxyMixin.detect(property)) {
+			var control=this;
+			property.then(function(property){
+				if( control.get('value')!==property) {
+					control.set('value',property);
 				}
+			});
+		}
+		else {
+			if( this.get('value')!==property) {
+				this.set('value',property);
 			}
-		});
+		}
+		//Ember.run.scheduleOnce('sync',this,this._propertyObserverUpdate);
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
-	}),
+	},
 	
 	
 	_valueObserver:Ember.observer('value',function() {
 		this._apply();
+		this._updateDirty();
+		this.send('onChange');
+		this.notifyChange();
+	}),
+	
+	_updateDirty :function() {
 		var value=this.get('value');
 		var dirty=false;
 		if(value!==this.get('_orgValue')) {
@@ -96,9 +105,7 @@ export default Ember.Mixin.create({
 			
 		} 
 		this.setDirty(dirty);
-		this.send('onChange');
-		this.notifyChange();
-	}),
+	},
 	
 	_apply: function() {
 		if(this.property!==null) {
@@ -107,6 +114,9 @@ export default Ember.Mixin.create({
 			this._components.invoke('set','value',this.get('value'));
 			
 			if(Ember.Enumerable.detect(property)) {
+				if(Ember.PromiseProxyMixin.detect(property)) {
+					property=property._content;
+				}
 				var dirty=false;
 				if(value.get('length')!==property.get('length')) {
 					dirty=true;
@@ -124,12 +134,11 @@ export default Ember.Mixin.create({
 					});						
 				}
 				if(dirty) {
-					property.clear();
-					property.pushObjects(value);
+					property.setObjects(value);
 				}
 				
 			}
-			else if(value!==property) {
+			else if(value!==property) {				
 				if(Ember.PromiseProxyMixin.detect(property)) {
 					var control=this;
 					property.then(function(propertyValue) {
@@ -138,7 +147,7 @@ export default Ember.Mixin.create({
 								control.set('property',value);
 							}
 							catch(e) {
-								Ember.warn(control.toString()+" (in panel "+control._panel.toString()+" with target "+control.get('_panel._model')+") could not update its corresponding property to the new value: "+e,false,{id:'furnace-forms:control.value-support.apply-exception'});
+								Ember.warn(control.toString()+" (in panel "+control._panel.toString()+" with target "+control.get('_panel._model')+") could not update its corresponding promise property to the new value: "+e,false,{id:'furnace-forms:control.value-support.apply-exception'});
 							}
 						}
 					});
@@ -167,17 +176,27 @@ export default Ember.Mixin.create({
 					}
 					if(control.get('value')!==property) {
 						control.set('value',property);
+					} else {
+						control._updateDirty();
 					}
 					
 				});
 			}
 			else {				
 				this._setOrgValue(property);
-				this.set('value',property);
+				if(property!==this.get('value')) {
+					this.set('value',property);
+				} else {
+					this._updateDirty();
+				}
 			}
 		}
 		else {
-			this.set('value',this._orgValue);
+			if(Ember.MutableArray.detect(this._orgValue)) {
+				this.get('value').setObjects(this._orgArray);
+			} else {
+				this.set('value',this._orgValue);
+			}
 		}
 		this._super(modelChanged);
 	},

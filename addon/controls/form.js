@@ -6,6 +6,8 @@
  */
 import Panel from './panel';
 import Proxy from 'furnace-forms/proxy';
+import Conditional from 'furnace-forms/mixins/controls/conditional';
+import { defaultCondition } from 'furnace-forms/utils/conditions';
 import Ember from 'ember';
 /**
  * Form control component proxy 
@@ -79,8 +81,20 @@ var Form = Panel.extend({
 
 		},
 		
-		reset : function(action) {
-			this._reset();
+		reset : function() {
+			var hard=false;
+			var action=null;
+			if(arguments.length===1) {
+				if(typeof arguments[0]==='boolean') {
+					hard=arguments[0];
+				} else {
+					action=arguments[0];
+				}
+			} else if(arguments.length>1) {
+				action=arguments[0];
+				hard=arguments[1];
+			}
+			this._reset(hard);
 			if(this._observer) {
 				this._observer.run();
 			}
@@ -469,6 +483,28 @@ var Form = Panel.extend({
 		}
 		return this;
 		
+	},
+	on : function(props,fn) {
+		props=props.split(',');
+		var _conditionFn;
+		if(arguments.length===1) {
+			_conditionFn=defaultCondition;
+		}
+		else {
+			_conditionFn=function customCondition() {	
+				this.get('conditionProperties').forEach(function(property) {
+					this.get(property);
+				},this);
+				if(!this.hasModel()) {
+					return false;
+				}
+				return fn.call(this);
+			};
+		}
+		return this.extend(Conditional,{
+			_conditionProps: props.join(','),
+			_conditionFn: _conditionFn
+		});
 	},
 });
 export default Form;

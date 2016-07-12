@@ -35,6 +35,9 @@ export default Control.extend(ControlSupport,{
 	init : function() {
 		this.set('_itemControls',Ember.A());
 		this._super();
+		if(this.filterBy) {
+			this.addObserver('value.@each.'+this.filterBy.key,this,this._loadItemControls);
+		}
 		this._loadItemControls();
 	},
 
@@ -64,8 +67,17 @@ export default Control.extend(ControlSupport,{
 		if(this.isDestroying) {
 			return;
 		}
-		if(Ember.Enumerable.detect(value)) {	
-			value.forEach(function(value,index) {
+		if(Ember.Enumerable.detect(value)) {
+			var values;
+			if(this.filter) {
+				values=value.filter(this.filter);
+			} else if(this.filterBy) {
+				values=value.filterBy(this.filterBy.key,this.filterBy.value);
+			} else {
+				values=value;
+			}
+			
+			values.forEach(function(value,index) {
 				var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
@@ -105,7 +117,35 @@ export default Control.extend(ControlSupport,{
 		this._super();
 	}),
 	
+	willDestroy : function() {
+		var controls=this._itemControls;
+		if(controls && controls.length) {
+			controls.invoke('willDestroy');
+		}
+		this._super();	
+	},
+	
+	destroy : function() {
+		var controls=this._itemControls;
+		if(controls && controls.length) {
+			controls.invoke('destroy');
+		}
+		this._super();	
+	},
+	
 }).reopenClass({
+	filter : function(callback) {
+		this.reopen({
+			filter:callback
+		})
+		return this;
+	},
+	filterBy: function(key,value) {
+		this.reopen({
+			filterBy:{key:key,value:value}
+		});
+		return this;
+	},
 	
 	generate : function(mixins,meta,options) {
 		options=options || {};
