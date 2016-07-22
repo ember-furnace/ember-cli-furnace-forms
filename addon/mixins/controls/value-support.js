@@ -29,7 +29,7 @@ export default Ember.Mixin.create({
 				this.reopen({
 					property:Ember.computed.alias(propertyName)
 				});
-			}
+			}			
 			var property=this.get('property');
 			if(Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
@@ -50,6 +50,7 @@ export default Ember.Mixin.create({
 	},
 	
 	// We no longer schedule or observe this directly, observer will be initialized when the initialization completes (with resolved property promise)
+	// Think again. While the promise may have been fulfilled, a change may be triggered while promise content has not been set
 	_propertyObserver:function() {
 		
 		// If we sync to the source, do not update the _orgValue so we keep a reliable dirty flag
@@ -59,6 +60,11 @@ export default Ember.Mixin.create({
 //		}
 		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
+		Ember.run.scheduleOnce('sync',this,this._propertyObserverUpdate);
+		//this.setDirty(this.get('value')!==this.get('_orgValue'));
+	},
+	
+	_propertyObserverUpdate: function() {
 		var property=this.get('property');
 		if(Ember.PromiseProxyMixin.detect(property)) {
 			var control=this;
@@ -73,10 +79,7 @@ export default Ember.Mixin.create({
 				this.set('value',property);
 			}
 		}
-		//Ember.run.scheduleOnce('sync',this,this._propertyObserverUpdate);
-		//this.setDirty(this.get('value')!==this.get('_orgValue'));
 	},
-	
 	
 	_valueObserver:Ember.observer('value',function() {
 		this._apply();
