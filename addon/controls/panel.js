@@ -129,16 +129,16 @@ export default Control.extend(ControlSupport,{
 //				options['for']=Ember.computed.alias('_panel.for');
 //			} else
 			if(options._name!==null && Ember.Enumerable.detect(options._panel.get('_model'))) {
-				if(options._panel.get('_model') instanceof DS.ManyArray) {
+//				if(options._panel.get('_model') instanceof DS.ManyArray) {
 					_options['for']=Ember.computed('_panel._model',function() {
 						if(!this.get('_panel._model')) {
 							return undefined;
 						}
 						return this.get('_panel._model').objectAt(this._name);
 					});
-				} else {
-					_options['for']=Ember.computed.alias('_panel._model.'+options._name);
-				}
+//				} else {
+//					_options['for']=Ember.computed.alias('_panel._model.'+options._name);
+//				}
 			}
 			else if(options._panel.get('_model') && options._panel.get('_model.'+options._name)!==undefined) {
 				_options['for']=Ember.computed.alias('_panel._model.'+options._name);
