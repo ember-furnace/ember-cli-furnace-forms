@@ -31,7 +31,7 @@ export default Ember.Mixin.create({
 				});
 			}			
 			var property=this.get('property');
-			if(Ember.PromiseProxyMixin.detect(property)) {
+			if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
 				
 				property.then(function(propertyValue){
@@ -61,12 +61,13 @@ export default Ember.Mixin.create({
 		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
 		Ember.run.scheduleOnce('sync',this,this._propertyObserverUpdate);
+//		this._propertyObserverUpdate();
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
 	},
 	
 	_propertyObserverUpdate: function() {
 		var property=this.get('property');
-		if(Ember.PromiseProxyMixin.detect(property)) {
+		if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 			var control=this;
 			property.then(function(property){
 				if( control.get('value')!==property) {
@@ -90,7 +91,7 @@ export default Ember.Mixin.create({
 	
 	_updateDirty :function() {
 		var value=this.get('value');
-		var dirty=false;
+		var dirty=false;		
 		if(value!==this.get('_orgValue')) {
 			dirty=true;
 		} else if(this._orgArray) {
@@ -117,7 +118,7 @@ export default Ember.Mixin.create({
 			this._components.invoke('set','value',this.get('value'));
 			
 			if(Ember.Enumerable.detect(property)) {
-				if(Ember.PromiseProxyMixin.detect(property)) {
+				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 					property=property._content;
 				}
 				var dirty=false;
@@ -142,7 +143,7 @@ export default Ember.Mixin.create({
 				
 			}
 			else if(value!==property) {				
-				if(Ember.PromiseProxyMixin.detect(property)) {
+				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 					var control=this;
 					property.then(function(propertyValue) {
 						if(value!==propertyValue) {
@@ -169,7 +170,7 @@ export default Ember.Mixin.create({
 	_reset: function(modelChanged) {
 		if(modelChanged) {
 			var property=this.get('property');
-			if(Ember.PromiseProxyMixin.detect(property)) {
+			if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
 				// We no longer nullify value and orgValue, this triggers observers which might not trigger again if our promise returns
 				// in the same runloop
@@ -196,7 +197,7 @@ export default Ember.Mixin.create({
 		}
 		else {
 			if(Ember.MutableArray.detect(this._orgValue)) {
-				this.get('value').setObjects(this._orgArray);
+				this.getValue('value').setObjects(this._orgArray.toArray());
 			} else {
 				this.set('value',this._orgValue);
 			}
