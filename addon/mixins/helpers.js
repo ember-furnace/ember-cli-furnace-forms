@@ -211,11 +211,12 @@ var Helpers= Ember.Mixin.create({
 		return Ember.computed(depKeys.join(','),{
 			set:getset.set,
 			get : function() {
+				var target=this._isForm ? this : this._form;
 				depKeys.forEach(function(property) {
 					this.get(property);
 				},this);
 				if(getset.get) {
-					return getset.get.apply(this._form);
+					return getset.get.apply(target);
 				}
 				return undefined;
 			}
@@ -232,7 +233,8 @@ var Helpers= Ember.Mixin.create({
 	
 	option: function(value,caption,control) {
 		return Ember.Object.extend({value:value,caption:caption,control : control ? control : null}).create();
-	}
+	},
+	
 });
 
 export default Helpers;
