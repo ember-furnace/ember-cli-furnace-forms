@@ -19,4 +19,10 @@ export default Control.extend(ValueSupport,{
 	
 	_decoratorType : 'input',
 	
+}).reopenClass({
+	targetProperty: function(cp) {
+		return this.reopen({
+			property:cp
+		});
+	}
 });
