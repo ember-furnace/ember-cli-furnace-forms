@@ -15,11 +15,13 @@ export default Ember.Mixin.create({
 	},
 
 	_updateElementValue: function() {
-		 Ember.run.next(this, function() {
-			 if(this.$('#'+get(this,'inputId'))) {
-				set(this, 'checked', this.$('#'+get(this,'inputId')).prop('checked'));
-			 }
-		 });
+		 Ember.run.next(this,this._syncWithDom); 
+	},
+	
+	_syncWithDom : function() {
+		if(this.$('#'+get(this,'inputId'))) {
+			set(this, 'checked', this.$('#'+get(this,'inputId')).prop('checked'));
+		}
 	},
 	
 	didInsertElement : function() {
