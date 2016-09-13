@@ -22,7 +22,7 @@ function FormKeywordFactory() {
 		
 		if(params[0]) {
 			if(typeof env.hooks.getValue(params[0])==='string') {
-				named=env.hooks.getValue(params[0]);			
+				named=env.hooks.getValue(params[0]);
 			}
 		} 
 	
@@ -37,7 +37,7 @@ function FormKeywordFactory() {
 			});
 			if(hash['for']) {
 				hash._forStreamSubscriber=hash['for'].subscribe(function(stream) {
-					this.set('for',stream.value());
+					Ember.run.schedule('afterRender',this,this.set,'for',stream.value());
 				},control);
 			}
 			hash.control=control;
