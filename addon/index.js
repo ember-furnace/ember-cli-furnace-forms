@@ -16,6 +16,7 @@ import Conditional from './mixins/controls/conditional';
 import ControlSupport from './mixins/controls/control-support';
 import ValueSupport from './mixins/controls/value-support';
 import Number from './mixins/controls/number';
+import Proxy from './proxy';
 
 /**
  * @class Forms
@@ -39,7 +40,8 @@ export default Ember.Namespace.extend(Helpers, {
 	
 	ValueSupport : ValueSupport,
 	
-	Number : Number
+	Number : Number,
 	
+	Proxy : Proxy
 	
 }).create();
