@@ -1,4 +1,5 @@
-import Lookup from 'furnace-forms/utils/lookup-class';
+import LookupClass from 'furnace-forms/utils/lookup-class';
+import LookupProxy from 'furnace-forms/utils/lookup-proxy';
 import RegisterFormHelper from 'furnace-forms/helpers/form';
 import RegisterControlHelper from 'furnace-forms/helpers/control';
 //import ControlHelper from 'furnace-forms/helpers/control';
@@ -8,10 +9,9 @@ import Forms from 'furnace-forms';
 
 import Ember from 'ember';
 
-
 export function initialize(application) {
 	
-	application.register('form:lookup',Lookup, {instantiate:false});
+	application.register('form:-lookup',LookupClass, {instantiate:false});
 	
 	
 	application.register('form:default',Forms.Controls.Form);
@@ -50,9 +50,16 @@ export function initialize(application) {
 	application.register('component:form-messages',Forms.Components.Messages);
 	application.register('component:f-messages',Forms.Components.Messages);
 	
-	application.inject('route','formFor','form:lookup');
-	application.inject('model','formFor','form:lookup');
-	application.inject('controller','formFor','form:lookup');
+	application.register('form-model-proxy:default',Forms.Proxy);
+	application.register('form-model-proxy:-lookup',LookupProxy,{instantiate:false});
+	
+	application.inject('route','formFor','form:-lookup');
+	application.inject('model','formFor','form:-lookup');
+	application.inject('controller','formFor','form:-lookup');
+	
+	application.inject('route','modelProxyFor','form-model-proxy:-lookup');
+	application.inject('model','modelProxyFor','form-model-proxy:-lookup');
+	application.inject('controller','modelProxyFor','form-model-proxy:-lookup');
 	
 //	Ember.ComponentLookup.reopen({
 //		componentFor: function(name,container) {

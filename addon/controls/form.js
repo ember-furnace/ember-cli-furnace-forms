@@ -8,6 +8,7 @@ import Panel from './panel';
 import Proxy from 'furnace-forms/proxy';
 import Conditional from 'furnace-forms/mixins/controls/conditional';
 import { defaultCondition } from 'furnace-forms/utils/conditions';
+import lookupProxy from 'furnace-forms/utils/lookup-proxy';
 import Ember from 'ember';
 /**
  * Form control component proxy 
@@ -400,7 +401,7 @@ var Form = Panel.extend({
 	
 	_modelObserver : Ember.observer('_model',function(){
 		// Only reset if 'for' actually changed
-		if(this.get('_model')!==this._currentModel) {
+		if(this.get('_model')!==this._currentModel) {		
 			this._reset(true);
 			this._currentModel=this.get('_model');
 		}
@@ -449,9 +450,9 @@ var Form = Panel.extend({
 				}
 				if(model) {
 					if(!this._syncFromSource || !this._syncToSource) {							
-						model= Proxy.create({_content:model,
-							_syncFromSource: this._syncFromSource,
-							_syncToSource: this._syncToSource});
+						model= lookupProxy(model,null,{
+							fromSource: this._syncFromSource,
+							toSource: this._syncToSource});
 					}										
 				}						
 				this.set('_model',model);

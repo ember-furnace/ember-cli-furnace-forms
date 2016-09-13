@@ -6,8 +6,10 @@
  */
 import Ember from 'ember';
 import Lookup from 'furnace-forms/utils/lookup-class';
+import Proxy from 'furnace-forms/proxy';
 import Actions from 'furnace-forms/mixins/controls/control-actions';
 import Conditional from 'furnace-forms/mixins/controls/conditional';
+
 import {
 	defaultCondition,	
 	getProps } from 'furnace-forms/utils/conditions';
@@ -208,7 +210,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		return true;
 	},
 	
-	getModel : function(path) {		
+	getModel : function(path,real) {		
 		var model=null;
 		if(this['_model']) {
 			model = this.get('_model');			
@@ -221,8 +223,16 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 			Ember.warn('Control '+this.toString()+' is trying to access the (form)model but it is not defined!',model,{id:'furnace-forms:control.model-missing'});
 			return undefined;
 		}
+		if(arguments.length===1 && typeof arguments[0]==='boolean'){
+			path=null;
+			real=arguments[0];
+		}			
+		
 		if(path) {
-			return model.get(path);
+			model= model.get(path);
+		}
+		if(real && model instanceof Proxy) {
+			return model._content;
 		}
 		return model;
 	},
