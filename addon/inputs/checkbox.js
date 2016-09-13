@@ -20,16 +20,18 @@ export default Control.extend(CheckedSupport,{
 	
 	checkedValue:Ember.computed({
 		get: function() {
-			if(this.control && this.control.hasOwnProperty('_checkedValue'))
+			if(this.control && this.control.hasOwnProperty('_checkedValue')) {
 				return this.get('control._checkedValue');
+			}
 			return true;
 		}
 	}),
 	
 	uncheckedValue: Ember.computed({
 		get: function() {
-			if(this.control && this.control.hasOwnProperty('_uncheckedValue'))
+			if(this.control && this.control.hasOwnProperty('_uncheckedValue')) {
 				return this.get('control._uncheckedValue');
+			}
 			return null;
 		}
 	}),
