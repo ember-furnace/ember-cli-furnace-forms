@@ -42,46 +42,50 @@ export default Ember.Mixin.create({
 			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
-					if(this.get('_form._model')===undefined) {
-						Ember.warn('furnace-forms: '+this+' not loading options, form model not ready',false,{id:'furnace-forms:control.options-support.no-model'});
-						return;
-					}	
-					if(!this.hasModel()) {
-						return;
-					}
-					var options=this.get('_options');
-					var newOptions=Ember.A();
-					var value = this._optionFn(newOptions,options);
-					if(value instanceof Ember.RSVP.Promise) {
-						var _self=this;
-						value.then(function(value){							
-							if(!_self.isDestroyed) {
-								if(value!==undefined) {
-									_self.set('_options',value);
-								} else { 
-									_self.set('_options',options);
-								}
-							}
-						});						
-					} else {
-						if(value!==undefined) {
-							this.set('_options',value);
-						} else { 
-							this.set('_options',options);
-						}
-					}
+					Ember.run.scheduleOnce('sync',this,this._getOptions);
 					this._super();
 				})
 			});
-			
+			Ember.run.scheduleOnce('sync',this,this._getOptions);
 		}
 	},
 	
-	_initOptions : Ember.on('init',function() {
-		if(this.hasModel()) {			
-			this._optionsObserver();
-		} 
-	}),
+	_getOptions: function() {
+		if(this.get('_form._model')===undefined) {
+			Ember.warn('furnace-forms: '+this+' not loading options, form model not ready',false,{id:'furnace-forms:control.options-support.no-model'});
+			return;
+		}	
+		if(!this.hasModel()) {
+			return;
+		}
+		var options=this.get('_options');
+		var newOptions=Ember.A();
+		var value = this._optionFn(newOptions,options);
+		if(value instanceof Ember.RSVP.Promise) {
+			var _self=this;
+			value.then(function(value){							
+				if(!_self.isDestroyed) {
+					if(value!==undefined) {
+						_self.set('_options',value);
+					} else { 
+						_self.set('_options',options);
+					}
+				}
+			});						
+		} else {
+			if(value!==undefined) {
+				this.set('_options',value);
+			} else { 
+				this.set('_options',options);
+			}
+		}
+	},
+	
+//	_initOptions : Ember.on('init',function() {
+//		if(this.hasModel()) {			
+//			Ember.run.scheduleOnce('sync',this,this._getOptions);
+//		} 
+//	}),
 	
 	_loadOptionControls : Ember.observer('_options,_options.[]',function() {
 		if(this._controlsLoaded===true) {
@@ -147,6 +151,10 @@ export default Ember.Mixin.create({
 	},
 	
 	options : Ember.computed.alias('_options'),
+	
+	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_optionControls.@each.isDirty',function(){			
+		this.setDirty(this._dirty);
+	}),
 	
 	willDestroy: function() {
 		// Only destroy options if we have an optionFn
