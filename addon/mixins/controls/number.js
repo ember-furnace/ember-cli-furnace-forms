@@ -55,6 +55,15 @@ export default Ember.Mixin.create({
 		this._checkValue();
 	}),
 	
+	value : Ember.computed({
+		set:function(key,value) {
+			if(typeof value!=='number' && value!==null && value!==undefined) {				
+				return Number(value);
+			}
+			return value;
+		},
+	}),
+	
 	_valueObserver : Ember.observer('value',function() {
 		this._checkValue();
 		this._super();				
