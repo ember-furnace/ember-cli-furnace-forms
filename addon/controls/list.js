@@ -69,6 +69,7 @@ export default Control.extend(ControlSupport,{
 		}
 		if(Ember.Enumerable.detect(value)) {
 			var values;
+			var _value=value;
 			if(this.filter) {
 				values=value.filter(this.filter);
 			} else if(this.filterBy) {
@@ -77,7 +78,8 @@ export default Control.extend(ControlSupport,{
 				values=value;
 			}
 			
-			values.forEach(function(value,index) {
+			values.forEach(function(value) {
+				var index=_value.indexOf(value);
 				var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
@@ -95,14 +97,43 @@ export default Control.extend(ControlSupport,{
 			});
 		}
 	},
-	
-	
-	_valueObserver:Ember.observer('value,value.[]',function() {
+
+	_valueObserver:Ember.observer('value,value.[]',function(sender,key) {
 		this._super();
+		if(key==='value') {
+			this._cleanControls();
+		}
 		Ember.run.scheduleOnce('sync',this,function() {
 			this._loadItemControls();
 		});
 	}),
+	
+	_reset: function(modelChanged) {
+		if(modelChanged) {
+			this._cleanControls();
+		}
+		this._super(modelChanged);
+	},
+	
+	_cleanControls : function() {
+		// Immediately remove controls that are no longer backed by a value: 
+		// Our child controls won't like it when their property gets yanked 
+		var toRemove=Ember.A();
+		var property=this.get('property');
+		if(!property) {
+			toRemove=this._itemControls.toArray();
+		} else if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
+			//toRemove=this._itemControls.toArray();
+		} else {
+			this._itemControls.forEach(function(control) {
+				if(!property.contains(control.get('for'))) {
+					toRemove.pushObject(control);
+				}
+			});
+		}
+		toRemove.invoke('destroy');
+		this._itemControls.removeObjects(toRemove);
+	},
 	
 	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
 	
@@ -137,7 +168,7 @@ export default Control.extend(ControlSupport,{
 	filter : function(callback) {
 		this.reopen({
 			filter:callback
-		})
+		});
 		return this;
 	},
 	filterBy: function(key,value) {
