@@ -38,7 +38,7 @@ function computedControl(type,options) {
 					Ember.warn('furnace-forms: trying to access control "'+key+'" but its currently being initialized',false,{id:'furnace-forms:computed-control.access-on-init'});
 					return null;
 				}
-				this.__controls[key]=null;
+				this.__controls[key]=null;				
 				this.__controls[key]=getControl.call(this,key,meta);
 			}			
 			return this.__controls[key];

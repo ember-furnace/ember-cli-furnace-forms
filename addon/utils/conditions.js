@@ -7,7 +7,6 @@ function defaultCondition() {
 	if(!this.hasModel()) {
 		return false;
 	}
-	
 	var props=this._conditionProps.split(',');
 	for(var i=0; i<props.length;i++) {
 		var prop=this.get(props[i]);
@@ -31,21 +30,21 @@ function defaultCondition() {
 		}					
 	}
 	return true;
-};
+}
 
 
 function getProps(props) {
-	var props=props.split(',');
+	props=props.split(',');
 	var length=props.length;
 	for(var i =0;i<length;i++) {
 		props[i]='_form.'+props[i];			
 	}
 	return props;
-};
+}
 export {
 	defaultCondition,
 	getProps
-}
+};
 
 export default function(props,fn) {
 	var options=this._meta.options;
@@ -63,7 +62,7 @@ export default function(props,fn) {
 				return false;
 			}
 			return fn.call(this._form);
-		}
+		};
 	}
 	options._conditionProps=props.join(',');
 	options._mixin.conditional=Conditional;
