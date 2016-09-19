@@ -10,12 +10,6 @@ export default Ember.Mixin.create({
 	
 	showOptionControl : false,
 	
-	actions : {
-		onSelect : function() {
-			
-		},
-	},
-	
 	select: function(index) {	
 		if(index==="0") {
 			this.set('value',null);

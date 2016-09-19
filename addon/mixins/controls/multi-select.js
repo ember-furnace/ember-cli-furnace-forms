@@ -2,14 +2,6 @@ import Ember from 'ember';
 import OptionsSupport from './options-support';
 
 export default Ember.Mixin.create({
-	actions : {
-		select : function() {
-			
-		},
-		unselect : function() {
-			
-		},
-	},
 	
 	_decoratorName : 'check',
 	

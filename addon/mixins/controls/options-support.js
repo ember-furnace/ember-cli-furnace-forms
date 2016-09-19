@@ -3,7 +3,17 @@ import Option from 'furnace-forms/controls/option';
 import getControl from 'furnace-forms/utils/get-control';
 
 export default Ember.Mixin.create({
-	
+	actions : {
+		onSelect : function() {
+			
+		},
+		select : function() {
+			
+		},
+		unselect : function() {
+			
+		},
+	},
 	select: function() {
 		Ember.assert('Select called on control with options-support but selection type was not specified',false);
 	},
