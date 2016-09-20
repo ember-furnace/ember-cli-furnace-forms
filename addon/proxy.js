@@ -287,9 +287,6 @@ var ProxyMixin=Ember.Mixin.create({
 	
 	_getProxy : function(key,value) {
 		if(!this._proxies[key] || value) {
-			if(key==='totals') {
-				console.log(value.toString());
-			}
 			var newProxy=this._lookupProxy(value || this._content.get(key));
 			if(this._proxies[key]!==newProxy) {
 				if(this._proxies[key]) {

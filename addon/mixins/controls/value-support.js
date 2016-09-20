@@ -197,7 +197,7 @@ export default Ember.Mixin.create({
 		}
 		else {
 			if(Ember.MutableArray.detect(this._orgValue)) {
-				this.getValue('value').setObjects(this._orgArray.toArray());
+				this.get('value').setObjects(this._orgArray.toArray());
 			} else {
 				this.set('value',this._orgValue);
 			}

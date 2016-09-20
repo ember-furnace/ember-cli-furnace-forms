@@ -353,7 +353,9 @@ var Form = Panel.extend({
 		if(!this._syncFromSource || !this._syncToSource) {
 			this._asyncObserver();
 		} 
-		
+		if(typeof this['for']==='function') {			
+			this.set('_model',this['for'].apply(this));
+		}
 		this._super();
 		
 		this.set('_path',null);		
@@ -434,11 +436,11 @@ var Form = Panel.extend({
 	
 	
 }).reopenClass({
-	async : function() {
+	async : function(options) {
 		this.reopen({
-			_syncFromSource : false,
+			_syncFromSource : options ? options.fromSource || false : false,
 			
-			_syncToSource : false,
+			_syncToSource : options ? options.toSource || false : false,
 			
 			_asyncObserver : Ember.observer('for',function() {
 				if(this._syncFromSource && this._syncToSource) { 
@@ -450,7 +452,7 @@ var Form = Panel.extend({
 				}
 				if(model) {
 					if(!this._syncFromSource || !this._syncToSource) {							
-						model= lookupProxy(model,null,{
+						model= lookupProxy.call(this,model,null,{
 							fromSource: this._syncFromSource,
 							toSource: this._syncToSource});
 					}										
