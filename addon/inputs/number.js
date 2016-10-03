@@ -29,5 +29,12 @@ export default Text.extend({
 	
 	real : Ember.computed.alias('control.real'),
 	
-	precision : Ember.computed.alias('control.precision')
+	precision : Ember.computed.alias('control.precision'),
+	
+	_valueObserver:Ember.observer('value',function() {
+		var value=this.get('value');
+		if(value!=='-' && value !==this.get('control.value')) {
+			this.set('control.value',value);
+		}
+	}),
 });
