@@ -7,7 +7,6 @@
 import Control from './abstract';
 import Ember from 'ember';
 
-import DS from 'ember-data';
 import getName from 'furnace-forms/utils/get-name';
 import ControlSupport from 'furnace-forms/mixins/controls/control-support';
 import Proxy from 'furnace-forms/proxy';
@@ -96,7 +95,10 @@ export default Control.extend(ControlSupport,{
 	_apply:function() {
 		this._super();
 		this.get('inputControls').invoke('_apply');
-		if((!this._form || this.get('_model')!==this._form.get('_model')) && this.get('_model') instanceof Proxy) {
+		// Our proxy should perform all applies, so make sure we only invoke it once instead once for every child of top form proxy . 
+		// We may need to check our proxies top model matched parent panel proxies top model
+		//if((!this._form || this.get('_model')!==this._form.get('_model')) && this.get('_model') instanceof Proxy) {
+		if((!this._form ) && this.get('_model') instanceof Proxy) {
 			this.get('_model')._apply();
 		}
 	},

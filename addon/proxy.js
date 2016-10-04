@@ -29,6 +29,14 @@ function applyProxy(proxy,refs) {
 				} else {
 					_content=proxy.container.lookup(proxy._modelType +":"+ proxy._modelName);
 				}
+				// We need to set our content so dependent children can apply it too
+				proxy._pendingContent=_content;
+				for(key in proxy._proxies) {
+					var child=proxy._proxies[key];
+					if(ProxyArrayMixin.detect(child) && child._content===null) {
+						child._initialContent(_content.get(key));
+					}
+				}
 				proxy._updateRef(proxy,_content);
 			}
 		}	
@@ -59,6 +67,7 @@ function applyProxy(proxy,refs) {
 			},proxy);
 		}
 		if(_content!==proxy._content) {
+			proxy._pendingContent=undefined;
 			proxy.set('_content',_content);
 			return true;
 		}		
@@ -128,6 +137,28 @@ var ProxyMixin=Ember.Mixin.create({
 			}
 		} else if(this._top) {
 			this._refs=this._top._refs;
+		}
+		if(!this._content && this._modelType==='model') {
+			var factory=this.container.lookupFactory(this._modelType+':'+this._modelName);
+			Ember.get(factory,'relationshipsByName').forEach(function(rel) {
+				if(rel.kind==='hasMany') {
+					var proxy=proxyArray({
+						_syncFromSource:this._syncFromSource,
+						_syncToSource:this._syncToSource,
+						_content:null,
+						container: this.container,
+						_top: this._top || this
+					});
+					this._proxies[rel.key]=proxy;
+					if(rel.options.async===false) {
+						this._cache[rel.key]=proxy;
+					} else {
+						this._cache[rel.key]=new Ember.RSVP.Promise(function(resolve){
+							resolve(proxy);
+						});
+					}
+				}
+			},this);
 		}
 		this.addObserver('_content',this,this._contentDidChange);
 	},
@@ -253,7 +284,7 @@ var ProxyMixin=Ember.Mixin.create({
 			});
 		}else if(!ProxyArrayMixin.detect(value)) {
 			if(ProxyMixin.detect(value)) {
-				value=value._content;
+				value=value._pendingContent || value._content;
 			}	
 			var currentValue=content.get(key);
 			if(currentValue instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(currentValue) ) {
@@ -465,8 +496,17 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		}
 		return name.slice(0,-1)+'('+contentName+')>';
 	},
+	
+	_initialContent: function(content) {
+		this._isApplying=true;
+		this.set('_content',content);
+		this._isApplying=false;
+	},
+	
 	_contentDidChange: function() {		
-		this.setObjects(this._content.toArray().map(this._map,this));		
+		if(this._content && !this._isApplying) {
+			this.setObjects(this._content.toArray().map(this._map,this));
+		}
 	},
 	
 	length: 0,
@@ -474,6 +514,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 	_isApplying: false,
 	
 	_apply: function (refs) {		
+		Ember.assert(this+' can not apply without its _content property set',this._content!==null);
 		var values=Ember.A();
 		this.forEach(function(item){
 			if(ProxyMixin.detect(item)) {
@@ -488,7 +529,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 			}
 		},this._content);
 		if(values.length<this._content.length) {
-			this._content.removeAt(values.length-1,this._content.length-values.length);
+			this._content.removeAt(values.length,this._content.length-values.length);
 		}
 		return this._super.apply(this,arguments);
 	},
