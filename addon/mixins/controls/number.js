@@ -24,9 +24,7 @@ export default Ember.Mixin.create({
 	
 	init : function() {
 		this._super();
-		if(!this._checkValue()) {			
-			this._valueObserver();
-		}
+		this._valueObserver();			
 	},
 	
 	_checkValue: function() {
@@ -71,38 +69,6 @@ export default Ember.Mixin.create({
 		return true;
 	},
 	
-	value: Ember.computed({
-		set: function(key,value) {			
-			if(typeof value!=='number') {
-				if(value===null && !this.canBeNull) {
-					value=0;
-				} else if(value==='' && this.canBeNull) {
-					value=null;
-				} else {
-					value=Number(value);
-					if(this.get('min')!==null && value<this.get('min')) {
-						return this.get('min');
-					}
-					if(this.get('max')!==null && value>this.get('max')) {
-						return this.get('max');
-					}
-					switch(this.get('real')) {
-						case true:
-							if(this.value<0) {
-								return 0;
-							}
-							break;
-						case false:
-							if(this.value>0) {
-								return 0;
-							}
-							break;
-					}
-				}
-			}
-			return value;
-		}
-	}),
 	
 	_constraintObserver : Ember.observer('min,max,real',function() {
 		this._checkValue();
