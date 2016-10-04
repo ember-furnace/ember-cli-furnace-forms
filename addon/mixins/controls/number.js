@@ -19,15 +19,20 @@ export default Ember.Mixin.create({
 		},
 		stepDown : function() {
 			this.set('value',this.get('value')-this.get('step'));
+		},
+		onBlur: function() {
+			this._checkValue(true);
+			this._super();
 		}
 	},
 	
 	init : function() {
 		this._super();
+		this._checkValue(true);
 		this._valueObserver();			
 	},
 	
-	_checkValue: function() {
+	_checkValue: function(fix) {
 		var value=this.get('value');
 		if(value===null && this.canBeNull) {
 			return true;
@@ -40,28 +45,38 @@ export default Ember.Mixin.create({
 				} else {
 					value = this.get('min')!==null ? this.get('min') : 0;
 				}
-			}
-			this.set('value',value);
-			return false;
+				if(fix) {
+					this.set('value',value);
+				}
+				return false;
+			}						
 		}
 		if(this.get('min')!==null && value<this.get('min')) {
-			this.set('value',this.get('min'));
+			if(fix) {
+				this.set('value',this.get('min'));
+			}
 			return false;
 		}
 		if(this.get('max')!==null && value>this.get('max')) {
-			this.set('value',this.get('max'));
+			if(fix) {
+				this.set('value',this.get('max'));
+			}
 			return false;
 		}
 		switch(this.get('real')) {
 			case true:
 				if(this.value<0) {
-					this.set('value',0);
+					if(fix) {
+						this.set('value',0);
+					}
 					return false;
 				}
 				break;
 			case false:
 				if(this.value>0) {
-					this.set('value',0);
+					if(fix) {
+						this.set('value',0);
+					}
 					return false;
 				}
 				break;
@@ -71,11 +86,12 @@ export default Ember.Mixin.create({
 	
 	
 	_constraintObserver : Ember.observer('min,max,real',function() {
-		this._checkValue();
+		this._checkValue(true);
 	}),
 	
 	_valueObserver : Ember.observer('value',function() {
-		this._checkValue();
-		this._super();				
+		if(this._checkValue()) {
+			this._super();
+		}
 	}),
 });
