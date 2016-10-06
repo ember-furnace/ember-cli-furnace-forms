@@ -9,7 +9,7 @@ export default Ember.Mixin.create({
 	max : null,
 	real : null,
 	
-	precision : 0,
+	precision : null,
 	
 	canBeNull: false,
 	
@@ -80,6 +80,20 @@ export default Ember.Mixin.create({
 					return false;
 				}
 				break;
+		}
+		if(fix) {
+			var value=this.get('value');
+			if(value!==null) {
+				var newValue=value;
+				if(this.precision===0) {
+					newValue=parseInt(value)
+				} else {
+					newValue=parseFloat(value);
+				}
+				if(newValue!==value) {
+					this.set('value',newValue);
+				}
+			}
 		}
 		return true;
 	},
