@@ -37,7 +37,7 @@ export default Ember.Mixin.create({
 		if(value===null && this.canBeNull) {
 			return true;
 		}
-		if(typeof value!=='number') {
+		if(typeof value!=='number' || isNaN(value)) {
 			value=Number(value);
 			if(isNaN(value)) {
 				if(this.canBeNull) {
@@ -82,11 +82,11 @@ export default Ember.Mixin.create({
 				break;
 		}
 		if(fix) {
-			var value=this.get('value');
+			value=this.get('value');
 			if(value!==null) {
 				var newValue=value;
 				if(this.precision===0) {
-					newValue=parseInt(value)
+					newValue=parseInt(value);
 				} else {
 					newValue=parseFloat(value);
 				}
@@ -106,6 +106,8 @@ export default Ember.Mixin.create({
 	_valueObserver : Ember.observer('value',function() {
 		if(this._checkValue()) {
 			this._super();
+		} else {
+			this._checkValue(true);
 		}
 	}),
 });
