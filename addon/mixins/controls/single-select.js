@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import OptionsSupport from './options-support';
 import getControl from 'furnace-forms/utils/get-control';
-import Proxy from 'furnace-forms/proxy';
 export default Ember.Mixin.create({
 	
 	_decoratorName : 'select',
@@ -131,7 +130,7 @@ export default Ember.Mixin.create({
 		}
 	}),
 	
-	_optionsObserver: Ember.observer('_options.[]',function() {
+	_optionsObserver: Ember.observer('_options,_options.[]',function() {
 //		this._valueObserver();
 		this._selectedIndexObserver();
 	}),

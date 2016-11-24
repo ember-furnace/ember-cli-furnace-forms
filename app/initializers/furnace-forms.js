@@ -13,7 +13,6 @@ export function initialize(application) {
 	
 	application.register('form:-lookup',LookupClass, {instantiate:false});
 	
-	
 	application.register('form:default',Forms.Controls.Form);
 	application.register('panel:default',Forms.Controls.Panel);
 	application.register('input:default',Forms.Controls.Input);

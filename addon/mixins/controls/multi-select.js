@@ -36,7 +36,7 @@ export default Ember.Mixin.create({
 		return this.get('_options')[index];			
 	},
 	
-	_valueObserver: Ember.observer('value,_options',function() {
+	_valueObserver: Ember.observer('value,_options,_options.[]',function() {
 		this._super();
 		var changed=false;
 		var value=this.get('value');

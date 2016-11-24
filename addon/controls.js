@@ -14,6 +14,7 @@ import Action from './controls/action';
 import Options from './controls/options';
 import Number from './controls/number';
 import View from './controls/view';
+import { ControlOption } from './mixins/controls/options-support';
 
 /**
  * @class Forms
@@ -28,6 +29,7 @@ export default Ember.Namespace.extend( {
 	Action : Action,
 	View : View,
 	Options:Options,
-	Number:Number
+	Number:Number,
+	Option: ControlOption
 	
 }).create();

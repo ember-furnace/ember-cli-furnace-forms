@@ -2,6 +2,15 @@ import Ember from 'ember';
 import Option from 'furnace-forms/controls/option';
 import getControl from 'furnace-forms/utils/get-control';
 
+var ControlOption=Ember.Object.extend({
+	value: null,
+	caption: null,
+	control: null,
+	index: -1
+});
+
+export { ControlOption };
+
 export default Ember.Mixin.create({
 	actions : {
 		onSelect : function() {
@@ -21,9 +30,6 @@ export default Ember.Mixin.create({
 	_options : Ember.computed({
 		get : function(){
 			return Ember.A();
-		},
-		set : function(key,value) {
-			return this._updateOptions(value);
 		}
 	}),
 	
@@ -60,6 +66,74 @@ export default Ember.Mixin.create({
 		}
 	},
 	
+	createOption:function(args) {
+		return ControlOption.extend(args).create(Ember.getOwner(this).ownerInjection());
+	},
+	
+	createOrUpdateOption:function(args) {
+		var exists=this.get('_options').findBy('value',args.value);
+		if(exists) {
+			delete args.control;
+			exists.setProperties(args);
+			return exists;			
+		}
+		return this.createOption(args);
+	},
+	
+	optionAt : function(index) {
+		return this.get('_options').objectAt(index);
+	},
+	
+	optionIndex : function(option) {
+		return this.get('_options').indexOf(option);
+	},
+	
+	addOption : function(option) {
+		if(!(option instanceof ControlOption)) {
+			option=this.createOption(option);
+		}
+		option.set('index',this.get('_options').length+1);
+		return this.get('_options').addObject(option);
+	},
+	
+	addOptions: function(options) {
+		var indexCount=1;
+		options.forEach(function(option,index){
+			if(!(option instanceof ControlOption)) {
+				option=this.createOption(option);
+				options[index]=option;
+			}	
+			if(!this.get('_options').contains(option)) {
+				option.set('index',this.get('_options').length+indexCount);
+				indexCount++;
+			}
+		},this);
+		return this.get('_options').addObjects(options);
+	},
+	
+	setOptions: function(options) {
+		options.forEach(function(option,index){
+			if(!(option instanceof ControlOption)) {
+				option=this.createOption(option);
+				options[index]=option;
+			}	
+			option.set('index',index+1);
+		},this);
+		return this.get('_options').setObjects(options);		
+	},
+	
+	removeOption: function(option) {
+		return this.get('_options').removeObject(option);
+	},
+	
+	removeOptions:function(options) {
+		return this.get('_options').removeObjects(options);
+	},
+	
+	clearOptions: function() {
+		return this.get('_options').clear();
+	},
+	
 	_getOptions: function() {
 		if(this.get('_form._model')===undefined) {
 			Ember.warn('furnace-forms: '+this+' not loading options, form model not ready',false,{id:'furnace-forms:control.options-support.no-model'});
@@ -76,17 +150,17 @@ export default Ember.Mixin.create({
 			value.then(function(value){							
 				if(!_self.isDestroyed) {
 					if(value!==undefined) {
-						_self.set('_options',value);
+						_self.setOptions(value);
 					} else { 
-						_self.set('_options',options);
+						_self.setOptions(options);
 					}
 				}
 			});						
 		} else {
 			if(value!==undefined) {
-				this.set('_options',value);
+				this.setOptions(value);
 			} else { 
-				this.set('_options',options);
+				this.setOptions(options);
 			}
 		}
 	},
@@ -149,16 +223,16 @@ export default Ember.Mixin.create({
 	
 	controls: Ember.computed.union('_controls','_optionControls').readOnly(),
 	
-	_updateOptions : function(newOptions) {		
-		if(!newOptions || !newOptions.length) {
-			return newOptions;
-		}
-		newOptions.forEach(function(option,index) {
-			option.set('index',index+1);
-			option.set('selected',false);
-		});
-		return newOptions;
-	},
+//	_updateOptions : function(newOptions) {		
+//		if(!newOptions || !newOptions.length) {
+//			return newOptions;
+//		}
+//		newOptions.forEach(function(option,index) {
+//			option.set('index',index+1);
+//			option.set('selected',false);
+//		});
+//		return newOptions;
+//	},
 	
 	options : Ember.computed.alias('_options'),
 	
