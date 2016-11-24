@@ -345,7 +345,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	toString: function() {
 		var string=this._super();
-		return string.substring(0,string.length-1)+':'+this.get('_name')+'>';
+		if(string) {
+			return string.substring(0,string.length-1)+':'+this.get('_name')+'>';
+		}
 	},
 	
 	willDestroy : function() {
