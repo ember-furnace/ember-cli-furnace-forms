@@ -30,8 +30,7 @@ function FormKeywordFactory() {
 		let componentPath;
 		if(!lastState.lookupPath || lastState.lookupPath!==lookupPath) {
 			var controlClass=Lookup.call(view,lookupPath);
-			var control=controlClass.create({
-				container: view.container,
+			var control=controlClass.create(Ember.getOwner(view).ownerInjection(),{
 				target:target,
 				'for': forObject
 			});
@@ -54,53 +53,6 @@ function FormKeywordFactory() {
 FormKeywordFactory.prototype=componentKeyword;
 
 var formKeyword = new FormKeywordFactory();
-
-/*
-
-function formKeyword(morph, env, scope, params, hash, template, inverse, visitor) {
-	let view=env.view;
-	let target= env.hooks.getValue(scope.getSelf());
-	let named=null;
-	let forObject = null;
-	
-	if(hash['for']) {
-		forObject=env.hooks.getValue(hash['for']);
-	}
-	else {
-		forObject=target;
-	}
-	
-	if(params[0]) {
-		if(typeof params[0]==='string') {
-			named=params[0];			
-		}
-	} 
-	
-	let lookupPath= named ? named : target;
-	let componentPath;
-	
-	let controlClass=Lookup.call(view,lookupPath);
-	let control=controlClass.create({
-		container: view.container,
-		target:target,
-		'for': forObject
-	});
-	if(hash['for']) {
-		hash['for'].subscribe(function(stream) {
-			this.set('for',stream.value());
-		},control);
-	}
-	hash.control=control;
-	componentPath = control.get('decorator');
-	
-	if (componentPath === undefined || componentPath === null) {
-		return;
-	}
-
-	env.hooks.component(morph, env, scope, componentPath, params, hash, { "default": template, inverse: inverse }, visitor);
-	return true;
-}
-*/
 
 export default function() {
 	registerKeyword('form',formKeyword);

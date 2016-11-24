@@ -337,7 +337,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		if(!component) {
 			return null;
 		}
-		return component.create({container:this.container,
+		return component.create(Ember.getOwner(this).ownerInjection(),{
 								control:this,
 								_debugContainerKey : component + this.get('_name')
 								});

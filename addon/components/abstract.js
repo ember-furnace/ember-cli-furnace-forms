@@ -362,8 +362,8 @@ export default Ember.Component.extend({
 	
 	layoutName: function() {
 		var layoutName=null;
-		var container=this.get('container');
-		if(!container) {
+		var owner=Ember.getOwner(this);
+		if(!owner) {
 			return null;
 		}
 		if(this.control && this.control.get('layoutName')) {
@@ -371,7 +371,7 @@ export default Ember.Component.extend({
 		}
 		
 		this.get('layouts').forEach(function(layout){
-			if(layoutName===null && container.lookup('template:'+layout)) {
+			if(layoutName===null && owner.lookup('template:'+layout)) {
 				layoutName=layout;
 				return true;
 			}

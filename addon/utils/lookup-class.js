@@ -2,14 +2,14 @@ import Ember from 'ember';
 import getName from './get-name';
 var Cache={classes : {},instances:{}};
 
-var getClass=function(container,type,name) {
+var getClass=function(owner,type,name) {
 	if(type===undefined) {
 		type='form';
 	}
 		
 	var Class=Cache.classes[type+":"+name];
 	if(!Class) {
-		Class = container.lookupFactory(type+':'+name);
+		Class = owner._lookupFactory(type+':'+name);
 		Ember.assert('No '+type+' defined for name "'+name+'"',Class);
 		Class.typeKey=name;
 		Cache.classes[type+':'+name]=Class;
@@ -28,8 +28,7 @@ export default function(object,type) {
 			object=this;
 		}
 		name=getName(object);
-	}
-	var container=this.container;
-	return getClass(container,type,name);
+	}	
+	return getClass(Ember.getOwner(this),type,name);
 }
 	

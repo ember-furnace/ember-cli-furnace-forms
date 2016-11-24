@@ -16,7 +16,8 @@ export default function getControl(name,meta,options) {
 	}
 	
 	options._panel=this;
-	options.container=this.container;
+	var owner =Ember.getOwner(this);
+	
 	if(typeof type==='string') {
 		var _type = type.split(':');
 		type=Lookup.call(this,_type[1],_type[0]);				
@@ -27,16 +28,16 @@ export default function getControl(name,meta,options) {
 		mixins.push(meta.options._mixin[index]);
 	}
 	if(typeof type.generate==='function') {
-		return type.generate(mixins,meta,options).create(options);			
+		return type.generate(mixins,meta,options).create(owner.ownerInjection(),options);			
 	}
 	else {
 		if(mixins.length) {			
 			let extend= type.extend.apply(type,mixins);
 			extend.typeKey=type.typeKey;
-			return extend.create(meta.options,options);
+			return extend.create(owner.ownerInjection(),meta.options,options);
 		} else {		
 			try {
-				return type.create(meta.options,options);
+				return type.create(owner.ownerInjection(),meta.options,options);
 			}
 			catch(e) {
 				Ember.assert('Could not create control '+type+':'+name+' '+e);

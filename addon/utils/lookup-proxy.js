@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import getName from './get-name';
 import { ProxyMixin } from 'furnace-forms/proxy';
 export default function(object,defaults,options) {
@@ -19,13 +20,12 @@ export default function(object,defaults,options) {
 		}
 		name=getName(object,true);
 	}
-	var container=this.container;	
-	var Class = container.lookupFactory('form-model-proxy:'+name);
+	var owner=Ember.getOwner(this);	
+	var Class = owner._lookupFactory('form-model-proxy:'+name);
 	if(!Class) {
-		Class= container.lookupFactory('form-model-proxy:default');
+		Class= owner._lookupFactory('form-model-proxy:default');
 	}
-	var _options={
-		container: container,
+	var _options={		
 		_modelType: type,
 		_modelName: name,
 		_content: object,
@@ -36,7 +36,7 @@ export default function(object,defaults,options) {
 		_options._top=this._top || this;
 	}	
 	
-	var proxy = Class.create(_options); 
+	var proxy = Class.create(owner.ownerInjection(),_options); 
 	if(defaults) {
 		proxy.setProperties(defaults);
 	}

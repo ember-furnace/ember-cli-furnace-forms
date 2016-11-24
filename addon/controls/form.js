@@ -326,7 +326,7 @@ var Form = Panel.extend({
 			return validator;
 		}
 		else {
-			var fn=this.container.lookup('validator:lookup');
+			var fn=Ember.getOwner(this).lookup('validator:lookup');
 			if(fn) {
 				try {
 					return fn.call(this,validator);

@@ -24,10 +24,10 @@ function applyProxy(proxy,refs) {
 			
 				Ember.assert('Form proxy requires a modelType and modelName to instantiate content object on apply',proxy._modelType && proxy._modelName);
 				if(proxy._modelType==='model') {
-					var store=proxy.container.lookup('service:store');
+					var store=Ember.getOwner(proxy).lookup('service:store');
 					_content=store.createRecord(proxy._modelName);
 				} else {
-					_content=proxy.container.lookup(proxy._modelType +":"+ proxy._modelName);
+					_content=Ember.getOwner(proxy).lookup(proxy._modelType +":"+ proxy._modelName);
 				}
 				// We need to set our content so dependent children can apply it too
 				proxy._pendingContent=_content;
@@ -119,7 +119,6 @@ var ProxyMixin=Ember.Mixin.create({
 	
 	_modelName : null,
 	
-	container: null,
 	
 	init: function() {
 		this._super();
@@ -139,14 +138,13 @@ var ProxyMixin=Ember.Mixin.create({
 			this._refs=this._top._refs;
 		}
 		if(!this._content && this._modelType==='model') {
-			var factory=this.container.lookupFactory(this._modelType+':'+this._modelName);
+			var factory=Ember.getOwner(this)._lookupFactory(this._modelType+':'+this._modelName);
 			Ember.get(factory,'relationshipsByName').forEach(function(rel) {
 				if(rel.kind==='hasMany') {
-					var proxy=proxyArray({
+					var proxy=proxyArray(Ember.getOwner(this),{
 						_syncFromSource:this._syncFromSource,
 						_syncToSource:this._syncToSource,
-						_content:null,
-						container: this.container,
+						_content:null,						
 						_top: this._top || this
 					});
 					this._proxies[rel.key]=proxy;
@@ -361,11 +359,10 @@ var ProxyMixin=Ember.Mixin.create({
 				return null;
 			}
 			if(Ember.Enumerable.detect(content)) {				
-				proxy = proxyArray({
+				proxy = proxyArray(Ember.getOwner(this),{
 					_syncFromSource:this._syncFromSource,
 					_syncToSource:this._syncToSource,
 					_content:content,
-					container: this.container,
 					_top: this._top || this
 				});
 			} else {
@@ -552,7 +549,6 @@ var ProxyArrayMixin = Ember.Mixin.create({
 	
 	init: function(options) {
 		this._top=options._top;
-		this.container=options.container;
 		this._syncFromSource=options._syncFromSource;
 		this._syncToSource=options._syncToSource;
 		this._cache={};
@@ -577,11 +573,14 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		
 });
 
-var proxyArray = function(options) {
+var proxyArray = function(owner,options) {
 	var a=[];
 	Ember.NativeArray.apply(a);	
 	ProxyMixin.apply(a);	
 	ProxyArrayMixin.apply(a);
+	var inject=owner.ownerInjection();
+	var name=Object.getOwnPropertyNames(inject)[0];
+	a[name]=inject[name];
 	a.init(options);
 	return a;
 };

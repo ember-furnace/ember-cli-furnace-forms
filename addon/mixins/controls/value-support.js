@@ -119,7 +119,7 @@ export default Ember.Mixin.create({
 			
 			if(Ember.Enumerable.detect(property)) {
 				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
-					property=property._content;
+					property=property.content;
 				}
 				var dirty=false;
 				if(value.get('length')!==property.get('length')) {
