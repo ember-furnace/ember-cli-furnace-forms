@@ -51,6 +51,10 @@ export default Ember.Mixin.create(ControlSupport,{
 		}
 	}),
 	
+	_optionObserver:Ember.observer('_option.value',function() {
+		this.set('value',this._option.value);
+	}),
+		
 	selected :  Ember.computed.alias('_option.selected'),
 	
 	caption : Ember.computed.alias('_option.caption'),
@@ -74,9 +78,13 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	optionControl : Ember.computed('_option.control',{
 		get : function() {
-			// @TODO: should probably destroy existing control
-			if(this._optionControl === null && this._option.control) {
-				var meta=this._option.control._meta;				
+			// @FIXME: I should only destroy and recreate control if it differs -> should work with extend of ControlOption
+			if(this._option.control) {
+				if(this._optionControl !== null) {
+					this.get('_controls').removeObject(this._optionControl);
+					this._optionControl.destroy();
+				} 
+				var meta=this._option.control;				
 				this._optionControl= getControl.call(this,'value',meta,{
 					caption: Ember.computed.alias('_panel.caption')	
 				});

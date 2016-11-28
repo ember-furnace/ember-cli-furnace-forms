@@ -1,10 +1,11 @@
 import Ember from 'ember';
 import Option from 'furnace-forms/controls/option';
 import getControl from 'furnace-forms/utils/get-control';
+import I18n from 'furnace-i18n';
 
 var ControlOption=Ember.Object.extend({
 	value: null,
-	caption: null,
+	caption: I18n.computed(null).explicit(),
 	control: null,
 	index: -1
 });
@@ -67,13 +68,31 @@ export default Ember.Mixin.create({
 	},
 	
 	createOption:function(args) {
-		return ControlOption.extend(args).create(Ember.getOwner(this).ownerInjection());
+		if(args.caption instanceof Ember.ComputedProperty) {
+			if(args.caption._meta.i18nDefaultValue!==undefined) {
+				Ember.deprecate('furnace-forms: don\'t append I18n computed properties to shallow option objects, use I18n.text instead',undefined,{id:'furnace-forms:options-i18n-computed',until:'Ember 2.4'});
+				args.caption=I18n.text(args.caption._meta.i18nDefaultValue);
+			} 		
+		}
+		// FIXME: should check for computed control explicitly and possibly throw exception
+		if(args.control instanceof Ember.ComputedProperty) {
+			args.control=args.control._meta;
+		}
+		return ControlOption.create(Ember.getOwner(this).ownerInjection(),args);
 	},
 	
 	createOrUpdateOption:function(args) {
 		var exists=this.get('_options').findBy('value',args.value);
 		if(exists) {
-			delete args.control;
+			if(args.control) {
+				args.control=args.control._meta;
+			}
+			if(args.caption instanceof Ember.ComputedProperty) {
+				if(args.caption._meta.i18nDefaultValue) {
+					Ember.deprecate('furnace-forms: don\'t append I18n computed properties to shallow option objects, use I18n.text instead',undefined,{id:'furnace-forms:options-i18n-computed',until:'Ember 2.4'});
+					args.caption=I18n.text(args.caption._meta.i18nDefaultValue);
+				} 						
+			}
 			exists.setProperties(args);
 			return exists;			
 		}
@@ -100,7 +119,7 @@ export default Ember.Mixin.create({
 		var indexCount=1;
 		options.forEach(function(option,index){
 			if(!(option instanceof ControlOption)) {
-				option=this.createOption(option);
+				option=this.createOrUpdateOption(option);
 				options[index]=option;
 			}	
 			if(!this.get('_options').contains(option)) {
@@ -114,7 +133,7 @@ export default Ember.Mixin.create({
 	setOptions: function(options) {
 		options.forEach(function(option,index){
 			if(!(option instanceof ControlOption)) {
-				option=this.createOption(option);
+				option=this.createOrUpdateOption(option);
 				options[index]=option;
 			}	
 			option.set('index',index+1);
@@ -183,16 +202,17 @@ export default Ember.Mixin.create({
 				return;
 			}
 			options.forEach(function(option,index) {
-				var oldControl=oldControls ? oldControls.findBy('_option',option) : undefined;
-				if(oldControl) {
+				var oldControl=optionControls.objectAt(index);
+				if(oldControl) {					
 					oldControls.removeObject(oldControl);
+					oldControl.set('_option',option);
 				} else {
 					optionControls.pushObject(getControl.call(control,index,{ options:{_controlType:Option}},{_panel:control,
 						_option:option}));
 				}
 				
 			});
-			if(oldControls) {
+			if(oldControls.length) {
 				oldControls.forEach(function(oldControl) {
 					optionControls.removeObject(oldControl);
 					oldControl.destroy();

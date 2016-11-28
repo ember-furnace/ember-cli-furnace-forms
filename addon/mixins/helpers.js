@@ -231,7 +231,7 @@ var Helpers= Ember.Mixin.create({
 		return  Ember.computed.alias(meta.key).meta(meta);
 	},
 	
-	option: function(value,caption,control) {
+	option: function(value,caption,control) {		
 		return {value:value,caption:caption,control : control ? control : null};
 	},
 	
