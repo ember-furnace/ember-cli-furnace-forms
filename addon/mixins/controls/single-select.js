@@ -116,7 +116,7 @@ export default Ember.Mixin.create({
 		this._super();
 	}),
 	
-	_updateSelected : Ember.observer('_options.[].selected',function() {
+	_updateSelected : Ember.observer('_options.[].selected',function() {		
 		var option=this.getOption();
 		if(!option || this.get('value')!==option.value) {
 			if(this.get('_options')) {
