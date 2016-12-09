@@ -380,6 +380,12 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		});
 	},
 	
+	enabled : function(enabled) {
+		return this.reopen({
+			_enabled : enabled
+		});
+	},
+	
 	on : function(props,fn) {
 		props=getProps(props);
 		var _conditionFn;
