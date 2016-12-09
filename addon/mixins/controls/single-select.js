@@ -58,7 +58,7 @@ export default Ember.Mixin.create({
 					ret = control.get('optionControl');
 				}
 			} else if(option && option.control) {
-				var meta=option.control._meta;
+				var meta=option.control;
 				var options={};
 				options['for']=this.get('value');
 				options._path=this._panel._path;
