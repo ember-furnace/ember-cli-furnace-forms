@@ -58,7 +58,7 @@ export default Ember.Mixin.create({
 					ret = control.get('optionControl');
 				}
 			} else if(option && option.control) {
-				var meta=option.control._meta;
+				var meta=option.control;
 				var options={};
 				options['for']=this.get('value');
 				options._path=this._panel._path;
@@ -116,7 +116,7 @@ export default Ember.Mixin.create({
 		this._super();
 	}),
 	
-	_updateSelected : Ember.observer('_options.[].selected',function() {
+	_updateSelected : Ember.observer('_options.[].selected',function() {		
 		var option=this.getOption();
 		if(!option || this.get('value')!==option.value) {
 			if(this.get('_options')) {

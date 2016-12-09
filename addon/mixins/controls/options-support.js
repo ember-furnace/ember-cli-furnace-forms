@@ -77,7 +77,7 @@ export default Ember.Mixin.create({
 		// FIXME: should check for computed control explicitly and possibly throw exception
 		if(args.control instanceof Ember.ComputedProperty) {
 			args.control=args.control._meta;
-		}
+		}		
 		return ControlOption.create(Ember.getOwner(this).ownerInjection(),args);
 	},
 	
@@ -131,6 +131,7 @@ export default Ember.Mixin.create({
 	},
 	
 	setOptions: function(options) {
+		options=options.toArray();
 		options.forEach(function(option,index){
 			if(!(option instanceof ControlOption)) {
 				option=this.createOrUpdateOption(option);
