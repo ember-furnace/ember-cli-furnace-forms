@@ -229,7 +229,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		}			
 		
 		if(path) {
-			model= model.get(path);
+			model= Ember.get(model,path);
 		}
 		if(real && model instanceof Proxy) {
 			return model._content;
@@ -262,12 +262,16 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	_controlMessages : null,
 	
 	setMessages: function(messages,silent) {
-		this._updateMessages(messages,this._controlMessages);		
-		if(this.get('hasPrerequisites')===false || this._components.length===0 || this._didReset) {
+		let orgCount=this._controlMessages.length;
+		let newCount=messages!==null ? messages.length : 0;
+		this._updateMessages(messages,this._controlMessages);
+		if(orgCount && newCount===0) {
+			silent=false;
+		} else if(this.get('hasPrerequisites')===false || this._components.length===0 || this._didReset) {
 			silent=true;
 		}
 		this._didReset=false;
-		this._messagesSilent=silent;		
+		this._messagesSilent=silent ;		
 //		console.log("New messages for "+this+" Components: "+this._components.length);
 		if(!silent) {
 			Ember.run.once(this,function() {
