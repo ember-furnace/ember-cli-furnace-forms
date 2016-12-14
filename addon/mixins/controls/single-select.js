@@ -36,7 +36,7 @@ export default Ember.Mixin.create({
 			this.set('value',option.value);				
 		}
 		else {
-			if(this.get('selectedIndex')===null) {
+			if(this.get('selectedIndex')===null && this.get('value')!==null) {
 				this.set('value',null);
 			}
 		}
@@ -106,7 +106,7 @@ export default Ember.Mixin.create({
 	
 	selectedIndex : 0,
 	
-	_valueObserver: Ember.observer('value',function() {
+	_valueObserver: Ember.observer('value',function() {		
 		let selectedOption=this.get("_options").findBy('value',this.get('value'));
 		let index=0;
 		if(selectedOption) {
