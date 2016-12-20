@@ -45,7 +45,7 @@ export default Ember.Mixin.create({
 				} else {
 					value = this.get('min')!==null ? this.get('min') : 0;
 				}
-				if(fix) {
+				if(fix) {					
 					this.set('value',value);
 				}
 				return false;
@@ -81,20 +81,24 @@ export default Ember.Mixin.create({
 				}
 				break;
 		}
-		if(fix) {
-			value=this.get('value');
-			if(value!==null) {
-				var newValue=value;
-				if(this.precision===0) {
-					newValue=parseInt(value);
-				} else {
-					newValue=parseFloat(value);
-				}
-				if(newValue!==value) {
-					this.set('value',newValue);
+		if(value!==null) {
+			var newValue=value;
+			if(this.precision===0) {
+				newValue=parseInt(value);
+			} else {
+				newValue=parseFloat(value);
+				if(this.precision>0) {
+					newValue=parseFloat(newValue.toFixed(this.precision));					
 				}
 			}
+			if(newValue!==value) {
+				if(fix) {
+					this.set('value',newValue);					
+				}
+				return false;
+			}
 		}
+		
 		return true;
 	},
 	
@@ -107,7 +111,10 @@ export default Ember.Mixin.create({
 		if(this._checkValue()) {
 			this._super();
 		} else {
-			this._checkValue(true);
+			var hasFocus=this._components.filterBy('hasFocus',true).length>0;
+			if(!hasFocus) {
+				this._checkValue(true);
+			}
 		}
 	}),
 });
