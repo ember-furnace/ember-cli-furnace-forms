@@ -22,14 +22,27 @@ export default Panel.extend({
 	
 	classNameBindings: ['_modelClass'],
 	
-	_rootControl : false,
+	attrTarget: null,
 	
-	_forStreamSubscriber: null,
+	attrList: null,
 	
-	_modelClass : Ember.computed('control._modelName', {
+	
+	_modelName : null,
+    
+	_modelNameObserver: Ember.observer('control._modelName',function() {
+		Ember.run.scheduleOnce('sync',this,this._updateModelName);
+	}).on('init'),
+	
+	_updateModelName: function() {
+		if(this.get('_modelName')!==this.get('control._modelName')) {
+			this.set('_modelName',this.get('control._modelName'));
+		}
+	},
+	
+	_modelClass : Ember.computed('_modelName', {
 		get :function() {
-			if(this.get('control._modelName')) {
-				return this.get('control._modelName').replace(/\./g,'-');
+			if(this.get('_modelName')) {
+				return this.get('_modelName').replace(/\./g,'-');
 			}
 		},
 		set : function(key,value) {
@@ -39,11 +52,11 @@ export default Panel.extend({
 	
 	attributeBindings: ['type'],
 	
-	layouts: Ember.computed('targetObject,for',{
+	layouts: Ember.computed('control',{
 		get : function() {
 			var name;
 			var ret=Ember.A();	
-			name=getName(this.get('targetObject'),true);
+			name=getName(this.get('control'),true);
 			if(name) {
 				ret.pushObject((name+'/form').replace(/\./g,'/'));
 			}
@@ -102,12 +115,9 @@ export default Panel.extend({
 	
 	destroy : function() {
 		this._super();
-		if(this._rootControl) {
+		if(this.control._rootControl) {
 			this.control.destroy();
-		}
-		if(this._forStreamSubscriber) {
-			this._forStreamSubscriber();
-		}
+		}		
 	},
 	
 	type : Ember.computed({
@@ -115,5 +125,16 @@ export default Panel.extend({
 			return Ember.String.camelize(this.control.constructor.typeKey);
 		}
 	}).readOnly(),
+	
+	updateAttributes : Ember.on('didReceiveAttrs',function(attrs) {
+		var opts={};
+		if(attrs.newAttrs && attrs.newAttrs.attrList) {
+			var list=this.get('attrList');
+			for(let index in list) {
+				opts[list[index]]=Ember.computed.alias('attrSource.'+list[index]);
+			}
+			this.reopen(opts);
+		}
+	})
 	
 });

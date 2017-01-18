@@ -13,8 +13,17 @@ export default Ember.Component.extend({
 
 	notices : Ember.computed.filterBy('messages','type','notice'),
 	
+	targetObject: null,
+	
 	init : function() {
 		this._super();
+		if(!this.get('targetObject')) {
+			if(this.get('target')) {
+				this.set('targetObject',this.get('target'));
+			} else {
+				this.set('targetObject',this.get('_targetObject'));
+			}
+		}
 		this.messages=Ember.A();
 	},
 

@@ -1,5 +1,5 @@
 <input id={{inputId}} type="checkbox" name={{name}} value="1"> 
 <label for={{inputId}}>{{caption}}</label>
 {{#if control.showOptionControl}}
-	{{f-control control.optionControl}}
+	{{component control.optionControl.decorator control=control.optionControl}}
 {{/if}} 

@@ -15,21 +15,40 @@ import I18n from 'furnace-i18n';
  * @namespace Furnace.Forms.Components
  * @extends Ember.Component
  */
-export default Ember.Component.extend({
+
+function getControlNameClass() {
+	
+}
+
+export default Ember.Component.extend({ 
 	tagName: 'control',
 	
 	classNameBindings: ['_validClass','_focusClass','_enabledClass','_nameClass','_controlClasses','_typeClass'],
 	
 	control: null,
+    
+	_controlName : null,
+    
+	_controlNameObserver: Ember.observer('control._name',function() {
+		Ember.run.scheduleOnce('sync',this,this._updateControlName);
+	}).on('init'),
 	
-	_nameClass : Ember.computed('control._name',{
+	_updateControlName: function() {
+		if(this.get('_controlName')!==this.get('control._name')) {
+			this.set('_controlName',this.get('control._name'));
+		}
+	},
+	
+	_nameClass : Ember.computed('_controlName',{
 		get : function() {
-			var name=this.get('control._name');		
+			var name=this.get('_controlName');
 			if(typeof name==='string') {
 				return name.replace(/\./g,'-');
 			}
+			return null;
 		}
 	}).readOnly(),
+	
 	
 	_focusClass : Ember.computed('_focus',{
 		get : function() {
@@ -348,7 +367,7 @@ export default Ember.Component.extend({
 			ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayoutName'))).replace(/\./g,'/'));
 			if(this.control._decoratorName) {
 				ret.pushObject((this.get('control._form._modelName')+'.'+this.control._decoratorName).replace(/\./g,'/'));			
-				var layoutName=this.control._decoratorName.replace(/\./g,'/');
+				var layoutName=this.control._decoratorName.replace(/\./g,'/');				
 				if(layoutName===this.control._decoratorName) {
 					ret.pushObject( 'forms/'+layoutName);
 				} else {
@@ -394,10 +413,6 @@ export default Ember.Component.extend({
 			Ember.warn(this+" control went missing. This is known to happen when the Ember Inspector causes optionControls to load while they shouldn't according to the used layout. We are now leaking memory");
 		}
 		this._super();
-//		if(this.get('targetObject.'+this._name) instanceof Control) {
-//			this.set('targetObject.'+this._name+'.content',null);
-//		}
-//		this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
 	},
 	
 	getStore: function() {
@@ -419,4 +434,6 @@ export default Ember.Component.extend({
 		return this.control._form;
 	}
 	
+}).reopenClass({
+	positionalParams: ['control'],
 });

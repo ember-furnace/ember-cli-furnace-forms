@@ -94,6 +94,8 @@ export default Control.extend(ControlSupport,{
 	
 	_apply:function() {
 		this._super();
+		// TODO: If input controls haven't been accessed yet (we don't have a model for example) they initialize now (on submit for example) not sure whether this is desired 
+		
 		this.get('inputControls').invoke('_apply');
 		// Our proxy should perform all applies, so make sure we only invoke it once instead once for every child of top form proxy . 
 		// We may need to check our proxies top model matched parent panel proxies top model

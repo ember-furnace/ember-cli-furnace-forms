@@ -18,11 +18,21 @@ export default Control.extend({
 	
 	attributeBindings: ['type'],
 	
-	classNameBindings : ['isEmpty'],
+	classNameBindings : ['_emptyClass'],
 	
 	defaultLayoutName: 'forms/input',
 	
 	isEmpty: Ember.computed.alias('control.isEmpty'),
+	
+
+	_emptyClass : Ember.computed('isEmpty',{
+		get : function() {
+			if(this.get('isEmpty')===true) {
+				return 'empty';
+			}
+			return null;
+		}
+	}).readOnly(),
 	
 	
 	inputId: Ember.computed('elementId',{

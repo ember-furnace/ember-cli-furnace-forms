@@ -126,7 +126,7 @@ export default Control.extend(ControlSupport,{
 			//toRemove=this._itemControls.toArray();
 		} else {
 			this._itemControls.forEach(function(control) {
-				if(!property.contains(control.get('for'))) {
+				if(!property.includes(control.get('for'))) {
 					toRemove.pushObject(control);
 				}
 			});

@@ -1,9 +1,6 @@
 import LookupClass from 'furnace-forms/utils/lookup-class';
 import LookupProxy from 'furnace-forms/utils/lookup-proxy';
-import RegisterFormHelper from 'furnace-forms/helpers/form';
-import RegisterControlHelper from 'furnace-forms/helpers/control';
-//import ControlHelper from 'furnace-forms/helpers/control';
-//import MessagesHelper from 'furnace-forms/helpers/messages';
+import FurnaceFormComponent from 'furnace-forms/helpers/furnace-form';
 
 import Forms from 'furnace-forms';
 
@@ -22,6 +19,7 @@ export function initialize(application) {
 	application.register('input:options',Forms.Controls.Options);
 	application.register('view:default',Forms.Controls.View);
 	
+	application.register('component:furnace-form',FurnaceFormComponent);
 	application.register('component:form.form-decorator',Forms.Components.Form);
 	application.register('component:panel.panel-decorator',Forms.Components.Panel);
 	application.register('component:condition.panel-decorator',Forms.Components.Condition);
@@ -46,7 +44,7 @@ export function initialize(application) {
 	application.register('component:checklist-option.input-decorator',Forms.Inputs.CheckOption);
 	
 	application.register('component:submit.input-decorator',Forms.Inputs.Submit);
-	application.register('component:form-messages',Forms.Components.Messages);
+	application.register('component:furnace-form-messages',Forms.Components.Messages);
 	application.register('component:f-messages',Forms.Components.Messages);
 	
 	application.register('form-model-proxy:default',Forms.Proxy);
@@ -81,8 +79,6 @@ export function initialize(application) {
 //		}
 //	});
 	
-	RegisterFormHelper();
-	RegisterControlHelper();
 };
 
 export default {

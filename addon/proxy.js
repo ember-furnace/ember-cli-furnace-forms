@@ -3,7 +3,7 @@ import lookupProxy from 'furnace-forms/utils/lookup-proxy';
 import DS from 'ember-data';
 
 function applyProxy(proxy,refs) {
-	if(!ProxyMixin.detect(proxy) || refs.contains(proxy)) {
+	if(!ProxyMixin.detect(proxy) || refs.includes(proxy)) {
 		return false;
 	}
 	refs.pushObject(proxy);
@@ -330,7 +330,7 @@ var ProxyMixin=Ember.Mixin.create({
 	_unregisterProxy: function(proxy) {
 		var ref=this._refs.findBy('proxy',proxy);
 		if(ref) {
-			if(ref.reg.contains(this)) {
+			if(ref.reg.includes(this)) {
 				ref.reg.removeObject(this);
 			}
 		}
@@ -339,7 +339,7 @@ var ProxyMixin=Ember.Mixin.create({
 	_registerProxy: function(proxy) {
 		var ref=this._refs.findBy('proxy',proxy);
 		if(ref) {
-			if(!ref.reg.contains(this)) {
+			if(!ref.reg.includes(this)) {
 				ref.reg.pushObject(this);
 			}
 		}

@@ -101,7 +101,7 @@ export default Ember.Mixin.create({
 			}
 			else {
 				value.forEach(function(value) {
-					if(!orgArray.contains(value)) {
+					if(!orgArray.includes(value)) {
 						dirty=true;
 					}
 				});
@@ -117,6 +117,11 @@ export default Ember.Mixin.create({
 			var value=this.get('value');
 			this._components.invoke('set','value',this.get('value'));
 			
+			if(!this.get('_panel._model')) {
+				// Don't apply when our panel is modelless
+				return;
+			} 
+
 			if(Ember.Enumerable.detect(property)) {
 				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 					property=property.content;
@@ -127,12 +132,12 @@ export default Ember.Mixin.create({
 				}
 				else {
 					value.forEach(function(value) {
-						if(!property.contains(value)) {
+						if(!property.includes(value)) {
 							dirty=true;
 						}
 					});
 					property.forEach(function(property) {
-						if(!value.contains(property)) {
+						if(!value.includes(property)) {
 							dirty=true;
 						}
 					});						
@@ -169,7 +174,11 @@ export default Ember.Mixin.create({
 	
 	_reset: function(modelChanged) {
 		if(modelChanged) {
-			var property=this.get('property');
+			var property=null;
+			if(this.get('_panel._model')) {
+				property=this.get('property');	
+			} 
+			
 			if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
 				// We no longer nullify value and orgValue, this triggers observers which might not trigger again if our promise returns
@@ -214,13 +223,14 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	isEmpty : Ember.computed('value',{
-		get : function() {
-			if(this.get('value')==="" || this.get('value')===undefined || this.get('value')===null) {
-				return 'empty';
-			}
-			return '';
-		}
-	}).readOnly(),
+	isEmpty : true,
 	
+	
+	_emptyObserver: Ember.observer('value',function() {
+		var empty=false
+		if(this.get('value')==="" || this.get('value')===undefined || this.get('value')===null) {
+			empty=true;
+		}		
+		this.setFlag('isEmpty',empty);
+	})
 });

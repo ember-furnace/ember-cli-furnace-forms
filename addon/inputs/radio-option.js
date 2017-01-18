@@ -18,7 +18,7 @@ import CheckedSupport from 'furnace-forms/mixins/components/checked-support';
 export default Input.extend(CheckedSupport,{
 	
 	
-	defaultLayoutName: 'forms/list/radio-option',
+	defaultLayoutName: 'forms/radio-option',
 	
 	
 	

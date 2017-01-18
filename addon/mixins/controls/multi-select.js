@@ -41,7 +41,7 @@ export default Ember.Mixin.create({
 		var changed=false;
 		var value=this.get('value');
 		this.get('_options').forEach(function(option) {
-			if(value.contains(option.get('value'))) {
+			if(value.includes(option.get('value'))) {
 				if(option.get('selected')!==true) {
 					changed=true;
 					option.set('selected',true);

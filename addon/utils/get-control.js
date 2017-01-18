@@ -36,12 +36,12 @@ export default function getControl(name,meta,options) {
 			extend.typeKey=type.typeKey;
 			return extend.create(owner.ownerInjection(),meta.options,options);
 		} else {		
-			try {
+//			try {
 				return type.create(owner.ownerInjection(),meta.options,options);
-			}
-			catch(e) {
-				Ember.assert('Could not create control '+type+':'+name+' '+e);
-			}
+//			}
+//			catch(e) {
+//				Ember.assert('Could not create control '+type+':'+name+' '+e);
+//			}
 		}
 	} 
 }

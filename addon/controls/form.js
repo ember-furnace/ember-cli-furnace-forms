@@ -75,6 +75,8 @@ var Form = Panel.extend({
 	
 	_forms: null,
 	
+	_rootControl : false,
+	
 	actions : {
 		validate : function(paths) {
 			

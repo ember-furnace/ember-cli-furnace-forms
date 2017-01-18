@@ -122,7 +122,7 @@ export default Ember.Mixin.create({
 				option=this.createOrUpdateOption(option);
 				options[index]=option;
 			}	
-			if(!this.get('_options').contains(option)) {
+			if(!this.get('_options').includes(option)) {
 				option.set('index',this.get('_options').length+indexCount);
 				indexCount++;
 			}

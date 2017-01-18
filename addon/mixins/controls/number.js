@@ -34,9 +34,17 @@ export default Ember.Mixin.create({
 	
 	_checkValue: function(fix) {
 		var value=this.get('value');
-		if(value===null && this.canBeNull) {
-			return true;
-		}
+		if(value===null) {
+			if(this.canBeNull) {
+				return true;
+			} else {
+				value = this.get('min')!==null ? this.get('min') : 0;
+				if(fix) {					
+					this.set('value',value);
+				}
+				return false;
+			}
+		}		
 		if(typeof value!=='number' || isNaN(value)) {
 			value=Number(value);
 			if(isNaN(value)) {

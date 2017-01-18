@@ -1,6 +1,6 @@
 {{#if caption}}
 	<h2 class="form-caption">{{caption}}</h2>
 {{/if}}
-<controls>{{#each inputControls as |control|}}{{f-control control}}{{/each}}</controls>
-<actions>{{#each actionControls as |control|}}{{f-control control}}{{/each}}</actions>
-{{f-messages}}
+<controls>{{#each inputControls as |control|}}{{component control.decorator control}}{{/each}}</controls>
+<actions>{{#each actionControls as |control|}}{{component control.decorator control}}{{/each}}</actions>
+{{furnace-form-messages}}

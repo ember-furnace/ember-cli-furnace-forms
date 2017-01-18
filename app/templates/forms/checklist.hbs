@@ -1,10 +1,10 @@
-<label  {{bind-attr for=inputId}}>{{caption}}</label>
+<label for={{inputId}}>{{caption}}</label>
 <options>
 	{{#each optionControls as |control|}}
-		{{f-control control}}
+		{{component control.decorator control}}
 	{{/each}}
 </options>
 {{#if control.showOptionControl}}
-	{{f-control control.optionControl dynamic=true}}
+	{{component control.optionControl.decorator control=control.optionControl}}
 {{/if}}
-{{f-messages}}
+{{furnace-form-messages}}

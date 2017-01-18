@@ -39,7 +39,7 @@ export default Input.extend(Placeholder,{
 	
 	selectionChanged : function() {
 		Ember.run.later(this,function() {
-			this.get('targetObject').send('selectionChanged',this.get('value'));
+			this.get('control').send('selectionChanged',this.get('value'));
 		});
 	}
 	
