@@ -597,5 +597,17 @@ export default Ember.Object.extend(ProxyMixin,{
 		});
 		return this;
 	},
-	A: proxyArray
+	A: proxyArray,
+	
+	apply(proxy) {
+		Ember.assert("Can only apply instance of form-model-proxy",proxy instanceof this);
+		proxy._apply();
+		return proxy;
+	},
+	
+	reset(proxy) {
+		Ember.assert("Can only reset instance of form-model-proxy",proxy instanceof this);
+		proxy._reset();
+		return proxy;
+	},
 });
