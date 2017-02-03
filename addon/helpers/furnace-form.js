@@ -20,7 +20,7 @@ export default Ember.Component.extend({
 			if(this.get('_named')) {
 				return this.get('_named');
 			} else {
-				return getName(this.get('for'));
+				return getName(this.get('_targetObject'));
 			}
 		}
 	}).readOnly(),
