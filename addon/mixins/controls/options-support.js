@@ -44,7 +44,7 @@ export default Ember.Mixin.create({
 	
 	_optionControls : null,
 	
-	sortProperties: ['index'],
+	sortProperties: null,
 	sortAscending: true,
 	
 	isSorted: Ember.computed.notEmpty('sortProperties'),
@@ -54,6 +54,9 @@ export default Ember.Mixin.create({
 	
 	init : function() {
 		this._super();
+		if(!this.sortProperties) {
+			this.set('sortProperties',['index']);
+		}
 		this.set('_optionControls',Ember.A());
 		if(this._optionFn) {			
 			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';
@@ -234,7 +237,9 @@ export default Ember.Mixin.create({
 			}
 			var content = this._optionControls;
 			var isSorted = this.get('isSorted');
+			console.log(isSorted);
 			if (content && isSorted) {
+				console.log(content.sortBy.apply(content,this.sortProperties));
 				return content.sortBy.apply(content,this.sortProperties);
 			}
 			
