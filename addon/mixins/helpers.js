@@ -185,21 +185,20 @@ var Helpers= Ember.Mixin.create({
 				return control;
 			}
 			options=arguments[0];
-		}else if(arguments.length===2) {
-			if(typeof arguments[1]==='string') {
-				control = getControl(arguments[1],{_modelName:arguments[0]});
-				control.async=async;
-				control.for=model;
-				control.model=model;
-				control.validation=validation;
-				return control;
-			}
-			options=arguments[1];
-			options._modelName=arguments[0];
-		} else {
-			Ember.assert('The form helper accepts either 1 or 2 arguments');
+		}else if(arguments.length===2 && typeof arguments[1]==='string') {
+			control = getControl(arguments[1],{_modelName:arguments[0]});
+			control.async=async;
+			control.for=model;
+			control.model=model;
+			control.validation=validation;
+			return control;
 		}
-		return Form.extend(options);
+		control= getControl( 'form:'+arguments[0],arguments[1]);
+		control.async=async;
+		control.for=model;
+		control.model=model;
+		control.validation=validation;
+		return control;
 	},
 	
 	computed : function(depKeys,getset) {
