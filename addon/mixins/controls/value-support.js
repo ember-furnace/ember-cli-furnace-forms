@@ -232,5 +232,5 @@ export default Ember.Mixin.create({
 			empty=true;
 		}		
 		this.setFlag('isEmpty',empty);
-	})
+	}).on('init')
 });
