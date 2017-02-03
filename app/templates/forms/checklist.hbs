@@ -1,7 +1,7 @@
 <label for={{inputId}}>{{caption}}</label>
 <options>
 	{{#each optionControls as |control|}}
-		{{component control.decorator control}}
+		{{component (furnace-form-decorator control this) control}}
 	{{/each}}
 </options>
 {{#if control.showOptionControl}}
