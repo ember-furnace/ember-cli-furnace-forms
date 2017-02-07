@@ -237,9 +237,7 @@ export default Ember.Mixin.create({
 			}
 			var content = this._optionControls;
 			var isSorted = this.get('isSorted');
-			console.log(isSorted);
 			if (content && isSorted) {
-				console.log(content.sortBy.apply(content,this.sortProperties));
 				return content.sortBy.apply(content,this.sortProperties);
 			}
 			
