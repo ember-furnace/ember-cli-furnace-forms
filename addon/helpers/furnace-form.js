@@ -5,7 +5,7 @@ import getName from 'furnace-forms/utils/get-name';
 
 export default Ember.Component.extend({
 	
-	tagName: '',
+	tagName: 'div',
 	
 	_control: null,
 	
@@ -27,17 +27,25 @@ export default Ember.Component.extend({
 	
 	_formObserver: Ember.observer('form',function() {
 		let Clazz=this._lookup(this.get('form'));
-		let control=Clazz.create(Ember.getOwner(this).ownerInjection(),{			
-			'for': this.get('for'),
-			target: this,
-			_rootControl:true
-		});
-		this.set('_control',control);
+		if(!(this._control instanceof Clazz)) {
+			let control=Clazz.create(Ember.getOwner(this).ownerInjection(),{			
+				'for': this.get('for'),
+				target: this,
+				_rootControl:true
+			});
+			this.set('_control',control);
+		}
 	}).on('init'),
 	
 	decorator: Ember.computed.alias('_control._decorator'),
 	
 	'for' : null,
+	
+	_forObserver:Ember.observer('for',function() {
+		if(this._control) {
+			this.set('_control.for',this.get('for'));
+		}
+	}),
 	
 	send: function() {
 		this.sendAction.apply(this,arguments);
@@ -65,6 +73,9 @@ export default Ember.Component.extend({
 			}
 			this.set('attrList',attrList);
 		}
+//		if(this._control && attrs.newAttrs['for']) {
+//			this.set('_control.for',attrs.newAttrs['for']);
+//		} 
 	}),
 	
 	
