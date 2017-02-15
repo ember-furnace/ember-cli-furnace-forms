@@ -5,7 +5,7 @@ import getName from 'furnace-forms/utils/get-name';
 
 export default Ember.Component.extend({
 	
-	tagName: 'div',
+	tagName: '',
 	
 	_control: null,
 	
