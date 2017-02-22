@@ -20,8 +20,11 @@ export default function(object,defaults,options) {
 		}
 		name=getName(object,true);
 	}
-	var owner=Ember.getOwner(this);	
-	var Class = owner._lookupFactory('form-model-proxy:'+name);
+	var owner=Ember.getOwner(this);
+	var Class;
+	if (name) {
+		Class= owner._lookupFactory('form-model-proxy:'+name);
+	}
 	if(!Class) {
 		Class= owner._lookupFactory('form-model-proxy:default');
 	}
