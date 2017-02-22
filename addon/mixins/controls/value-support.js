@@ -35,9 +35,11 @@ export default Ember.Mixin.create({
 				var control=this;
 				
 				property.then(function(propertyValue){
-					control.addObserver('property',control._propertyObserver);
-					control._setOrgValue(propertyValue);
-					control.set('value',propertyValue);
+					if(!control.isDestroyed) {
+						control.addObserver('property',control._propertyObserver);
+						control._setOrgValue(propertyValue);
+						control.set('value',propertyValue);
+					}
 				});
 			}
 			else {
