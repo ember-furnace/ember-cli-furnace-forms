@@ -59,7 +59,7 @@ export default Control.extend(ControlSupport,{
 		get : function(key,value) {
 			if(value)  {
 				return value;
-			}	
+			}
 			if(this.get('_model')===this.get('_panel._model')) {
 				return this.get('_panel._modelName');
 			}
@@ -68,6 +68,8 @@ export default Control.extend(ControlSupport,{
 				if(name) {
 					return name;
 				}
+				// FIXME: our parent panel may not be an instance of panel or form (list for example) 
+				// causing the modelName to be undefined 
 				return this.get('_panel._modelName')+'.'+this._name;
 			}
 			else {
