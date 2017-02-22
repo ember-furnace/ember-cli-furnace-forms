@@ -231,6 +231,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		if(path) {
 			model= Ember.get(model,path);
 		}
+		if(real) {
+			Ember.deprecate('Furnace-forms: the use of getModel(real=true) to get the model behind a proxy is deprecated, use Proxy.getContent(proxy)',false,{id:'furnace-forms:get-proxy-model'});
+		}
 		if(real && model instanceof Proxy) {
 			return model._content;
 		}
