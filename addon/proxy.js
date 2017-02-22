@@ -605,6 +605,26 @@ export default Ember.Object.extend(ProxyMixin,{
 		return proxy;
 	},
 	
+	getContent(proxy) {
+		Ember.assert("Can only get content for instance of form-model-proxy",proxy instanceof this);		
+		return Ember.get(proxy,'_content');
+	},
+	
+	proxyFor(proxyOrOwner,content) {
+		if(proxyOrOwner instanceof this) {
+			return proxyOrOwner.modelProxyFor(content);
+		} else {
+			if(Ember.Enumerable.detect(content)) {
+				return proxyArray(Ember.getOwner(proxyOrOwner),{
+					_content:content
+				});
+			} else {
+				return lookupProxy.call(proxyOrOwner,content,null,{
+				});
+			}
+		}
+	},
+	
 	reset(proxy) {
 		Ember.assert("Can only reset instance of form-model-proxy",proxy instanceof this);
 		proxy._reset();
