@@ -37,7 +37,15 @@ function getProps(props) {
 	props=props.split(',');
 	var length=props.length;
 	for(var i =0;i<length;i++) {
-		props[i]='_form.'+props[i];			
+		if(!props[i]) {
+			delete props[i];
+		} else if(props[i].indexOf('@this.')===0){
+			props[i]=props[i].substring(6);
+		} else if(props[i].indexOf('@panel.')===0){
+			props[i]='_panel.'+props[i].substring(7);
+		} else {
+			props[i]='_form.'+props[i];
+		}
 	}
 	return props;
 }
@@ -61,7 +69,7 @@ export default function(props,fn) {
 			if(!this.hasModel()) {
 				return false;
 			}
-			return fn.call(this._form);
+			return fn.call(this._form,this,ValueSupport.detect(this) ? this.get('value') : this.get('_panel._model'));
 		};
 	}
 	options._conditionProps=props.join(',');
