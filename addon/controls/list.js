@@ -25,7 +25,11 @@ export default Control.extend(ControlSupport,{
 	_itemControls : null,
 	
 	sortProperties: null,
+	
+	_currentSortProperties: null,
+	
 	sortAscending: true,
+	
 	
 	isSorted: Ember.computed.notEmpty('sortProperties'),
 	
@@ -41,7 +45,7 @@ export default Control.extend(ControlSupport,{
 		this._loadItemControls();
 	},
 
-	itemControls : Ember.computed('_itemControls,_itemControls.[],sortProperties.[]',{
+	itemControls : Ember.computed('_itemControls,_itemControls.[]',{
 		get  : function() {
 			if(!this._itemControls) {
 				return Ember.A();
@@ -56,6 +60,24 @@ export default Control.extend(ControlSupport,{
 		}
 	}).readOnly(),
 	
+	_sortObserver: Ember.observer('sortProperties',function() {
+		if(this._currentSortProperties) {
+			this._currentSortProperties.forEach(function(prop) {
+				this.removeObserver('value.@each.'+prop,this,this._notifySortChanged);
+			},this);
+		}
+		this._currentSortProperties=this.get('sortProperties');
+		if(this._currentSortProperties) {
+			this._currentSortProperties.forEach(function(prop) {
+				this.addObserver('value.@each.'+prop,this,this._notifySortChanged);
+			},this);
+		}
+	}).on('init'),
+	
+	_notifySortChanged() {
+		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'_itemControls');		
+	},
+	
 	_loadItemControls : function() {
 		var control=this;
 		var value=this.get('value');
@@ -63,7 +85,7 @@ export default Control.extend(ControlSupport,{
 		var itemControls=this._itemControls;
 		var oldControls=itemControls.toArray();
 		
-		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl);
+		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl || this._itemControlFn);
 		if(this.isDestroying) {
 			return;
 		}
@@ -80,11 +102,12 @@ export default Control.extend(ControlSupport,{
 			
 			values.forEach(function(value) {
 				var index=_value.indexOf(value);
+				var _itemControlDef = control._itemControl || control._itemControlFn.call(this,value);
 				var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
 				} else {
-					var meta=control._itemControl._meta;						
+					var meta=_itemControlDef._meta;
 					itemControls.pushObject(getControl.call(control,index,meta,{'for' : null}));
 				}
 				
@@ -140,11 +163,11 @@ export default Control.extend(ControlSupport,{
 	// We alias the for property for panels and forms
 	'_model' : Ember.computed.alias('value'),
 	
-	_controlDirtyObserver: Ember.observer('_controls.[].isDirty,_itemControls.@each.isDirty',function(){		
+	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_itemControls.@each.isDirty',function(){		
 		this._super();
 	}),
 	
-	_controlValidObserver: Ember.observer('_controls.[].isValid,_itemControls.@each.isValid',function(){
+	_controlValidObserver: Ember.observer('_controls.@each.isValid,_itemControls.@each.isValid',function(){
 		this._super();
 	}),
 	
