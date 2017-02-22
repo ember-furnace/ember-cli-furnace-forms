@@ -88,13 +88,9 @@ function applyProxy(proxy,refs) {
 
 function arrayDestroy(item) {
 	if(ProxyMixin.detect(item)|| item instanceof Ember.Object) {
-		item.destroy();
-	} 
-}
-
-function arrayWillDestroy(item) {
-	if(ProxyMixin.detect(item)|| item instanceof Ember.Object) {
-		item.willDestroy();
+		if(!item.isDestroyed) {
+			item.destroy();
+		}
 	} 
 }
 
@@ -433,29 +429,14 @@ var ProxyMixin=Ember.Mixin.create({
 		this.endPropertyChanges();
 	},
 	
-	willDestroy: function() {
-		this._super();
-		var cache;
-		for(var key in this._cache) {
-			cache=this._cache[key];
-			if(Ember.Enumerable.detect(cache)) {
-				cache.forEach(arrayWillDestroy);
-			} else if(cache instanceof Ember.Object) {
-				cache.willDestroy();
-			}
-		}
-	},
-	
 	destroy: function() {
 		this._super();
-		var cache;
-		for(var key in this._cache) {
-			cache=this._cache[key];
-			if(Ember.Enumerable.detect(cache)) {
-				cache.forEach(arrayDestroy);
-			} else if(cache instanceof Ember.Object) {
-				cache.destroy();
-			}
+		if(this._refs) {
+			this._refs.forEach(function(obj) {
+				if(!obj.proxy.isDestroying) {
+					obj.proxy.destroy();
+				}
+			});
 		}
 	},
 	
@@ -502,8 +483,24 @@ var ProxyArrayMixin = Ember.Mixin.create({
 	
 	_contentDidChange: function() {		
 		if(this._content && !this._isApplying) {
-			this.setObjects(this._content.toArray().map(this._map,this));
+			this.setObjects(this._content.toArray());
 		}
+	},
+	
+	setObjects: function(objects) {
+		this._super(objects.map(this._map,this));
+	},
+	
+	unshiftObjects: function(objects) {
+		this._super(objects.map(this._map,this));
+	},
+	
+	unshiftObject: function(object) {
+		this._super(this._lookupProxy(object));
+	},
+	
+	pushObject: function(object) {
+		this._super(this._lookupProxy(object));
 	},
 	
 	length: 0,
@@ -600,14 +597,18 @@ export default Ember.Object.extend(ProxyMixin,{
 	A: proxyArray,
 	
 	apply(proxy) {
-		Ember.assert("Can only apply instance of form-model-proxy",proxy instanceof this);
+		Ember.assert("Can only apply instance of form-model-proxy",ProxyMixin.detect(proxy));
 		proxy._apply();
 		return proxy;
 	},
 	
 	getContent(proxy) {
-		Ember.assert("Can only get content for instance of form-model-proxy",proxy instanceof this);		
+		Ember.assert("Can only get content for instance of form-model-proxy",ProxyMixin.detect(proxy));		
 		return Ember.get(proxy,'_content');
+	},
+	
+	detect(proxy) {
+		return ProxyMixin.detect(proxy);
 	},
 	
 	proxyFor(proxyOrOwner,content) {
@@ -626,7 +627,7 @@ export default Ember.Object.extend(ProxyMixin,{
 	},
 	
 	reset(proxy) {
-		Ember.assert("Can only reset instance of form-model-proxy",proxy instanceof this);
+		Ember.assert("Can only reset instance of form-model-proxy",ProxyMixin.detect(proxy));
 		proxy._reset();
 		return proxy;
 	},
