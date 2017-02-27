@@ -40,7 +40,7 @@ export default Control.extend(ControlSupport,{
 		this.set('_itemControls',Ember.A());
 		this._super();
 		if(this.filterBy) {
-			this.addObserver('value.@each.'+this.filterBy.key,this,this._loadItemControls);
+			this.addObserver('value.[].'+this.filterBy.key,this,this._loadItemControls);
 		}
 		this._loadItemControls();
 	},
@@ -121,15 +121,11 @@ export default Control.extend(ControlSupport,{
 		}
 	},
 
-	_valueObserver:Ember.observer('value,value.[]',function(sender,key) {
+	_valueObserver:function(sender,key) {
+		this._cleanControls();
 		this._super();
-		if(key==='value') {
-			this._cleanControls();
-		}
-		Ember.run.scheduleOnce('sync',this,function() {
-			this._loadItemControls();
-		});
-	}),
+		Ember.run.scheduleOnce('sync',this,this._loadItemControls);
+	},
 	
 	_reset: function(modelChanged) {
 		if(modelChanged) {

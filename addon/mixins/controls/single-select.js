@@ -106,7 +106,7 @@ export default Ember.Mixin.create({
 	
 	selectedIndex : 0,
 	
-	_valueObserver: Ember.observer('value',function() {		
+	_valueObserver: function() {
 		let selectedOption=this.get("_options").findBy('value',this.get('value'));
 		let index=0;
 		if(selectedOption) {
@@ -114,7 +114,7 @@ export default Ember.Mixin.create({
 		}
 		this.set('selectedIndex',index);
 		this._super();
-	}),
+	},
 	
 	_updateSelected : Ember.observer('_options.[].selected',function() {		
 		var option=this.getOption();

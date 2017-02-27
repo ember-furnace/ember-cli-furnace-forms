@@ -3,6 +3,8 @@ export default Ember.Mixin.create({
 	_orgValue : null,
 	_orgArray : null,
 	
+	_didSetupValue: false,
+	
 	property: undefined,
 	
 	value:null,
@@ -29,25 +31,51 @@ export default Ember.Mixin.create({
 				this.reopen({
 					property:Ember.computed.alias(propertyName)
 				});
-			}			
-			var property=this.get('property');
+			}
+			
+			this._setupValue()
+
+		}
+	},
+	
+	_setupValue(value) {
+		var property;
+		if(arguments.length===0) {
+			property=this.get('property');
 			if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
-				
 				property.then(function(propertyValue){
 					if(!control.isDestroyed) {
-						control.addObserver('property',control._propertyObserver);
-						control._setOrgValue(propertyValue);
-						control.set('value',propertyValue);
+						control._setupValue(propertyValue);
 					}
 				});
+				return;
 			}
-			else {
-				this.addObserver('property',this._propertyObserver);
-				this._setOrgValue(this.get('property'));
-				this.set('value',this.get('property'));
+		}
+		
+		value=value || (property || this.get('property'));
+		
+		let isEnum=false;
+		if(Ember.Enumerable.detect(value)) {
+			value=value.toArray();
+			isEnum=true;
+		}
+		if(!this._didSetupValue) {
+			this.addObserver('property',this._propertyObserver);
+			this.addObserver('value',this._valueObserver);
+			if(isEnum) {
+				this.addObserver('value.[]',this._valueObserver);
 			}
-
+			this._setOrgValue(value);
+			this._didSetupValue=true;
+		}
+		var currentValue=this.get('value');
+		if(Ember.compare(value,currentValue)!==0) {
+			if(isEnum && Ember.Array.detect(currentValue)) {
+				currentValue.setObjects(value);
+			} else {
+				this.set('value',value);
+			}
 		}
 	},
 	
@@ -68,28 +96,17 @@ export default Ember.Mixin.create({
 	},
 	
 	_propertyObserverUpdate: function() {
-		var property=this.get('property');
-		if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
-			var control=this;
-			property.then(function(property){
-				if( control.get('value')!==property) {
-					control.set('value',property);
-				}
-			});
-		}
-		else {
-			if( this.get('value')!==property) {
-				this.set('value',property);
-			}
-		}
+		this._setupValue();
 	},
 	
-	_valueObserver:Ember.observer('value',function() {
-		this._apply();
-		this._updateDirty();
-		this.send('onChange');
-		this.notifyChange();
-	}),
+	_valueObserver:function() {
+		if(this._didSetupValue) {
+			this._apply();
+			this._updateDirty();
+			this.send('onChange');
+			this.notifyChange();
+		}
+	},
 	
 	_updateDirty :function() {
 		var value=this.get('value');
@@ -114,6 +131,9 @@ export default Ember.Mixin.create({
 	},
 	
 	_apply: function() {
+		if(!this._didSetupValue) {
+			return;
+		}
 		if(this.property!==null) {
 			var property=this.get('property');
 			var value=this.get('value');
@@ -128,26 +148,9 @@ export default Ember.Mixin.create({
 				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 					property=property.content;
 				}
-				var dirty=false;
-				if(value.get('length')!==property.get('length')) {
-					dirty=true;
-				}
-				else {
-					value.forEach(function(value) {
-						if(!property.includes(value)) {
-							dirty=true;
-						}
-					});
-					property.forEach(function(property) {
-						if(!value.includes(property)) {
-							dirty=true;
-						}
-					});						
-				}
-				if(dirty) {
+				if(Ember.compare(value,property)!==0) {
 					property.setObjects(value);
 				}
-				
 			}
 			else if(value!==property) {				
 				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {

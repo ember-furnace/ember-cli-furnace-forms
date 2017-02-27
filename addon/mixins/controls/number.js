@@ -115,7 +115,7 @@ export default Ember.Mixin.create({
 		this._checkValue(true);
 	}),
 	
-	_valueObserver : Ember.observer('value',function() {
+	_valueObserver : function() {
 		if(this._checkValue()) {
 			this._super();
 		} else {
@@ -124,5 +124,5 @@ export default Ember.Mixin.create({
 				this._checkValue(true);
 			}
 		}
-	}),
+	},
 });

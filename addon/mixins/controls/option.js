@@ -38,7 +38,8 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	value : null,
 	
-	_valueObserver:Ember.observer('value',function() {
+	_valueObserver:function() {
+		this._super();
 		if(this.get('_option.value')!==this.value) {
 			var selected=this.get('selected');
 			if(selected) {
@@ -49,7 +50,7 @@ export default Ember.Mixin.create(ControlSupport,{
 				this._panel.select(this._option.index,true);
 			}
 		}
-	}),
+	},
 	
 	_optionObserver:Ember.observer('_option.value',function() {
 		this.set('value',this._option.value);
