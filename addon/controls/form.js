@@ -44,7 +44,9 @@ var Form = Panel.extend({
 		var setControlMessages=function(control){
 			control.setMessages(messages[name].toArray(),silent);
 		};
-		for(var name in validations) {
+		var keys=Object.keys(validations).sort().reverse();
+		for(var i=0;i<keys.length;i++ ) {
+			var name=keys[i];
 			if(this._controlsByPath[name]!==undefined) {				
 				this._controlsByPath[name].invoke('setValid',validations[name]);
 				if(messages[name]!==undefined) {
