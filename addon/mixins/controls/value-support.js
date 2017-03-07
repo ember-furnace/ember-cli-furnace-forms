@@ -64,6 +64,7 @@ export default Ember.Mixin.create({
 			this.addObserver('property',this._propertyObserver);
 			this.addObserver('value',this._valueObserver);
 			if(isEnum) {
+				this.addObserver('property.[]',this._propertyObserver);
 				this.addObserver('value.[]',this._valueObserver);
 			}
 			this._setOrgValue(value);
