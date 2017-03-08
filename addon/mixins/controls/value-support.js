@@ -55,6 +55,10 @@ export default Ember.Mixin.create({
 		
 		value=value || (property || this.get('property'));
 		
+		if(Ember.PromiseProxyMixin.detect(value)) {
+			value=Ember.get(value,'content');
+		}
+		
 		let isEnum=false;
 		if(Ember.Enumerable.detect(value)) {
 			value=value.toArray();
@@ -146,8 +150,8 @@ export default Ember.Mixin.create({
 			} 
 
 			if(Ember.Enumerable.detect(property)) {
-				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
-					property=property.content;
+				if(Ember.PromiseProxyMixin.detect(property)) {
+					property=Ember.get(property,'content');
 				}
 				if(Ember.compare(value,property)!==0) {
 					property.setObjects(value);
@@ -190,6 +194,9 @@ export default Ember.Mixin.create({
 				// We no longer nullify value and orgValue, this triggers observers which might not trigger again if our promise returns
 				// in the same runloop
 				property.then(function(property){
+					if(Ember.PromiseProxyMixin.detect(property)) {
+						property=Ember.get(property,'content');
+					}
 					if(modelChanged) {
 						control._setOrgValue(property);
 					}
