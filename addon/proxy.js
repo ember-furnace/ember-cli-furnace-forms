@@ -384,7 +384,7 @@ var ProxyMixin=Ember.Mixin.create({
 				}
 			} else {
 				if(Ember.PromiseProxyMixin.detect(content)) {
-					return PromiseObjectProxy.create(Ember.PromiseProxyMixin,{
+					return PromiseObjectProxy.create({
 						promise:content.then(function(content){
 							return _self._lookupProxy(content);
 						})
