@@ -38,8 +38,10 @@ export default function(object,defaults,options) {
 	if(ProxyMixin.detect(this)) {
 		_options._top=this._top || this;
 	}	
-	
-	var proxy = Class.create(owner.ownerInjection(),_options); 
+	var args=[];
+	args.push(owner.ownerInjection());
+	args.push(_options);
+	var proxy = Class.create.apply(Class,args); 
 	if(defaults) {
 		proxy.setProperties(defaults);
 	}

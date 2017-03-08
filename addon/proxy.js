@@ -44,6 +44,9 @@ function applyProxy(proxy,refs) {
 		// First make sure edges are applied
 		for(key in proxy._cache) {
 			value=proxy._proxies[key] || proxy._cache[key];
+			if(Ember.PromiseProxyMixin.detect(value)) {
+				value=value.content;
+			}
 			if(ProxyMixin.detect(value)) {
 				if(value._apply(refs)) {
 					changes.push(key);
@@ -85,6 +88,9 @@ function applyProxy(proxy,refs) {
 //	}
 //	return item;
 //}
+
+var PromiseObjectProxy=Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+var PromiseArrayProxy=Ember.ArrayProxy.extend(Ember.PromiseProxyMixin);
 
 function arrayDestroy(item) {
 	if(ProxyMixin.detect(item)|| item instanceof Ember.Object) {
@@ -237,7 +243,7 @@ var ProxyMixin=Ember.Mixin.create({
 				if(value!==null && typeof value==='object') {
 					
 					var proxy=this;
-					if(value instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(value) ) {
+					if(value instanceof Ember.RSVP.Promise ) {
 						value=value.then(function(value) {
 							if(value!==null && typeof value==='object') {
 								value=proxy._getProxy(key,value);								
@@ -271,6 +277,10 @@ var ProxyMixin=Ember.Mixin.create({
 					return;
 			}
 		}
+		if(Ember.PromiseProxyMixin.detect(value)) {
+			value=value.content;
+		}
+
 		if(value instanceof Ember.RSVP.Promise) {
 			value.then(function(value) {
 				proxy._applyKey(content,key,value);
@@ -343,29 +353,48 @@ var ProxyMixin=Ember.Mixin.create({
 	
 	_lookupProxy : function(content) {
 		if(ProxyMixin.detect(content)) {
+			// TODO: Possible bug, we should probably check whether this proxy is our own reference list
+			// We may need to proxy a proxy if we want to have them stackable
 			return content;
 		}
 		var ref=this._refs.findBy('obj',content);
+		var _self=this;
 		var proxy;
 		if(ref) {
 			proxy = ref.proxy;
-		} else {
-			if(content instanceof Ember.RSVP.Promise && !Ember.PromiseProxyMixin.detect(content)) {
+		} else {			
+			if(content instanceof Ember.RSVP.Promise) {
 				Ember.assert('Proxy did not expect to receive a promise here');
 				return null;
 			}
-			if(Ember.Enumerable.detect(content)) {				
-				proxy = proxyArray(Ember.getOwner(this),{
-					_syncFromSource:this._syncFromSource,
-					_syncToSource:this._syncToSource,
-					_content:content,
-					_top: this._top || this
-				});
+			if(Ember.Enumerable.detect(content)) {					
+				if(Ember.PromiseProxyMixin.detect(content)) {
+					return PromiseArrayProxy.create({
+						promise:content.then(function(content){
+							return _self._lookupProxy(content);
+						})
+					});
+				} else {
+					proxy = proxyArray(Ember.getOwner(this),{
+						_syncFromSource:this._syncFromSource,
+						_syncToSource:this._syncToSource,
+						_content:content,
+						_top: this._top || this
+					});
+				}
 			} else {
-				proxy = lookupProxy.call(this,content,null,{
-					fromSource:this._syncFromSource,
-					toSource:this._syncToSource
-				});
+				if(Ember.PromiseProxyMixin.detect(content)) {
+					return PromiseObjectProxy.create(Ember.PromiseProxyMixin,{
+						promise:content.then(function(content){
+							return _self._lookupProxy(content);
+						})
+					});
+				} else {
+					proxy = lookupProxy.call(this,content,null,{
+						fromSource:this._syncFromSource,
+						toSource:this._syncToSource
+					});
+				}
 			}
 			
 			this._refs.pushObject({
@@ -460,7 +489,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 	},
 	
 	toString : function() {
-		var name = '<ProxyArray>';
+		var name = Ember.PromiseProxyMixin.detect(this) ? '<PromiseProxyArray>' :'<ProxyArray>';
 		var contentName='null';
 		if(this._content) {
 			contentName=this._content.toString();
@@ -550,7 +579,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		this._syncToSource=options._syncToSource;
 		this._cache={};
 		if(options._content) {
-			this._content=options._content;		
+			this._content=options._content;
 		}
 		if(!this._top) {
 			this._refs=Ember.A();
@@ -569,6 +598,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 	}
 		
 });
+
 
 var proxyArray = function(owner,options) {
 	var a=[];
