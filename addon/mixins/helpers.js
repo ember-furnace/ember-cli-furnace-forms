@@ -46,8 +46,8 @@ var Helpers= Ember.Mixin.create({
 				return this.text();
 			case 'check':
 				Ember.deprecate('furnace-forms: the "check" input is deprecated, use "checklist" instead',{id:'furnace-forms:input.check'});
-				name='checklist';
-				return this[name].apply(this,name,options); 
+				arguments[0]='checklist';
+				return this[arguments[0]].apply(this,arguments); 
 			case 'radio':
 			case 'checklist':
 			case 'button':
