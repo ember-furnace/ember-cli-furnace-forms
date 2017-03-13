@@ -365,10 +365,12 @@ export default Ember.Component.extend({
 		get : function() {
 			var ret=Ember.A();		
 			ret.pushObject((this.get('control._form._modelName')+'.'+(this.control._path ? this.control._path : this.get('defaultLayoutName'))).replace(/\./g,'/'));
-			if(this.control._decoratorName) {
-				ret.pushObject((this.get('control._form._modelName')+'.'+this.control._decoratorName).replace(/\./g,'/'));			
-				var layoutName=this.control._decoratorName.replace(/\./g,'/');				
-				if(layoutName===this.control._decoratorName) {
+			
+			var decoratorName=this.control._decoratorName || this.get('parentView.optionType');
+			if(decoratorName) {
+				ret.pushObject((this.get('control._form._modelName')+'.'+decoratorName).replace(/\./g,'/'));			
+				var layoutName=decoratorName.replace(/\./g,'/');
+				if(layoutName===decoratorName) {
 					ret.pushObject( 'forms/'+layoutName);
 				} else {
 					ret.pushObject(layoutName+'/'+this.control._decoratorType);
