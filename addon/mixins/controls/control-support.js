@@ -52,8 +52,10 @@ export default Ember.Mixin.create({
 		this.set('_controls',controls);
 
 		// Fixes issue with isValid flags not propegating
-		// Sets form to valid before validation was run, so disable this 
-		//this._controlValidObserver();
+		// Sets form to valid before validation was run, so disable this
+		// So now we call this observer anyway, but we do not specify a key, to prevent actually
+		// updating the valid state
+		this._controlValidObserver();
 	},
 	
 	inputControls: Ember.computed('_controls',{
@@ -113,6 +115,7 @@ export default Ember.Mixin.create({
 //	_valid : null,
 //	
 //	isValid : null,
+	
 	setValid : function(valid) {
 		this._syncValid(valid);
 		//Ember.run.scheduleOnce('sync',this,this._syncValid,valid);
@@ -127,14 +130,19 @@ export default Ember.Mixin.create({
 			this.set('_valid',valid);
 		}
 		valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
-		if(valid!==this.isValid) {
+		if(valid!==this.get('isValid')) {
 			this.setFlag('isValid',valid);
 			this.notifyChange();
 		}
 	},
 	
-	_controlValidObserver: Ember.observer('controls.@each.isValid',function(){
-		this.setValid(this._valid);
+	_controlValidObserver: Ember.observer('controls.@each.isValid',function(sender,key){
+		// If we don't get a key, we were called manually to prime the observed properties
+		// If we already have an invalid control, because validation already took place,
+		// then update validity anyway
+		if(key || this.get('controls').filterBy('isValid',false ).get('length')>0) {
+			this.setValid(this._valid);
+		}
 	}),
 	
 	

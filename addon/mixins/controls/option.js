@@ -107,7 +107,7 @@ export default Ember.Mixin.create(ControlSupport,{
 			if(this.get('selected')) {
 				valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
 			}
-			if(valid!==this.isValid) {
+			if(valid!==this.get('isValid')) {
 				this.setFlag('isValid',valid);
 				this.notifyChange();
 			}

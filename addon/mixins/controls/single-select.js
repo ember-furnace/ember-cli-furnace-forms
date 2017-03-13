@@ -144,7 +144,7 @@ export default Ember.Mixin.create({
 				this.notifyChange();
 			}
 		}
-		else if(valid!==this._valid || valid!==this.isValid) {	
+		else if(valid!==this._valid || valid!==this.get('isValid')) {	
 			this.setFlag('isValid',valid);
 			this.set('_valid',valid);
 			this.notifyChange();

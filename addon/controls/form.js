@@ -37,23 +37,40 @@ var Form = Panel.extend({
 	
 	_setValidations : function(result,silent) {
 		var validations=result.get('validations');
-		var messages=result.get('messages');
-		
+		var messages=result.get('messages');		
 		this._validationCache=validations;
 		this._messageCache=messages;	
 		var setControlMessages=function(control){
 			control.setMessages(messages[name].toArray(),silent);
 		};
 		var keys=Object.keys(validations).sort().reverse();
+		// Set invalid controls first, to prevent premature parent isValid trigger
 		for(var i=0;i<keys.length;i++ ) {
 			var name=keys[i];
-			if(this._controlsByPath[name]!==undefined) {				
-				this._controlsByPath[name].invoke('setValid',validations[name]);
-				if(messages[name]!==undefined) {
-					this._controlsByPath[name].forEach(setControlMessages);
+			if(validations[name]===false) {
+				if(this._controlsByPath[name]!==undefined) {				
+					this._controlsByPath[name].invoke('setValid',validations[name]);
+					if(messages[name]!==undefined) {
+						this._controlsByPath[name].forEach(setControlMessages);
+					}
+					else { 
+						this._controlsByPath[name].invoke('setMessages',null);
+					}
 				}
-				else { 
-					this._controlsByPath[name].invoke('setMessages',null);
+			}
+		}
+		// Then, set controls that became valid
+		for(var i=0;i<keys.length;i++ ) {
+			var name=keys[i];
+			if(validations[name]===true) {
+				if(this._controlsByPath[name]!==undefined) {				
+					this._controlsByPath[name].invoke('setValid',validations[name]);
+					if(messages[name]!==undefined) {
+						this._controlsByPath[name].forEach(setControlMessages);
+					}
+					else { 
+						this._controlsByPath[name].invoke('setMessages',null);
+					}
 				}
 			}
 		}
