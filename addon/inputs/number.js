@@ -49,7 +49,7 @@ export default Text.extend({
 			if(value===null) {
 				return '';
 			} else {
-				return this.get('i18nService').numberToLocale(value); 
+				return this.get('i18nService').numberToLocale(value,{maximumFractionDigits:20}); 
 			}
 		},
 		set(key,value) {
@@ -61,7 +61,7 @@ export default Text.extend({
 				if(isNaN(value)) {
 					value='';
 				} else {
-					value=this.get('i18nService').numberToLocale(value);
+					value=this.get('i18nService').numberToLocale(value,{maximumFractionDigits:20});
 				}
 			}
 			return value;
