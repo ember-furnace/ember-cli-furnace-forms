@@ -36,8 +36,5 @@ export default Input.extend(CheckedSupport,{
 	
 	type : 'checklist-option',
 
-	_checkedObserver: Ember.observer('checked',function() {		
-		this.$('#'+Ember.get(this,'inputId')).prop('checked',this.get('checked'));
-	}),
 	
 });
