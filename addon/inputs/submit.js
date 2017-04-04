@@ -19,6 +19,14 @@ export default Input.extend({
 		click:function() {
 			this.control.submit();
 		}
-	}
+	},
 	
+	tabindex: Ember.computed({
+		get() {
+			return this.get('control.tabindex');
+		},
+		set(key,value) {
+			return value;
+		}
+	})
 });

@@ -19,6 +19,8 @@ export default Control.extend(ValueSupport,{
 	
 	_decoratorType : 'input',
 	
+	tabindex: 0
+	
 }).reopenClass({
 	targetProperty: function(cp) {
 		return this.reopen({

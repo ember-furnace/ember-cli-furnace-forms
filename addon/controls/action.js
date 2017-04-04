@@ -20,6 +20,8 @@ export default Control.extend({
 	
 	_decoratorName : 'button',
 	
+	tabindex: 0,
+	
 	dispatch : function() {
 		if(!this.get('isEnabled')) {
 			if(this.get('hasPrerequisites')===false) {
@@ -38,6 +40,7 @@ export default Control.extend({
 			return;
 		}
 		this.send('submit',this._name);
-	},
+	}
+	
 	
 });
