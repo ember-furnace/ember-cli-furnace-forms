@@ -35,5 +35,12 @@ export default Input.extend(CheckedSupport,{
 		}
 	},
 	
+	keyPress:function(event) {
+		if(event.keyCode!==32) {
+			return;
+		}
+		this.control.select();
+	},
+	
 	type : 'radio-option'
 });
