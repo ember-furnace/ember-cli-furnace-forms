@@ -7,6 +7,8 @@ export default Ember.Component.extend({
 	
 	tagName: '',
 	
+	controlTagName: 'form',
+	
 	_control: null,
 	
 	_lookup: lookup,
