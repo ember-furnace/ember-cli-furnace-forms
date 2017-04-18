@@ -55,8 +55,6 @@ export default Ember.Mixin.create({
 					}
 				}
 			});
-		} else {
-			debugger;
 		}
 		if(changed) {
 			this.notifyChange();

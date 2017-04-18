@@ -36,7 +36,13 @@ export default Ember.Mixin.create({
 				input.prop('checked',this.get('checked'));
 			}
 		});
-		
-		
-	}
+	},
+	
+	click : function(event) {
+		var target=event.toElement || event.target;
+		target=target.control || target;
+		if(target.id===this.get('inputId')) {
+			this.control.select();
+		}
+	},
 });

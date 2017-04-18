@@ -75,4 +75,17 @@ export default Control.extend(CheckedSupport,{
 		this.$('#'+Ember.get(this,'inputId')).prop('checked',this.get('checked'));
 	}),
 	
+	click : function(event) {
+		var target=event.toElement || event.target;
+		target=target.control || target;
+		if(target.id===this.get('inputId') && this.get('isEnabled')) {
+			if(this.get('value')===this.get('checkedValue')) {
+				this.set('value',this.get('uncheckedValue'));
+			} else {
+				this.set('value',this.get('checkedValue'));
+			}
+			event.preventDefault();
+			return false;
+		}
+	},
 });

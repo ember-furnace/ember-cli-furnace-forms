@@ -28,13 +28,6 @@ export default Input.extend(CheckedSupport,{
 		
 	checked : Ember.computed.alias('selected'),
 		
-	click : function(event) {
-		var target=event.toElement || event.target;
-		if(target.id===this.get('inputId')) {
-			this.control.select();
-		}
-	},
-	
 	keyPress:function(event) {
 		if(event.keyCode!==32) {
 			return;
