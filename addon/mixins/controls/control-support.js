@@ -3,6 +3,8 @@ import Action from 'furnace-forms/controls/action';
 export default Ember.Mixin.create({
 	_controls : null,
 	
+	_loadingControls: false,
+	
 	init : function() {
 		this._super();
 		// "for" or "value" might not be available yet
@@ -33,6 +35,10 @@ export default Ember.Mixin.create({
 		if(!this.get('_model')) {		   
 			return;
 		}
+		if(this._loadingControls) {
+			return;
+		}
+		this._loadingControls=true;
 		var control=this;
 		var controls=Ember.A();
 		if(this.isDestroyed) {
