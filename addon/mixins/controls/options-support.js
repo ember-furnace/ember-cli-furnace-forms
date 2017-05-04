@@ -62,11 +62,11 @@ export default Ember.Mixin.create({
 			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
-					Ember.run.scheduleOnce('sync',this,this._getOptions);
+					this._getOptions();
 					this._super();
 				})
 			});
-			Ember.run.scheduleOnce('sync',this,this._getOptions);
+			this._getOptions();
 		}
 	},
 	

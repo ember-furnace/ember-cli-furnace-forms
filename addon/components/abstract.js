@@ -17,7 +17,11 @@ import I18n from 'furnace-i18n';
  */
 
 function getControlNameClass() {
-	
+	var name=this.get('control._name');
+	if(typeof name==='string') {
+		return name.replace(/\./g,'-');
+	}
+	return null;
 }
 
 export default Ember.Component.extend({ 
@@ -26,29 +30,17 @@ export default Ember.Component.extend({
 	classNameBindings: ['_validClass','_focusClass','_enabledClass','_nameClass','_controlClasses','_typeClass'],
 	
 	control: null,
-    
-	_controlName : null,
-    
-	_controlNameObserver: Ember.observer('control._name',function() {
-		Ember.run.scheduleOnce('sync',this,this._updateControlName);
-	}).on('init'),
 	
-	_updateControlName: function() {
-		if(this.get('_controlName')!==this.get('control._name')) {
-			this.set('_controlName',this.get('control._name'));
-		}
-	},
-	
-	_nameClass : Ember.computed('_controlName',{
-		get : function() {
-			var name=this.get('_controlName');
-			if(typeof name==='string') {
-				return name.replace(/\./g,'-');
-			}
-			return null;
-		}
+	_nameClass : Ember.computed({
+		get : getControlNameClass
 	}).readOnly(),
 	
+	_controlNameObserver: Ember.observer('control._name',function() {
+		var name=getControlNameClass.apply(this);
+		if(name!==this.get('_nameClass')) {
+			Ember.run.schedule('sync',this,this.set,'_nameClass',name);
+		}
+	}),
 	
 	_focusClass : Ember.computed('_focus',{
 		get : function() {
