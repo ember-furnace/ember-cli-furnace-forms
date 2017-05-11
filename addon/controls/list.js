@@ -144,11 +144,11 @@ export default Control.extend(ControlSupport,{
 		} else if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 			//toRemove=this._itemControls.toArray();
 		} else {
-			this._itemControls.forEach(function(control) {
-				if(!property.includes(control.get('for'))) {
-					toRemove.pushObject(control);
-				}
-			});
+			// Simply removing controls based on their content has severy decremental effects on performance
+			// Remove controls based on their length
+			if(this._itemControls.length>property.length) {
+				toRemove=this._itemControls.slice(property.length,this._itemControls.length);				
+			}
 		}
 		toRemove.invoke('destroy');
 		this._itemControls.removeObjects(toRemove);
