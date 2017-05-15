@@ -26,9 +26,10 @@ export default Panel.extend({
 	
 	attrList: null,
 	
+	_boundAttrs:null,
 	
 	_modelName : null,
-    
+
 	_modelNameObserver: Ember.observer('control._modelName',function() {
 		Ember.run.scheduleOnce('sync',this,this._updateModelName);
 	}).on('init'),
@@ -82,7 +83,8 @@ export default Panel.extend({
 	
 	
 	init: function() {
-		this._super();
+		this._super(...arguments);
+		this._boundAttrs=Ember.A();
 	},
 	
 	'for' : Ember.computed({
@@ -126,15 +128,20 @@ export default Panel.extend({
 		}
 	}).readOnly(),
 	
-	updateAttributes : Ember.on('didReceiveAttrs',function(attrs) {
-		var opts={};
-		if(attrs.newAttrs && attrs.newAttrs.attrList) {
-			var list=this.get('attrList');
-			for(let index in list) {
-				opts[list[index]]=Ember.computed.alias('attrSource.'+list[index]);
+	_bindAttributes : Ember.observer('attrList.[]',function() {
+		var opts={};		
+		var list=this.get('attrList');
+		var bound=this.get('_boundAttrs');
+		if(list) {
+			for(var i=0;i<list.length;i++) {
+				var key=list[i];
+				if(!bound.includes(key)) {
+					opts[key]=Ember.computed.alias('attrSource.'+key);
+					bound.pushObject(key);
+				}
 			}
 			this.reopen(opts);
 		}
-	})
+	}).on('init')
 	
 });

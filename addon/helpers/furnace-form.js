@@ -27,6 +27,30 @@ export default Ember.Component.extend({
 		}
 	}).readOnly(),
 	
+	init() {
+		var attrList=this.get('attrList');
+		if(!attrList) {
+			attrList = this.set('attrList',Ember.A());
+		}
+		this._super(...arguments);
+	},
+	
+	// Should consider using .attrs for attrList
+	// For now wait for API to stabalize
+	setUnknownProperty(key,value) {
+		var attrList=this.get('attrList');
+		if(!attrList) {
+			attrList = this.set('attrList',Ember.A());
+		}
+		if(key.substr(0,1)!=='_' && key!=='attrs' && key!=='renderer') {			
+			if(!attrList.includes(key)) {
+				attrList.pushObject(key);
+			}
+		}
+		this[key]=value;
+		return this.set(key,value);
+	},
+	
 	_formObserver: Ember.observer('form',function() {
 		let Clazz=this._lookup(this.get('form'));
 		if(!(this._control instanceof Clazz)) {
@@ -40,8 +64,6 @@ export default Ember.Component.extend({
 	}).on('init'),
 	
 	decorator: Ember.computed.alias('_control._decorator'),
-	
-	'for' : null,
 	
 	_forObserver:Ember.observer('for',function() {
 		if(this._control) {
@@ -64,23 +86,6 @@ export default Ember.Component.extend({
 			}
 		}
 	},
-	
-	receiveParentAttributes : Ember.on('didReceiveAttrs',function(attrs) {
-		if(!this.attrList) {
-			var attrList=Ember.A();
-			for(let name in attrs.newAttrs) {
-				if(name!=='for' && name!=='_named') {
-					attrList.push(name);
-				}
-			}
-			this.set('attrList',attrList);
-		}
-//		if(this._control && attrs.newAttrs['for']) {
-//			this.set('_control.for',attrs.newAttrs['for']);
-//		} 
-	}),
-	
-	
 	
 }).reopenClass({
 	positionalParams: ['_named'],
