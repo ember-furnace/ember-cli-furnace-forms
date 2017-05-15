@@ -23,10 +23,10 @@ export default function(object,defaults,options) {
 	var owner=Ember.getOwner(this);
 	var Class;
 	if (name) {
-		Class= owner._lookupFactory('form-model-proxy:'+name);
+		Class= owner.factoryFor('form-model-proxy:'+name).class;
 	}
 	if(!Class) {
-		Class= owner._lookupFactory('form-model-proxy:default');
+		Class= owner.factoryFor('form-model-proxy:default').class;
 	}
 	var _options={		
 		_modelType: type,

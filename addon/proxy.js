@@ -140,7 +140,7 @@ var ProxyMixin=Ember.Mixin.create({
 			this._refs=this._top._refs;
 		}
 		if(!this._content && this._modelType==='model') {
-			var factory=Ember.getOwner(this)._lookupFactory(this._modelType+':'+this._modelName);
+			var factory=Ember.getOwner(this).factoryFor(this._modelType+':'+this._modelName).class;
 			Ember.get(factory,'relationshipsByName').forEach(function(rel) {
 				if(rel.kind==='hasMany') {
 					var proxy=proxyArray(Ember.getOwner(this),{

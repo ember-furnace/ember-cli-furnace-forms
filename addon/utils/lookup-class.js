@@ -9,7 +9,7 @@ var getClass=function(owner,type,name) {
 		
 	var Class=Cache.classes[type+":"+name];
 	if(!Class) {
-		Class = owner._lookupFactory(type+':'+name);
+		Class = owner.factoryFor(type+':'+name).class;
 		Ember.assert('No '+type+' defined for name "'+name+'"',Class);
 		Class.typeKey=name;
 		Cache.classes[type+':'+name]=Class;
