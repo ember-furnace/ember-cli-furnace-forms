@@ -31,7 +31,11 @@ export default Panel.extend({
 	_modelName : null,
 
 	_modelNameObserver: Ember.observer('control._modelName',function() {
-		Ember.run.scheduleOnce('sync',this,this._updateModelName);
+		if(this.get('control._modelName')) {
+			this._updateModelName();
+		} else {
+			Ember.run.scheduleOnce('sync',this,this._updateModelName);
+		}
 	}).on('init'),
 	
 	_updateModelName: function() {
