@@ -130,7 +130,7 @@ export default Control.extend(ControlSupport,{
 		options=options || {};
 		var _options={};
 		mixins=mixins || [];
-		if(!options['for'] && !meta.options['for']) {
+		if(!options['for'] && !meta.options['for'] && !this._modelSet) {
 //			if(options._panel && options._panel._isFormOption) {
 //				options['for']=Ember.computed.alias('_panel.for');
 //			} else

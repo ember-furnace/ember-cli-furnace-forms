@@ -492,6 +492,9 @@ var Form = Panel.extend({
 					_modelName : arguments[0],
 					'for' : arguments[1]
 				});
+				this.reopenClass({
+					_modelSet:true
+				});
 				break;
 			case 1:
 				if(typeof arguments[0]==='string') {
@@ -501,6 +504,9 @@ var Form = Panel.extend({
 				} else {
 					this.reopen({
 						'for' : arguments[0]
+					});
+					this.reopenClass({
+						_modelSet:true
 					});
 				}
 				break;
