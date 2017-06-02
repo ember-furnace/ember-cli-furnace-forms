@@ -21,13 +21,14 @@ export default function(object,defaults,options) {
 		name=getName(object,true);
 	}
 	var owner=Ember.getOwner(this);
-	var Class;
+	var Class,Factory;
 	if (name) {
-		Class= owner.factoryFor('form-model-proxy:'+name).class;
+		Factory= owner.factoryFor('form-model-proxy:'+name);
 	}
-	if(!Class) {
-		Class= owner.factoryFor('form-model-proxy:default').class;
+	if(!Factory) {
+		Factory= owner.factoryFor('form-model-proxy:default');
 	}
+	Class=Factory.class;
 	var _options={		
 		_modelType: type,
 		_modelName: name,
