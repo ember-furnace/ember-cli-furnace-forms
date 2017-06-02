@@ -114,7 +114,7 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty',function(){			
+	_controlDirtyObserver: Ember.observer('controls.@each.isDirty',function(){			
 		this.setDirty(this._dirty);
 	}),
 	

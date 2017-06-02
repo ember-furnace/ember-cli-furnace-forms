@@ -159,13 +159,15 @@ export default Control.extend(ControlSupport,{
 	// We alias the for property for panels and forms
 	'_model' : Ember.computed.alias('value'),
 	
-	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_itemControls.@each.isDirty',function(){		
-		this._super();
-	}),
 	
-	_controlValidObserver: Ember.observer('_controls.@each.isValid,_itemControls.@each.isValid',function(){
-		this._super();
-	}),
+// These terrible workaround seem no long necessary.
+//	_controlDirtyObserver: Ember.observer('_controls.@each.isDirty,_itemControls.@each.isDirty',function(){		
+//		this._super();
+//	}),
+	
+//	_controlValidObserver: Ember.observer('_controls.@each.isValid,_itemControls.@each.isValid',function(){
+//		this._super();
+//	}),
 	
 	willDestroy : function() {
 		var controls=this._itemControls;
