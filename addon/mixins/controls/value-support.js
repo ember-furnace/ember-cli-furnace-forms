@@ -38,7 +38,7 @@ export default Ember.Mixin.create({
 		}
 	},
 	
-	_setupValue(value) {
+	_setupValue(value,resetOrgValue) {
 		var property;
 		if(arguments.length===0) {
 			property=this.get('property');
@@ -71,16 +71,21 @@ export default Ember.Mixin.create({
 				this.addObserver('property.[]',this._propertyObserver);
 				this.addObserver('value.[]',this._valueObserver);
 			}
+		} 
+		if(!this._didSetupValue || resetOrgValue) {
 			this._setOrgValue(value);
 			this._didSetupValue=true;
 		}
 		var currentValue=this.get('value');
-		if(Ember.compare(value,currentValue)!==0) {
-			if(isEnum && Ember.Array.detect(currentValue)) {
-				currentValue.setObjects(value);
-			} else {
-				this.set('value',value);
-			}
+		
+		if(isEnum && Ember.Array.detect(currentValue) && Ember.compare(value,currentValue)!==0) {
+			currentValue.setObjects(value);
+		} else if(currentValue!==value){
+			this.set('value',value);
+		}
+		
+		if(resetOrgValue) {
+			this._updateDirty();
 		}
 	},
 	
@@ -116,9 +121,7 @@ export default Ember.Mixin.create({
 	_updateDirty :function() {
 		var value=this.get('value');
 		var dirty=false;		
-		if(value!==this.get('_orgValue')) {
-			dirty=true;
-		} else if(this._orgArray) {
+		if(value && this._orgArray) {
 			var orgArray=this._orgArray;
 			if(value.length!==orgArray.length) {
 				dirty=true;
@@ -131,7 +134,9 @@ export default Ember.Mixin.create({
 				});
 			}
 			
-		} 
+		} else if(value!==this.get('_orgValue')) {
+			dirty=true;
+		}
 		this.setDirty(dirty);
 	},
 	
@@ -153,7 +158,7 @@ export default Ember.Mixin.create({
 				if(Ember.PromiseProxyMixin.detect(property)) {
 					property=Ember.get(property,'content');
 				}
-				if(Ember.compare(value,property)!==0) {
+				if(Ember.compare(value,property.toArray())!==0) {
 					property.setObjects(value);
 				}
 			}
@@ -197,11 +202,9 @@ export default Ember.Mixin.create({
 					if(Ember.PromiseProxyMixin.detect(property)) {
 						property=Ember.get(property,'content');
 					}
-					if(modelChanged) {
-						control._setOrgValue(property);
-					}
+					
 					if(control.get('value')!==property) {
-						control.set('value',property);
+						control._setupValue(property,true);
 					} else {
 						control._updateDirty();
 					}
@@ -209,9 +212,8 @@ export default Ember.Mixin.create({
 				});
 			}
 			else {				
-				this._setOrgValue(property);
 				if(property!==this.get('value')) {
-					this.set('value',property);
+					this._setupValue(property,true);
 				} else {
 					this._updateDirty();
 				}
