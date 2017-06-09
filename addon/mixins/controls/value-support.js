@@ -206,6 +206,7 @@ export default Ember.Mixin.create({
 					if(control.get('value')!==property) {
 						control._setupValue(property,true);
 					} else {
+						control._setOrgValue(property);
 						control._updateDirty();
 					}
 					
@@ -215,6 +216,7 @@ export default Ember.Mixin.create({
 				if(property!==this.get('value')) {
 					this._setupValue(property,true);
 				} else {
+					this._setOrgValue(property);
 					this._updateDirty();
 				}
 			}
