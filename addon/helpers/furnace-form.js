@@ -54,12 +54,17 @@ export default Ember.Component.extend({
 	_formObserver: Ember.observer('form',function() {
 		let Clazz=this._lookup(this.get('form'));
 		if(!(this._control instanceof Clazz)) {
-			let control=Clazz.create(Ember.getOwner(this).ownerInjection(),{			
+			let control=Clazz.create(Ember.getOwner(this).ownerInjection(),{
 				'for': this.get('for'),
 				target: this,
 				_rootControl:true
 			});
+			if(this._control) {
+				this._control.destroy();
+				this.sendAction('controlDestroyed',this._control);
+			}
 			this.set('_control',control);
+			this.sendAction('controlCreated',control);
 		}
 	}).on('init'),
 	
@@ -71,6 +76,10 @@ export default Ember.Component.extend({
 		}
 	}),
 	
+	destroy() {
+		this.sendAction('controlDestroyed',this._control);
+	},
+	
 	send: function() {
 		this.sendAction.apply(this,arguments);
 	},
@@ -80,9 +89,11 @@ export default Ember.Component.extend({
 		if(this.get('attrs.'+actionName)) {
 			this._super(...arguments);			
 		} else {
-			var targetObject=this.get('_targetObject') || this.get('targetObject');
-			if(targetObject) {
-				targetObject.send.apply(targetObject,arguments);
+			if(action!=='controlCreated' && action!=='controlDestroyed') {
+				var targetObject=this.get('_targetObject') || this.get('targetObject');
+				if(targetObject) {
+					targetObject.send.apply(targetObject,arguments);
+				}
 			}
 		}
 	},
