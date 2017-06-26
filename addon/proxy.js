@@ -170,17 +170,26 @@ var ProxyMixin=Ember.Mixin.create({
 		var value = this._content.get(key);
 		if(value!==null && typeof value==='object') {
 			var proxy=this;
-			if(value instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(value) ) {
-				value=value.then(function(value) {
+			if(value instanceof Ember.RSVP.Promise ) {
+				value.then(function(value) {
 					if(value!==null && typeof value==='object') {
-						value=proxy._getProxy(key,value);								
+						value=proxy._getProxy(key,value);	
 					}
 					proxy.notifyPropertyChange(key);
+					proxy._cache[key]=value;
 					return value;
 				});
+				return;
 			} else if(!this._proxies[key] || this._proxies[key]!==value) {
 				value=this._getProxy(key,value);
-			} 
+				if(Ember.PromiseProxyMixin.detect(value)) {
+					value.then(function() {
+						proxy.notifyPropertyChange(key);
+						proxy._cache[key]=value;
+					})
+					return;
+				}
+			}
 		}
 		this._cache[key]=value;
 		this.propertyDidChange(key);
