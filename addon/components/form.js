@@ -36,7 +36,11 @@ export default Panel.extend({
 		} else {
 			Ember.run.scheduleOnce('sync',this,this._updateModelName);
 		}
-	}).on('init'),
+	}),
+	
+	_modelNameInit:Ember.on('init',function() {
+		this._modelNameObserver();
+	}),
 	
 	_updateModelName: function() {
 		if(this.get('_modelName')!==this.get('control._modelName')) {
@@ -146,6 +150,10 @@ export default Panel.extend({
 			}
 			this.reopen(opts);
 		}
-	}).on('init')
+	}),
+	
+	_bindAttributesInit: Ember.on('init',function() {
+		this._bindAttributes();
+	}),
 	
 });

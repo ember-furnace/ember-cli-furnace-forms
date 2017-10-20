@@ -341,25 +341,27 @@ var Form = Panel.extend({
 		this._forms.invoke('_reset',modelChanged);
 	},
 	
-	_validator: function() {
-		var validator=this.get('validator');
-		if(typeof validator==='object') {
-			return validator;
-		}
-		else {
-			var fn=Ember.getOwner(this).lookup('validator:lookup');
-			if(fn) {
-				try {
-					return fn.call(this,validator);
-				}
-				catch(e) {				
-					Ember.warn('A form tried to resolve a validator for "'+validator+'" but got the following error: '+e.message);
-					return null;
-				}
+	_validator: Ember.computed('validator', {
+		get: function() {
+			var validator=this.get('validator');
+			if(typeof validator==='object') {
+				return validator;
 			}
-			return null;
+			else {
+				var fn=Ember.getOwner(this).lookup('validator:lookup');
+				if(fn) {
+					try {
+						return fn.call(this,validator);
+					}
+					catch(e) {				
+						Ember.warn('A form tried to resolve a validator for "'+validator+'" but got the following error: '+e.message);
+						return null;
+					}
+				}
+				return null;
+			}
 		}
-	}.property('validator'),
+	}),
 	
 	'for' : null,
 	

@@ -66,7 +66,11 @@ export default Ember.Component.extend({
 			this.set('_control',control);
 			this.sendAction('controlCreated',control);
 		}
-	}).on('init'),
+	}),
+	
+	_formInit: Ember.on('init',function(){
+		this._formObserver();
+	}),
 	
 	decorator: Ember.computed.alias('_control._decorator'),
 	

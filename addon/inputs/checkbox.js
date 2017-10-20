@@ -40,9 +40,11 @@ export default Control.extend(CheckedSupport,{
 	
 	name : Ember.computed.alias('_name'),
 	
-	inputId: function() {
-		return this.elementId+'Input';
-	}.property('elementId'),
+	inputId: Ember.computed('elementId',{
+		get() {
+			return this.elementId+'Input';
+		}
+	}),
 		
 	checked : Ember.computed('value', {
 		get : function() {

@@ -72,7 +72,11 @@ export default Control.extend(ControlSupport,{
 				this.addObserver('value.@each.'+prop,this,this._notifySortChanged);
 			},this);
 		}
-	}).on('init'),
+	}),
+	
+	_sortInit: Ember.on('init',function() {
+		this._sortObserver();
+	}),
 	
 	_notifySortChanged() {
 		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'_itemControls');		
