@@ -16,6 +16,7 @@ Router.map(function() {
 	this.route('conditions', {path:'/conditions'}, function() {
 		this.route('stacked', {path:'/stacked'});
 	});
+	this.route('integration', {path:'/integration'});
 });
 
 export default Router;

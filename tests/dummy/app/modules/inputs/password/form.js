@@ -1,4 +1,4 @@
 import Forms from 'furnace-forms';
-export default Forms.form({
+export default Forms.Form.extend({
 	text : Forms.input('password')
 })

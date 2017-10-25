@@ -1,5 +1,5 @@
 import Forms from 'furnace-forms';
-export default Forms.form( {	
+export default Forms.Form.extend({
 	
 	actions : {
 		panel1Confirm : function() {
@@ -9,7 +9,7 @@ export default Forms.form( {
 			this.get('panel2').setEnabled(false);
 		},
 		
-		add : function() {			
+		finish : function() {			
 			this.get('panel1').setEnabled(true);
 			this.get('panel2').setEnabled(true);
 			return true;
@@ -30,35 +30,17 @@ export default Forms.form( {
 	panel1 : Forms.panel({
 		input1: Forms.input(),
 		
-		panel1Confirm : Forms.action({
-			actions: {
-				click: function() {
-					if(this.get('hasPrerequisites')) {
-						this.set('value',true);
-						this._super();
-					}
-				}
-			}
-		}).cond('panel1.input1')
+		panel1Confirm :Forms.action('conditions.stacked.confirm').on('panel1.input1')
 	}),
 	
 	panel2 : Forms.panel('condition',{
 		input2:Forms.input(),
-		panel2Confirm: Forms.action({
-			actions: {
-				click: function() {
-					if(this.get('hasPrerequisites')) {
-						this.set('value',true);
-						this._super();
-					}
-				}
-			}
-		}).cond('panel2.input2'),
-	}).cond('panel1.input1,panel1.panel1Confirm'),
+		panel2Confirm:  Forms.action('conditions.stacked.confirm').on('panel2.input2'),
+	}).on('panel1.input1,panel1.panel1Confirm'),
 	
 	panel3 : Forms.panel('condition',{
 		input3:Forms.input(),
-		finish: Forms.action().cond('panel3.input3')
-																
-	}).cond('panel2,panel2.panel2Confirm')
+		finish: Forms.action().on('panel3.input3')
+
+	}).on('panel2,panel2.panel2Confirm')
 });

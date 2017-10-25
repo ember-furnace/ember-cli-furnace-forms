@@ -3,6 +3,7 @@
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'dummy',
+    podModulePrefix: 'dummy/modules',
     environment: environment,
     rootURL: '',
     locationType: 'hash',
@@ -31,7 +32,7 @@ module.exports = function(environment) {
 
   if (environment === 'test') {
     // Testem prefers this...
-	ENV.rootURL = '//';
+	ENV.rootURL = '/';
     ENV.locationType = 'none';
 
     // keep test console output quieter
