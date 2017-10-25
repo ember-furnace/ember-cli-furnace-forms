@@ -13,6 +13,7 @@ cache:
 before_script:
   - npm config set spin false
   - npm config set cache-min 9999
+  - npm install --prefer-offline
 
 stages:
   - test
