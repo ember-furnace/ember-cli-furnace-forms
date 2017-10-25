@@ -45,8 +45,9 @@ var Form = Panel.extend({
 		};
 		var keys=Object.keys(validations).sort().reverse();
 		// Set invalid controls first, to prevent premature parent isValid trigger
-		for(var i=0;i<keys.length;i++ ) {
-			var name=keys[i];
+		var i,name;
+		for(i=0;i<keys.length;i++ ) {
+			name=keys[i];
 			if(validations[name]===false) {
 				if(this._controlsByPath[name]!==undefined) {				
 					this._controlsByPath[name].invoke('setValid',validations[name]);
@@ -60,8 +61,8 @@ var Form = Panel.extend({
 			}
 		}
 		// Then, set controls that became valid
-		for(var i=0;i<keys.length;i++ ) {
-			var name=keys[i];
+		for(i=0;i<keys.length;i++ ) {
+			name=keys[i];
 			if(validations[name]===true) {
 				if(this._controlsByPath[name]!==undefined) {				
 					this._controlsByPath[name].invoke('setValid',validations[name]);
@@ -85,7 +86,6 @@ var Form = Panel.extend({
 			} else { 
 				return this._panel.get('_path');
 			}
-			return '';
 		}
 	}).readOnly(),
 	
@@ -225,9 +225,8 @@ var Form = Panel.extend({
 		Ember.warn(this+" cannot unregister control "+control+" with name "+name,this._controlsByPath[name]!==undefined,{id:'furnace-forms:control.form.unregister'});
 		if(this._controlsByPath[name]!==undefined) {
 			this._controlsByPath[name].removeObject(control);
-		} else {
-			console.log(this._controlsByPath);
 		}
+		
 		if(this._form) {
 			if(control===this) { 
 				this._form._unregisterForm(control);

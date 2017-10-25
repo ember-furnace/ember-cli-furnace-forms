@@ -92,14 +92,6 @@ function applyProxy(proxy,refs) {
 var PromiseObjectProxy=Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 var PromiseArrayProxy=Ember.ArrayProxy.extend(Ember.PromiseProxyMixin);
 
-function arrayDestroy(item) {
-	if(ProxyMixin.detect(item)|| item instanceof Ember.Object) {
-		if(!item.isDestroyed) {
-			item.destroy();
-		}
-	} 
-}
-
 var ProxyMixin=Ember.Mixin.create({
 	_canInstantiate : true,
 	
@@ -212,7 +204,7 @@ var ProxyMixin=Ember.Mixin.create({
 			this.removeObserver(contentKey, null, this._contentPropertyDidChange);
 		}
 	},
-	  
+
 	setUnknownProperty : function(key,value) {
 		var keys=key.split('.');
 		if(!this._content && this._syncToSource) {
@@ -282,6 +274,7 @@ var ProxyMixin=Ember.Mixin.create({
 			switch(key) {
 				case 'id':
 				// Fix for Ember-data bug, hasDirtyAttributes is computed but not readOnly
+				// falls through
 				case 'hasDirtyAttributes':
 					return;
 			}
@@ -435,8 +428,8 @@ var ProxyMixin=Ember.Mixin.create({
 	},
 	
 	_contentDidChange: function() {
-	    Ember.assert("Can't set Proxy's content to itself", this.get('_content') !== this);
-	    this._registerEvents();
+		Ember.assert("Can't set Proxy's content to itself", this.get('_content') !== this);
+		this._registerEvents();
 //	    this._reset();
 	},
 	

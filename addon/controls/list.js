@@ -125,9 +125,9 @@ export default Control.extend(ControlSupport,{
 		}
 	},
 
-	_valueObserver:function(sender,key) {
+	_valueObserver:function() {
 		this._cleanControls();
-		this._super();
+		this._super(...arguments);
 		Ember.run.scheduleOnce('sync',this,this._loadItemControls);
 	},
 	
@@ -203,8 +203,7 @@ export default Control.extend(ControlSupport,{
 		return this;
 	},
 	
-	generate : function(mixins,meta,options) {
-		options=options || {};
+	generate : function(mixins,meta) {
 		mixins=mixins || [];
 		mixins.push(meta.options);
 		var typeKey=this.typeKey;

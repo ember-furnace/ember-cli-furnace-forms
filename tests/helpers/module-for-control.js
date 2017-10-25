@@ -13,6 +13,9 @@ export default function(control,name, options = {}) {
 			owner.factoryFor('initializer:furnace-forms').class.initialize(owner);
 			owner.factoryFor('initializer:furnace-i18n').class.initialize(owner);
 			owner.factoryFor('instance-initializer:furnace-i18n').class.initialize(owner);
+			if (options.beforeEach) {
+				return options.beforeEach.apply(this, arguments);
+			}
 		},
 		testModel() {
 			if(this._testModel===undefined) {
@@ -25,4 +28,4 @@ export default function(control,name, options = {}) {
 			return this._testModel;
 		}
 	});
-};
+}

@@ -1,8 +1,8 @@
 import { test } from 'ember-qunit';
 import moduleForControl from '../../helpers/module-for-control';
-import wait from 'ember-test-helpers/wait';
+import Ember from 'ember';
 moduleForControl('form:form-test','Unit | Control | Form', {
-	
+
 });
 
 test('Model name', function(assert) {

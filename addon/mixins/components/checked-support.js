@@ -15,7 +15,7 @@ export default Ember.Mixin.create({
 	},
 
 	_updateElementValue: function() {
-		 Ember.run.next(this,this._syncWithDom); 
+		Ember.run.next(this,this._syncWithDom);
 	},
 	
 	_syncWithDom : function() {

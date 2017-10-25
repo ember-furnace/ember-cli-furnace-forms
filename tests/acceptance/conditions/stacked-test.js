@@ -1,5 +1,4 @@
-import Ember from "ember";
-import { module, test } from 'qunit';
+import { test } from 'qunit';
 import moduleForAcceptance from '../../helpers/module-for-acceptance';
 import wait from 'ember-test-helpers/wait';
 

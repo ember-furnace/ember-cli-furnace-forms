@@ -43,7 +43,7 @@ export default Ember.Mixin.create(ControlSupport,{
 		if(this.get('_option.value')!==this.value) {
 			var selected=this.get('selected');
 			if(selected) {
- 				this._panel.select(this._option.index,false);
+				this._panel.select(this._option.index,false);
 			}
 			this.set('_option.value',this.value);
 			if(selected) {

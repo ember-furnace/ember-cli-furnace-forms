@@ -5,7 +5,6 @@
  * @submodule furnace-forms
  */
 import Control from './abstract';
-import Ember from 'ember';
 
 /**
  * Action control component proxy 
