@@ -12,8 +12,7 @@ cache:
 
 before_script:
   - npm config set spin false
-  - npm install --prefer-offline
-  - bower install --allow-root
+  - npm config set cache-min 9999
 
 stages:
   - test
