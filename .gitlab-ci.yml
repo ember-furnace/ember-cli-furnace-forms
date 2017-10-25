@@ -19,20 +19,6 @@ stages:
   - test
   - publish
 
-test-ember-lts-2.8:
-  stage: test
-  script:
-    - ember try:one ember-lts-2.8
-  tags:
-    - test
-
-test-ember-lts-2.12:
-  stage: test
-  script:
-    - ember try:one ember-lts-2.12
-  tags:
-    - test
-
 test-ember-default:
   stage: test
   script:
@@ -40,12 +26,32 @@ test-ember-default:
   tags:
     - test
 
+test-ember-lts-2.8:
+  stage: test
+  script:
+    - ember try:one ember-lts-2.8
+  tags:
+    - test
+  only:
+    - master
+
+test-ember-lts-2.12:
+  stage: test
+  script:
+    - ember try:one ember-lts-2.12
+  tags:
+    - test
+  only:
+    - master
+
 test-ember-release:
   stage: test
   script:
     - ember try:one ember-release
   tags:
     - test
+  only:
+    - master
 
 test-ember-beta:
   stage: test
@@ -53,6 +59,8 @@ test-ember-beta:
     - ember try:one ember-canary
   tags:
     - test
+  only:
+    - master
 
 test-ember-beta:
   stage: test
@@ -60,7 +68,9 @@ test-ember-beta:
     - ember try:one ember-beta
   tags:
     - test
-    
+  only:
+    - master
+
 publish:
   stage: publish
   script:
