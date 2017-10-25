@@ -1,0 +1,76 @@
+image: node:5.10
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+cache:
+  untracked: true
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - node_modules/
+    - bower_components/
+
+before_script:
+  - npm config set spin false
+  - npm install --prefer-offline
+  - bower install --allow-root
+
+stages:
+  - test
+  - publish
+
+test-ember-lts-2.8:
+  stage: test
+  script:
+    - ember try:one ember-lts-2.8
+  tags:
+    - test
+
+test-ember-lts-2.12:
+  stage: test
+  script:
+    - ember try:one ember-lts-2.12
+  tags:
+    - test
+
+test-ember-default:
+  stage: test
+  script:
+    - ember try:one ember-default
+  tags:
+    - test
+
+test-ember-release:
+  stage: test
+  script:
+    - ember try:one ember-release
+  tags:
+    - test
+
+test-ember-beta:
+  stage: test
+  script:
+    - ember try:one ember-canary
+  tags:
+    - test
+
+test-ember-beta:
+  stage: test
+  script:
+    - ember try:one ember-beta
+  tags:
+    - test
+    
+publish:
+  stage: publish
+  script:
+    - npm publish
+  environment:
+    name: productoin
+  when: manual
+  tags:
+    - build
+    - lvo-environment
+
+
+  
