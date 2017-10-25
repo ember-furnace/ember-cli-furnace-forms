@@ -2,6 +2,7 @@ import Forms from 'furnace-forms';
 import Ember from 'ember';
 
 export default Forms.Inputs.Button.extend({
+	defaultLayoutName:'forms/button',
 	
 	actions: {
 		click:function() {			
