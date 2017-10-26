@@ -75,12 +75,7 @@ publish:
   stage: publish
   script:
     - npm publish
-  environment:
-    name: productoin
   when: manual
   tags:
     - build
     - lvo-environment
-
-
-  
