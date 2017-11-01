@@ -44,7 +44,7 @@
     "ember-data": "~2.11.1",
     "loader.js": "^4.2.3",
     "ember-cli-furnace-i18n": "^0.4.6",
-    "ember-cli-furnace-validation": "^0.3.4"
+    "ember-cli-furnace-validation": "^0.3.6"
   },
   "keywords": [
     "ember-addon"
