@@ -22,7 +22,7 @@
    "ember-factory-for-polyfill": "^1.1.1"
   },
   "peerDependencies" : {
-    "ember-cli-furnace-i18n": "^0.4.6",
+    "ember-cli-furnace-i18n": "^0.4.8",
     "ember-cli-furnace-validation": "^0.3.6"
   },"devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
@@ -40,10 +40,10 @@
     "ember-export-application-global": "^2.0.0",
     "ember-load-initializers": "^1.0.0",
     "ember-resolver": "^4.0.0",
-    "ember-source": "~2.11.1",
-    "ember-data": "~2.11.1",
+    "ember-source": "~2.16.1",
+    "ember-data": "~2.16.1",
     "loader.js": "^4.2.3",
-    "ember-cli-furnace-i18n": "^0.4.6",
+    "ember-cli-furnace-i18n": "^0.4.8",
     "ember-cli-furnace-validation": "^0.3.6"
   },
   "keywords": [
