@@ -21,9 +21,11 @@ export default Input.extend(CheckedSupport,{
 	
 	
 	
-	inputId: function() {
-		return this.elementId+'Input';
-	}.property('elementId'),
+	inputId: Ember.computed('elementId',{
+		get() {
+			return this.elementId+'Input';
+		}
+	}),
 		
 	checked : Ember.computed.alias('selected'),
 	

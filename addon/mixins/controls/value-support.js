@@ -249,5 +249,9 @@ export default Ember.Mixin.create({
 			empty=true;
 		}		
 		this.setFlag('isEmpty',empty);
-	}).on('init')
+	}),
+	
+	_emptyInit: Ember.on('init',function() {
+		this._emptyObserver();
+	})
 });

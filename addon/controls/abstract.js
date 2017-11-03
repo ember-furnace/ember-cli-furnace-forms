@@ -358,9 +358,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	},
 	
 	willDestroy : function() {
-	    if(!this.isDestroyed) {
-		//this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
-	}
+		if(!this.isDestroyed) {
+			//this._unregisterControl ? this._unregisterControl(this) : this._form._unregisterControl(this);
+		}
 		this._super();
 	},
 	

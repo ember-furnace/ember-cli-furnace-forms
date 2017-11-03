@@ -204,19 +204,21 @@ export default Ember.Component.extend({
 	 * @type String
 	 * @private
 	 */
-	_controlClasses : function() {
-		var classes=[];
-		if(this.get('hasError')) {
-			classes.push('error');
-		} 
-		if(this.get('hasWarning')) {
-			classes.push('warning');
+	_controlClasses : Ember.computed('hasError,hasWarning,hasNotice',{
+		get() {
+			var classes=[];
+			if(this.get('hasError')) {
+				classes.push('error');
+			} 
+			if(this.get('hasWarning')) {
+				classes.push('warning');
+			}
+			if(this.get('hasNotice')) {
+				classes.push('notice');
+			}
+			return classes.join(" ");
 		}
-		if(this.get('hasNotice')) {
-			classes.push('notice');
-		}		
-		return classes.join(" ");
-	}.property('hasError,hasWarning,hasNotice'),
+	}),
 		
 	hasError: false,
 	
@@ -373,26 +375,28 @@ export default Ember.Component.extend({
 		}
 	}).readOnly(),
 	
-	layoutName: function() {
-		var layoutName=null;
-		var owner=Ember.getOwner(this);
-		if(!owner) {
-			return null;
-		}
-		if(this.control && this.control.get('layoutName')) {
-			return this.control.get('layoutName');
-		}
-		
-		this.get('layouts').forEach(function(layout){
-			if(layoutName===null && owner.lookup('template:'+layout)) {
-				layoutName=layout;
-				return true;
+	layoutName: Ember.computed({
+		get() {
+			var layoutName=null;
+			var owner=Ember.getOwner(this);
+			if(!owner) {
+				return null;
 			}
-		});
+			if(this.control && this.control.get('layoutName')) {
+				return this.control.get('layoutName');
+			}
+			
+			this.get('layouts').forEach(function(layout){
+				if(layoutName===null && owner.lookup('template:'+layout)) {
+					layoutName=layout;
+					return true;
+				}
+			});
+			
+			return layoutName;
+		}
 		
-		return layoutName;
-		
-	}.property(),
+	}),
 	
 	_focusObserver : Ember.observer('_focus',function() {		
 		this.set('_showDelayedMessages',false);

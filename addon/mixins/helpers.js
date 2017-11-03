@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import Form from 'furnace-forms/controls/form';
 
 import {computedControl} from 'furnace-forms/utils/computed';
 
@@ -144,7 +143,6 @@ var Helpers= Ember.Mixin.create({
 	},
 	
 	form: function() {
-		var options;
 		var control=null;
 		var async=function() {
 			this._meta.options._syncFromSource=false;
@@ -184,7 +182,6 @@ var Helpers= Ember.Mixin.create({
 				control.validation=validation;
 				return control;
 			}
-			options=arguments[0];
 		}else if(arguments.length===2 && typeof arguments[1]==='string') {
 			control = getControl(arguments[1],{_modelName:arguments[0]});
 			control.async=async;
@@ -204,8 +201,8 @@ var Helpers= Ember.Mixin.create({
 	computed : function(depKeys,getset) {
 		depKeys=depKeys.split(',');
 		for(var i =0;i<depKeys.length;i++) {
-			depKeys[i]='_form.'+depKeys[i];			
-		}		
+			depKeys[i]='_form.'+depKeys[i];
+		}
 		
 		return Ember.computed(depKeys.join(','),{
 			set:getset.set,
@@ -230,7 +227,7 @@ var Helpers= Ember.Mixin.create({
 		return  Ember.computed.alias(meta.key).meta(meta);
 	},
 	
-	option: function(value,caption,control) {		
+	option: function(value,caption,control) {
 		return {value:value,caption:caption,control : control ? control : null};
 	},
 	

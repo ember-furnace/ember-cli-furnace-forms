@@ -66,16 +66,16 @@ export default Ember.Mixin.create({
 	
 	inputControls: Ember.computed('_controls',{
 		get : function() {
-		    var ret = Ember.A();
-		    if(this._controls===null) {
-		    	this._loadControls();
-		    }
-		    var self = this;
-		    this.constructor.eachComputedProperty(function(name, meta) {
+			var ret = Ember.A();
+			if(this._controls===null) {
+				this._loadControls();
+			}
+			var self = this;
+			this.constructor.eachComputedProperty(function(name, meta) {
 				if (meta.type==='form-control' && !(self.get(name) instanceof Action)) {
 					ret.pushObject(self.get(name));
 				}
-		    });
+			});
 			return ret;
 		}
 	}).readOnly(),

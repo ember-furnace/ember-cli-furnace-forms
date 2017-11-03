@@ -6,7 +6,7 @@
  */
 import Ember from 'ember';
 import Text from 'furnace-forms/inputs/text';
-import I18n from 'furnace-i18n';
+
 /**
  * Text input control component
  * 
@@ -45,7 +45,7 @@ export default Text.extend({
 	
 	value: Ember.computed('_value',{
 		get() {
-			value=this.get('_value');
+			var value=this.get('_value');
 			if(value===null) {
 				return '';
 			} else {

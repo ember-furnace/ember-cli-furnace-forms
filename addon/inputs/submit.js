@@ -5,6 +5,7 @@
  * @submodule furnace-forms
  */
 import Input from 'furnace-forms/components/input';
+import Ember from 'ember';
 
 /**
  * Action control component
