@@ -16,7 +16,19 @@ Router.map(function() {
 	this.route('conditions', {path:'/conditions'}, function() {
 		this.route('stacked', {path:'/stacked'});
 	});
-	this.route('integration', {path:'/integration'});
+	this.route('integration', {path:'/integration'},function() {
+		this.route('basics', {path:'/basics'},function() {
+			this.route('binding', {path:'/binding'});
+		});
+		this.route('lists', {path:'/lists'},function() {
+			this.route('single', {path:'/single'});
+			this.route('embedded', {path:'/embedded'});
+		});
+		this.route('embedded-promise', {path:'/embedded-promise'});
+	});
+	
+	this.route('company', {path:'/company'});
+	
 });
 
 export default Router;
