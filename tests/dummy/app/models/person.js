@@ -7,6 +7,8 @@ export default DS.Model.extend({
 
 	age : DS.attr('number'),
 	
+	gender: DS.attr('string'),
+	
 	bestFriend : DS.belongsTo('person',{inverse: null}),
 	
 	friends : DS.hasMany('person',{inverse: 'friends'}),

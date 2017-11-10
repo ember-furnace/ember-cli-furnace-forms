@@ -13,6 +13,8 @@ export default Forms.Form.extend({
 	
 	pets: Forms.list().item(Forms.form('pet')),
 	
-	address: Forms.input()
+	address: Forms.input(),
+	
+	gender : Forms.input('select').options(Forms.option('Male','Male'),Forms.option('Female','Female'),Forms.option('Helicopter','Helicopter'))
 	
 }).model('person');

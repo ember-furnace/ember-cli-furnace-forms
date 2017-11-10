@@ -157,7 +157,9 @@ test('Model updates filtered list with ember-data relation, similar structure',f
 	
 	assert.equal(itemControl1.get('friends.itemControls').objectAt(0).get('pets.itemControls').objectAt(0).get('name.value'),'Tweety','ItemControl1-0-0 name');
 	
-	
+	Ember.run(() => {
+		formControl.destroy();
+	});
 });
 
 test('Model updates filtered list with ember-data relation, different structure',function(assert){
@@ -230,6 +232,9 @@ test('Model updates filtered list with ember-data relation, different structure'
 	
 	assert.equal(itemControl0.get('friends.itemControls').objectAt(0).get('firstName.value'),'Ferdinand','ItemControl0-0 firstName');
 	
+	Ember.run(() => {
+		formControl.destroy();
+	});
 });
 
 test('Model updates filtered list with array',function(assert){
@@ -286,6 +291,8 @@ test('Model updates filtered list with array',function(assert){
 	
 	assert.equal(Ember.get(formControl,'name.value'),'NewTestCorp','Root form name attribute');
 	
+	itemControls=formControl.get('employees.itemControls');
+	
 	assert.equal(itemControls.length,1,'1 itemControl');
 	
 	assert.ok(!itemControl0.isDestroyed,'ItemControl at 0 not destroyed');
@@ -299,4 +306,8 @@ test('Model updates filtered list with array',function(assert){
 	assert.equal(itemControl0.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
 	
 	assert.equal(itemControl0.get('friends.itemControls').objectAt(0).get('firstName.value'),'Ferdinand','ItemControl0-0 firstName');
+	
+	Ember.run(() => {
+		formControl.destroy();
+	});
 });

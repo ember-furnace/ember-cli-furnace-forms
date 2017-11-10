@@ -337,7 +337,11 @@ var Form = Panel.extend({
 		this._validationCache={};
 		this._messageCache={};
 		this._super(modelChanged);
-		this._forms.invoke('_reset',modelChanged);
+		// This is propably here to reset forms that are unreachable via controls
+		// It causes an exponational number if reset triggers
+		// All form controls should be reachable via the controls property and should get
+		// their reset anyway...
+		// this._forms.invoke('_reset',modelChanged);
 	},
 	
 	_validator: Ember.computed('validator', {

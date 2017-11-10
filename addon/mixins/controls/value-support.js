@@ -40,6 +40,7 @@ export default Ember.Mixin.create({
 	
 	_setupValue(value,resetOrgValue) {
 		var property;
+		Ember.run.cancel(this._propertyObserverUpdate);
 		if(arguments.length===0) {
 			property=this.get('property');
 			if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
@@ -52,7 +53,6 @@ export default Ember.Mixin.create({
 				return;
 			}
 		}
-		
 		value=value || (property || this.get('property'));
 		
 		if(Ember.PromiseProxyMixin.detect(value)) {
@@ -100,14 +100,12 @@ export default Ember.Mixin.create({
 //		}
 		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
-		Ember.run.scheduleOnce('sync',this,this._propertyObserverUpdate);
+		this._propertyObserverUpdate=Ember.run.scheduleOnce('sync',this,this._setupValue);
 //		this._propertyObserverUpdate();
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
 	},
 	
-	_propertyObserverUpdate: function() {
-		this._setupValue();
-	},
+	_propertyObserverUpdate: null,
 	
 	_valueObserver:function() {
 		if(this._didSetupValue) {
@@ -152,23 +150,21 @@ export default Ember.Mixin.create({
 			if(!this.get('_panel._model')) {
 				// Don't apply when our panel is modelless
 				return;
-			} 
-
-			if(Ember.Enumerable.detect(property)) {
-				if(Ember.PromiseProxyMixin.detect(property)) {
-					property=Ember.get(property,'content');
-				}
-				if(Ember.compare(value,property.toArray())!==0) {
-					property.setObjects(value);
-				}
 			}
-			else if(value!==property) {				
+
+			if(value!==property) {
 				if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 					var control=this;
-					property.then(function(propertyValue) {
-						if(value!==propertyValue) {
+					property.then(function(property) {
+						if(value!==property) {
 							try{
-								control.set('property',value);
+								if(Ember.Enumerable.detect(property)) {
+									if(Ember.compare(value,property.toArray())!==0) {
+										property.setObjects(value);
+									}
+								} else {
+									control.set('property',value);
+								}
 							}
 							catch(e) {
 								Ember.warn(control.toString()+" (in panel "+control._panel.toString()+" with target "+control.get('_panel._model')+") could not update its corresponding promise property to the new value: "+e,false,{id:'furnace-forms:control.value-support.apply-exception'});
@@ -177,9 +173,14 @@ export default Ember.Mixin.create({
 					});
 				} else {
 					try{
-						this.set('property',value);
-					}
-					catch(e) {
+						if(Ember.Enumerable.detect(property)) {
+							if(Ember.compare(value,property.toArray())!==0) {
+								property.setObjects(value);
+							}
+						} else {
+							this.set('property',value);
+						}
+					} catch(e) {
 						Ember.warn(this.toString()+" (in panel "+this._panel.toString()+" with target "+this.get('_panel._model')+") could not update its corresponding property to the new value: "+e,false,{id:'furnace-forms:control.value-support.apply-exception'});
 					}
 				}
@@ -189,30 +190,32 @@ export default Ember.Mixin.create({
 	
 	_reset: function(modelChanged) {
 		if(modelChanged) {
+			this._didSetupValue=false;
 			var property=null;
 			if(this.get('_panel._model')) {
 				property=this.get('property');	
-			} 
+			}
 			
 			if(property instanceof Ember.RSVP.Promise || Ember.PromiseProxyMixin.detect(property)) {
 				var control=this;
 				// We no longer nullify value and orgValue, this triggers observers which might not trigger again if our promise returns
 				// in the same runloop
+				var _super=this._super;
 				property.then(function(property){
 					if(Ember.PromiseProxyMixin.detect(property)) {
 						property=Ember.get(property,'content');
 					}
-					
 					if(control.get('value')!==property) {
 						control._setupValue(property,true);
 					} else {
 						control._setOrgValue(property);
 						control._updateDirty();
 					}
-					
+					_super.apply(control,arguments);
 				});
+				return;
 			}
-			else {				
+			else {
 				if(property!==this.get('value')) {
 					this._setupValue(property,true);
 				} else {

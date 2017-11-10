@@ -103,7 +103,6 @@ test('Model updates',function(assert){
 	assert.ok(itemControl1.isDestroyed,'ItemControl at 1 destroyed');
 });
 
-
 test('Relation updates',function(assert){
 	var Class=lookup.call(this,'employee');
 	var formControl,friendsControl,itemControls,itemControl0,itemControl1,friend;
@@ -162,7 +161,11 @@ test('Relation updates',function(assert){
 	
 	itemControls=friendsControl.get('itemControls');
 	
-	assert.equal(itemControls.length,2,'2 itemControl');
+	assert.ok(!itemControl0.isDestroyed,'ItemControl at 0 not destroyed');
 	
+	assert.ok(itemControls.objectAt(0)===itemControl0,'ItemControl at 0 retained');
+	
+	assert.equal(itemControls.length,2,'2 itemControl');
+
 	assert.equal(itemControls.objectAt(1).get('for'),friend,'ItemControl model updated');
 });

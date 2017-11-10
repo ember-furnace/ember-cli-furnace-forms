@@ -17,6 +17,8 @@ export default Validation.State.extend({
 }).on('position',function(object) {
 	if(object===null)
 		return ['ignore'];
+	if(object===undefined)
+		return ['ignore'];
 	switch(object.get('position')) {
 	case 'Manager':
 		return ['person','employee','manager'];

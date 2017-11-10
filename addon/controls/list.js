@@ -40,7 +40,9 @@ export default Control.extend(ControlSupport,{
 		this.set('_itemControls',Ember.A());
 		this._super();
 		if(this.filterBy) {
-			this.addObserver('value.[].'+this.filterBy.key,this,this._loadItemControls);
+			this.addObserver('value.[].'+this.filterBy.key,this,function(){
+				Ember.run.scheduleOnce('sync',this,this._loadItemControls);
+			});
 		}
 		this._loadItemControls();
 	},
@@ -104,18 +106,27 @@ export default Control.extend(ControlSupport,{
 				values=value;
 			}
 			
-			values.forEach(function(value) {
-				var index=_value.indexOf(value);
-				var _itemControlDef = control._itemControl || control._itemControlFn.call(this,value);
+			values=values.toArray();
+			// Reuse controls with existing values;
+			values.toArray().forEach(function(value) {
 				var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
-				} else {
-					var meta=_itemControlDef._meta;
-					itemControls.pushObject(getControl.call(control,index,meta,{'for' : null}));
+					values.removeObject(value);
 				}
-				
 			});
+			// Reuse existing controls or create new control
+			values.toArray().forEach(function(value) {
+				var index=_value.indexOf(value);
+				var _itemControlDef = control._itemControl || control._itemControlFn.call(this,value);
+				var meta=_itemControlDef._meta;
+				if(oldControls.length) {
+					let _control=oldControls.shiftObject();
+					_control.set('for',value);
+				} else {
+					itemControls.pushObject(getControl.call(control,index,meta,{'for' : value}));
+				}
+			})
 		}
 		if(oldControls) {
 			oldControls.forEach(function(oldControl) {
@@ -132,6 +143,8 @@ export default Control.extend(ControlSupport,{
 	},
 	
 	_reset: function(modelChanged) {
+// Both valueObserver and reset would trigger clean controls
+// We don't want that, but if I recall correctly there was a reason to clean controls in reset
 		if(modelChanged) {
 			this._cleanControls();
 		}
@@ -158,7 +171,7 @@ export default Control.extend(ControlSupport,{
 		this._itemControls.removeObjects(toRemove);
 	},
 	
-	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
+	controls: Ember.computed.union('_controls').readOnly(),
 	
 	// We alias the for property for panels and forms
 	'_model' : Ember.computed.alias('value'),
