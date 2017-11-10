@@ -4,5 +4,8 @@ export default Forms.Form.extend({
 	
 	lastName : Forms.input(),
 	
-	age: Forms.input().number()
+	age: Forms.input().number(),
+	
+	pets: Forms.list().item(Forms.form('pet')),
+	
 }).model('friend');

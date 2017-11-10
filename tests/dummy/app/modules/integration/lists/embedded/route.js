@@ -10,12 +10,27 @@ export default Ember.Route.extend({
 				lastName:'Anderson',
 				friends: [this.get('store').createRecord('person',{
 					firstName:'Brian',
-					lastName:'Brooks'
-				}),this.get('store').createRecord('person',{
-					firstName:'Chris',
-					lastName:'Cross'
+					lastName:'Brooks',
+					pets: [this.get('store').createRecord('pet',{
+						name:'Felix the cat',
+					})]
+				})]
+			}),
+			this.get('store').createRecord('employee',{
+				firstName:'Chris',
+				lastName:'Cross',
+				friends: [this.get('store').createRecord('person',{
+					firstName:'David',
+					lastName:'Dove',
+					pets: [this.get('store').createRecord('pet',{
+						name:'Garfield',
+					})]
 				})]
 			})]
 		});
+	},
+	afterModel(model) {
+		var a=Ember.A();
+		return Ember.RSVP.all(a.getEach.call(Ember.get(model,'employees'),'friends'));
 	}
 });

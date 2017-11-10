@@ -16,6 +16,8 @@ export default Common.extend({
 	
 	friends: 'Friends',
 	
+	pets: 'Pets',
+	
 	address: 'Address',
 	addressPlaceholder: 'Choose an address'
 	

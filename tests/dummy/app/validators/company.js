@@ -1,7 +1,6 @@
 import Validation from 'furnace-validation';
 export default Validation.Object.extend( {
 	
-	
 	name: Validation.val('required'),
 	
 	bestFriend: Validation.val('person'),
@@ -9,5 +8,6 @@ export default Validation.Object.extend( {
 	employees: Validation.enum({
 	}).item('employee'),
 	
-	address: Validation.val('address'),
+	address: Validation.val('address')
+	
 });

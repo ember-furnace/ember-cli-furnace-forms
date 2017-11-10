@@ -23,7 +23,7 @@
   },
   "peerDependencies" : {
     "ember-cli-furnace-i18n": "^0.4.8",
-    "ember-cli-furnace-validation": "^0.3.6"
+    "ember-cli-furnace-validation": "^0.3.7"
   },"devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
     "ember-ajax": "^3.0.0",
@@ -44,7 +44,7 @@
     "ember-data": "~2.11.1",
     "loader.js": "^4.2.3",
     "ember-cli-furnace-i18n": "^0.4.8",
-    "ember-cli-furnace-validation": "^0.3.6"
+    "ember-cli-furnace-validation": "^0.3.7"
   },
   "keywords": [
     "ember-addon"

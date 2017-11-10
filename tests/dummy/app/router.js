@@ -13,8 +13,13 @@ Router.map(function() {
 		this.route('checkbox', {path:'/checkbox'});
 		this.route('checklist', {path:'/checklist'});
 	});
-	this.route('conditions', {path:'/conditions'}, function() {
-		this.route('stacked', {path:'/stacked'});
+	this.route('acceptance', {path:'/acceptance'},function() {
+		this.route('conditions', {path:'/conditions'}, function() {
+			this.route('stacked', {path:'/stacked'});
+		});
+		this.route('lists', {path:'/lists'}, function() {
+			this.route('embedded-updates', {path:'/embedded-updates'});
+		});
 	});
 	this.route('integration', {path:'/integration'},function() {
 		this.route('basics', {path:'/basics'},function() {

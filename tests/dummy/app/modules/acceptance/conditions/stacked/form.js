@@ -30,12 +30,12 @@ export default Forms.Form.extend({
 	panel1 : Forms.panel({
 		input1: Forms.input(),
 		
-		panel1Confirm :Forms.action('conditions.stacked.confirm').on('panel1.input1')
+		panel1Confirm :Forms.action('acceptance.conditions.stacked.confirm').on('panel1.input1')
 	}),
 	
 	panel2 : Forms.panel('condition',{
 		input2:Forms.input(),
-		panel2Confirm:  Forms.action('conditions.stacked.confirm').on('panel2.input2'),
+		panel2Confirm:  Forms.action('acceptance.conditions.stacked.confirm').on('panel2.input2'),
 	}).on('panel1.input1,panel1.panel1Confirm'),
 	
 	panel3 : Forms.panel('condition',{

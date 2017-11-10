@@ -11,5 +11,8 @@ export default Forms.Form.extend({
 	
 	friends: Forms.list().item(Forms.form('friend')),
 	
+	pets: Forms.list().item(Forms.form('pet')),
+	
 	address: Forms.input()
+	
 }).model('person');

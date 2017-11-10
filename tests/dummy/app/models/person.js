@@ -11,5 +11,8 @@ export default DS.Model.extend({
 	
 	friends : DS.hasMany('person',{inverse: 'friends'}),
 	
-	address : DS.belongsTo('address'),
+	pets : DS.hasMany('pet'),
+	
+	address : DS.belongsTo('address')
+	
 });

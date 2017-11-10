@@ -1,5 +1,5 @@
 import DS from 'ember-data';
-import Person from 'dummy/modules/person/model';
+import Person from './person';
 export default Person.extend({
 	position:DS.attr(),
 

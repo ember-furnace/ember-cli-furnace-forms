@@ -13,6 +13,8 @@ export default I18n.Translation.extend({
 	
 	finish: 'Finish',
 	
-	address: 'Address'
+	address: 'Address',
 	
+	name: 'Name',
+	namePlaceholder: 'Enter name',
 });
