@@ -47,7 +47,7 @@ export default Control.extend(ControlSupport,{
 		this._loadItemControls();
 	},
 
-	itemControls : Ember.computed('_itemControls,_itemControls.[]',{
+	itemControls : Ember.computed({
 		get  : function() {
 			if(!this._itemControls) {
 				return Ember.A();
@@ -81,7 +81,7 @@ export default Control.extend(ControlSupport,{
 	}),
 	
 	_notifySortChanged() {
-		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'_itemControls');		
+		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
 	},
 	
 	_loadItemControls : function() {
@@ -134,6 +134,7 @@ export default Control.extend(ControlSupport,{
 				oldControl.destroy();
 			});
 		}
+		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
 	},
 
 	_valueObserver:function() {
@@ -167,8 +168,11 @@ export default Control.extend(ControlSupport,{
 				toRemove=this._itemControls.slice(property.length,this._itemControls.length);				
 			}
 		}
-		toRemove.invoke('destroy');
-		this._itemControls.removeObjects(toRemove);
+		if(toRemove.length) {
+			toRemove.invoke('destroy');
+			this._itemControls.removeObjects(toRemove);
+			Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
+		}
 	},
 	
 	controls: Ember.computed.union('_controls').readOnly(),
