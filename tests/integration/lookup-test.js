@@ -22,7 +22,7 @@ test('Lookup',function(assert) {
 	assert.ok(formClass=method.call(object,'form-test'),'Get FormTest form');
 	
 	Ember.run(()=>{
-		formInstance=formClass.create();
+		formInstance=formClass.create(Ember.getOwner(this).ownerInjection());
 	});
 	
 	assert.ok(formInstance instanceof FormTest,'Got FormTest form');
