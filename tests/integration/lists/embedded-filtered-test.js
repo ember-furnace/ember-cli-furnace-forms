@@ -3,6 +3,8 @@ import hbs from 'htmlbars-inline-precompile';
 import Ember from 'ember';
 import EmbeddedListFormControl from 'dummy/forms/company';
 import lookup from 'furnace-forms/utils/lookup-class';
+import wait from 'ember-test-helpers/wait';
+
 moduleForComponent('furnace-form', 'Integration | Lists | Embedded with filter', {
 	integration: true,
 	beforeEach() {
@@ -238,76 +240,91 @@ test('Model updates filtered list with ember-data relation, different structure'
 });
 
 test('Model updates filtered list with array',function(assert){
+	// In this test we provide a POJO as object, the validator/observer chokes on this
+	// Without validation, several promises won't get fulfilled which requires these tests
+	// to run inside the run loop and we need to wait for some promises to fulfill.
 	var Class=lookup.call(this,'company');
 	var formControl,itemControls,itemControl0,itemControl1;
 	Ember.run(() => {
 		formControl=Class.create(Ember.getOwner(this).ownerInjection(),{
 			'for': this.testModel(),
 			target: this,
-			_rootControl:true
+			_rootControl:true,
+			validator: null
 		});
 	});
 	assert.ok(formControl instanceof EmbeddedListFormControl,'FormControl loads');
-	
-	assert.equal(Ember.get(formControl,'name.value'),'TestCorp','Root form name attribute');
-	
-	itemControls=formControl.get('employees.itemControls');
-	
-	assert.equal(itemControls.length,2,'2 itemControls');
-	
-	itemControl0=itemControls.objectAt(0);
-
-	itemControl1=itemControls.objectAt(1);
-	
-	assert.equal(itemControl0.get('firstName.value'),'Adrian','ItemControl0 firstName');
-	
-	assert.equal(itemControl0.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
-	
-	assert.equal(itemControl0.get('friends.itemControls').objectAt(0).get('firstName.value'),'Brian','ItemControl0-0 firstName');
-	
-	assert.equal(itemControl1.get('firstName.value'),'Chris','ItemControl1 firstName');
-	
-	assert.equal(itemControl1.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
-	
-	assert.equal(itemControl1.get('friends.itemControls').objectAt(0).get('firstName.value'),'David','ItemControl1-0 firstName');
-	
-	
 	Ember.run(() => {
-		formControl.set('for',{
-			name :'NewTestCorp',
-			employees : [this.get('store').createRecord('employee',{
-				firstName:'Eddy',
-				lastName:'Edison',
-				friends: [this.get('store').createRecord('person',{
-					firstName:'Ferdinand',
-					lastName:'Ferrel',
-					pets: [this.get('store').createRecord('pet',{
-						name:'Bugs Bunny',
+		assert.equal(Ember.get(formControl,'name.value'),'TestCorp','Root form name attribute');
+		
+		itemControls=formControl.get('employees.itemControls');
+		
+		// itemControl shouldn't have loaded yet
+		assert.equal(itemControls.length,0,'0 itemControls');
+	});
+	return wait().then(() => {
+		Ember.run(() => {
+			assert.equal(Ember.get(formControl,'name.value'),'TestCorp','Root form name attribute');
+			
+			itemControls=formControl.get('employees.itemControls');
+			
+			assert.equal(itemControls.length,2,'2 itemControls');
+			
+			itemControl0=itemControls.objectAt(0);
+		
+			itemControl1=itemControls.objectAt(1);
+			
+			assert.equal(itemControl0.get('firstName.value'),'Adrian','ItemControl0 firstName');
+			
+			assert.equal(itemControl0.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
+			
+			assert.equal(itemControl0.get('friends.itemControls').objectAt(0).get('firstName.value'),'Brian','ItemControl0-0 firstName');
+			
+			assert.equal(itemControl1.get('firstName.value'),'Chris','ItemControl1 firstName');
+			
+			assert.equal(itemControl1.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
+			
+			assert.equal(itemControl1.get('friends.itemControls').objectAt(0).get('firstName.value'),'David','ItemControl1-0 firstName');
+		});
+	
+		Ember.run(() => {
+			formControl.set('for',{
+				name :'NewTestCorp',
+				employees : [this.get('store').createRecord('employee',{
+					firstName:'Eddy',
+					lastName:'Edison',
+					friends: [this.get('store').createRecord('person',{
+						firstName:'Ferdinand',
+						lastName:'Ferrel',
+						pets: [this.get('store').createRecord('pet',{
+							name:'Bugs Bunny',
+						})]
 					})]
 				})]
-			})]
+			});
 		});
-	});
-	
-	assert.equal(Ember.get(formControl,'name.value'),'NewTestCorp','Root form name attribute');
-	
-	itemControls=formControl.get('employees.itemControls');
-	
-	assert.equal(itemControls.length,1,'1 itemControl');
-	
-	assert.ok(!itemControl0.isDestroyed,'ItemControl at 0 not destroyed');
-	
-	assert.ok(itemControls.objectAt(0)===itemControl0,'ItemControl at 0 retained');
-
-	assert.ok(itemControl1.isDestroyed,'ItemControl at 1 destroyed');
 		
-	assert.equal(itemControl0.get('firstName.value'),'Eddy','ItemControl0 firstName');
-	
-	assert.equal(itemControl0.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
-	
-	assert.equal(itemControl0.get('friends.itemControls').objectAt(0).get('firstName.value'),'Ferdinand','ItemControl0-0 firstName');
-	
-	Ember.run(() => {
-		formControl.destroy();
+		Ember.run(() => {
+			assert.equal(Ember.get(formControl,'name.value'),'NewTestCorp','Root form name attribute');
+			
+			itemControls=formControl.get('employees.itemControls');
+			
+			assert.equal(itemControls.length,1,'1 itemControl');
+			
+			assert.ok(!itemControl0.isDestroyed,'ItemControl at 0 not destroyed');
+			
+			assert.ok(itemControls.objectAt(0)===itemControl0,'ItemControl at 0 retained');
+		
+			assert.ok(itemControl1.isDestroyed,'ItemControl at 1 destroyed');
+				
+			assert.equal(itemControl0.get('firstName.value'),'Eddy','ItemControl0 firstName');
+			
+			assert.equal(itemControl0.get('friends.itemControls.length'),1,'ItemControl0 1 friend');
+			
+			assert.equal(itemControl0.get('friends.itemControls').objectAt(0).get('firstName.value'),'Ferdinand','ItemControl0-0 firstName');
+		});
+		Ember.run(() => {
+			formControl.destroy();
+		});
 	});
 });

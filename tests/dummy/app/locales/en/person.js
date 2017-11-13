@@ -19,6 +19,8 @@ export default Common.extend({
 	pets: 'Pets',
 	
 	address: 'Address',
-	addressPlaceholder: 'Choose an address'
+	addressPlaceholder: 'Choose an address',
 	
+	gender: 'Gender',
+	genderPlaceholder: 'Choose a gender'
 });
