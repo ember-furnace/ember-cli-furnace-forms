@@ -13,8 +13,7 @@ module.exports = {
       },
       npm: {
         devDependencies: {
-          'ember-source': null,
-          'ember-factory-for-polyfill': '^1.1.1'
+          'ember-source': null
         }
       }
     },
@@ -22,7 +21,8 @@ module.exports = {
       name: 'ember-lts-2.12',
       npm: {
         devDependencies: {
-          'ember-source': '~2.12.0'
+          'ember-source': '~2.12.0',
+          'ember-factory-for-polyfill': null
         }
       }
     },
@@ -38,7 +38,8 @@ module.exports = {
       },
       npm: {
         devDependencies: {
-          'ember-source': null
+          'ember-source': null,
+          'ember-factory-for-polyfill': null
         }
       }
     },
@@ -54,7 +55,8 @@ module.exports = {
       },
       npm: {
         devDependencies: {
-          'ember-source': null
+          'ember-source': null,
+          'ember-factory-for-polyfill': null
         }
       }
     },
