@@ -205,10 +205,10 @@ export default Ember.Mixin.create({
 					if(Ember.PromiseProxyMixin.detect(property)) {
 						property=Ember.get(property,'content');
 					}
+					control._setOrgValue(property);
 					if(control.get('value')!==property) {
 						control._setupValue(property,true);
 					} else {
-						control._setOrgValue(property);
 						control._updateDirty();
 					}
 					_super.apply(control,arguments);
@@ -216,10 +216,10 @@ export default Ember.Mixin.create({
 				return;
 			}
 			else {
+				this._setOrgValue(property);
 				if(property!==this.get('value')) {
 					this._setupValue(property,true);
 				} else {
-					this._setOrgValue(property);
 					this._updateDirty();
 				}
 			}

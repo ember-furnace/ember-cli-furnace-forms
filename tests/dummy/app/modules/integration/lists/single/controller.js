@@ -9,9 +9,14 @@ export default Ember.Controller.extend({
 			var employee= this.get('store').createRecord('employee',{
 				firstName:'David',
 				lastName:'Dove',
+				age: 20,
+				position:null,
+				gender:null,
 				friends: [this.get('store').createRecord('person',{
 					firstName:'Eddy',
-					lastName:'Edison'
+					lastName:'Edison',
+					age:35,
+					gender:null
 				})]
 			});
 			this.set('employee',employee);

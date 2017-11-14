@@ -6,12 +6,19 @@ export default Ember.Route.extend({
 		return this.get('store').createRecord('employee',{
 			firstName:'Adrian',
 			lastName:'Anderson',
+			age:30,
+			position:null,
+			gender:null,
 			friends: [this.get('store').createRecord('person',{
 				firstName:'Brian',
-				lastName:'Brooks'
+				lastName:'Brooks',
+				age:30,
+				gender:null
 			}),this.get('store').createRecord('person',{
 				firstName:'Chris',
-				lastName:'Cross'
+				lastName:'Cross',
+				age:30,
+				gender:null
 			})]
 		});
 	}
