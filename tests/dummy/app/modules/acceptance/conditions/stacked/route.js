@@ -9,6 +9,6 @@ export default Ember.Route.extend({
 	},
 	
 	model() {
-		return this.get('store').createRecord('conditions.stacked');
+		return this.get('store').createRecord('acceptance.conditions.stacked');
 	}
 });

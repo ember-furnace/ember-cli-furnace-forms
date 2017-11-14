@@ -172,7 +172,7 @@ export default Ember.Mixin.create({
 		this._super(modelChanged);
 		var controls=this.get('controls');
 		if(controls) {
-			controls.invoke('_reset',modelChanged);
+			controls.toArray().invoke('_reset',modelChanged);
 		}
 	},
 	

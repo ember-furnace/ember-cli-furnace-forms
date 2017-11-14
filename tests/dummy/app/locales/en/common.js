@@ -11,5 +11,10 @@ export default I18n.Translation.extend({
 	input3: 'Input(3)',
 	input3Placeholder: 'Input(3) placeholder',
 	
-	finish: 'Finish'
+	finish: 'Finish',
+	
+	address: 'Address',
+	
+	name: 'Name',
+	namePlaceholder: 'Enter name',
 });

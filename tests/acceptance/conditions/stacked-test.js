@@ -5,7 +5,7 @@ import wait from 'ember-test-helpers/wait';
 moduleForAcceptance('Acceptance | Conditions | Stacked panels');
 	
 test("Test flow", function(assert) {
-	visit('/conditions/stacked').then(function() {
+	visit('/acceptance/conditions/stacked').then(function() {
 		assert.ok(find('.input1.disabled').length===0,'Input 1 enabled');
 		assert.ok(find('.input1.invalid').length===1,'Input 1 invalid');
 		assert.ok(find('.panel2.disabled').length===1,'Panel 2 disabled');

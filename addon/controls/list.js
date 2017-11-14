@@ -40,12 +40,14 @@ export default Control.extend(ControlSupport,{
 		this.set('_itemControls',Ember.A());
 		this._super();
 		if(this.filterBy) {
-			this.addObserver('value.[].'+this.filterBy.key,this,this._loadItemControls);
+			this.addObserver('value.[].'+this.filterBy.key,this,function(){
+				Ember.run.scheduleOnce('sync',this,this._loadItemControls);
+			});
 		}
 		this._loadItemControls();
 	},
 
-	itemControls : Ember.computed('_itemControls,_itemControls.[]',{
+	itemControls : Ember.computed({
 		get  : function() {
 			if(!this._itemControls) {
 				return Ember.A();
@@ -79,7 +81,7 @@ export default Control.extend(ControlSupport,{
 	}),
 	
 	_notifySortChanged() {
-		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'_itemControls');		
+		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
 	},
 	
 	_loadItemControls : function() {
@@ -104,18 +106,27 @@ export default Control.extend(ControlSupport,{
 				values=value;
 			}
 			
-			values.forEach(function(value) {
-				var index=_value.indexOf(value);
-				var _itemControlDef = control._itemControl || control._itemControlFn.call(this,value);
+			values=values.toArray();
+			// Reuse controls with existing values;
+			values.toArray().forEach(function(value) {
 				var oldControl=oldControls ? oldControls.findBy('for',value) : undefined;
 				if(oldControl) {
 					oldControls.removeObject(oldControl);
-				} else {
-					var meta=_itemControlDef._meta;
-					itemControls.pushObject(getControl.call(control,index,meta,{'for' : null}));
+					values.removeObject(value);
 				}
-				
 			});
+			// Reuse existing controls or create new control
+			values.toArray().forEach(function(value) {
+				var index=_value.indexOf(value);
+				var _itemControlDef = control._itemControl || control._itemControlFn.call(this,value);
+				var meta=_itemControlDef._meta;
+				if(oldControls.length) {
+					let _control=oldControls.shiftObject();
+					_control.set('for',value);
+				} else {
+					itemControls.pushObject(getControl.call(control,index,meta,{'for' : value}));
+				}
+			})
 		}
 		if(oldControls) {
 			oldControls.forEach(function(oldControl) {
@@ -123,6 +134,7 @@ export default Control.extend(ControlSupport,{
 				oldControl.destroy();
 			});
 		}
+		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
 	},
 
 	_valueObserver:function() {
@@ -132,6 +144,8 @@ export default Control.extend(ControlSupport,{
 	},
 	
 	_reset: function(modelChanged) {
+// Both valueObserver and reset would trigger clean controls
+// We don't want that, but if I recall correctly there was a reason to clean controls in reset
 		if(modelChanged) {
 			this._cleanControls();
 		}
@@ -154,8 +168,11 @@ export default Control.extend(ControlSupport,{
 				toRemove=this._itemControls.slice(property.length,this._itemControls.length);				
 			}
 		}
-		toRemove.invoke('destroy');
-		this._itemControls.removeObjects(toRemove);
+		if(toRemove.length) {
+			toRemove.invoke('destroy');
+			this._itemControls.removeObjects(toRemove);
+			Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
+		}
 	},
 	
 	controls: Ember.computed.union('_controls','_itemControls').readOnly(),
