@@ -60,6 +60,7 @@ export default Ember.Mixin.create({
 		this.set('_optionControls',Ember.A());
 		if(this._optionFn) {			
 			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';
+			// TODO: We might want an assertion here if we watch an undefined property
 			this.reopen({
 				_optionsObserver: Ember.observer(optionProps,function() {
 					this._getOptions();

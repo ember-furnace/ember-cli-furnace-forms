@@ -37,8 +37,11 @@ export default Ember.Mixin.create({
 		return this.get('_options')[index];			
 	},
 	
-	_valueObserver: Ember.observer('_options,_options.[]',function() {
-		this._super();
+	_optionsChangeObserver: Ember.observer('_options,_options.[]',function() {
+		this._updateSelection();
+	}),
+	
+	_updateSelection() {
 		var changed=false;
 		var value=this.get('value');
 		if(Ember.Enumerable.detect(value)) {
@@ -59,6 +62,11 @@ export default Ember.Mixin.create({
 		if(changed) {
 			this.notifyChange();
 		}
-	}),
+	},
+	
+	_valueObserver() {
+		this._super();
+		this._updateSelection();
+	},
 	
 });
