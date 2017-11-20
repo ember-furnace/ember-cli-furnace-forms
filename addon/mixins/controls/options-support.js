@@ -60,11 +60,10 @@ export default Ember.Mixin.create({
 		this.set('_optionControls',Ember.A());
 		if(this._optionFn) {			
 			var optionProps=this._optionProps ? this._optionProps+',_form._model' : '_form._model';
-			this.reopen({
-				_optionsObserver: Ember.observer(optionProps,function() {
-					this._getOptions();
-					this._super();
-				})
+			// TODO: We might want an assertion here if we watch an undefined property
+			optionProps=optionProps.split(',');
+			optionProps.forEach((prop) =>{
+				this.addObserver(prop,this,this._getOptions);
 			});
 			this._getOptions();
 		}
@@ -142,7 +141,8 @@ export default Ember.Mixin.create({
 			}	
 			option.set('index',index+1);
 		},this);
-		return this.get('_options').setObjects(options);		
+		this.get('_options').setObjects(options);
+		this._loadOptionControls();
 	},
 	
 	removeOption: function(option) {
@@ -195,40 +195,42 @@ export default Ember.Mixin.create({
 //	}),
 	
 	_loadOptionControls : Ember.observer('_options,_options.[]',function() {
-		if(this._controlsLoaded===true) {
-			var control=this;
-			var options=this.get('_options');
-					
-			var optionControls=this._optionControls;
-			var oldControls=optionControls.toArray();
-			
-			if(this.isDestroying) {
-				return;
-			}
-			options.forEach(function(option,index) {
-				var oldControl=optionControls.objectAt(index);
-				if(oldControl) {					
-					oldControls.removeObject(oldControl);
-					oldControl.set('_option',option);
-				} else {
-					optionControls.pushObject(getControl.call(control,index,{ options:{_controlType:Option}},{_panel:control,
-						_option:option}));
-				}
+		
+		var control=this;
+		var options=this.get('_options');
 				
-			});
-			if(oldControls.length) {
-				oldControls.forEach(function(oldControl) {
-					optionControls.removeObject(oldControl);
-					oldControl.destroy();
-				});
-			}
+		var optionControls=this._optionControls;
+		var oldControls=optionControls.toArray();
+		
+		if(this.isDestroying) {
+			return;
 		}
+		options.forEach(function(option,index) {
+			var oldControl=optionControls.objectAt(index);
+			if(oldControl) {					
+				oldControls.removeObject(oldControl);
+				oldControl.set('_option',option);
+			} else {
+				optionControls.pushObject(getControl.call(control,index,{ options:{_controlType:Option}},{_panel:control,
+					_option:option}));
+			}
+			
+		});
+		if(oldControls.length) {
+			oldControls.forEach(function(oldControl) {
+				optionControls.removeObject(oldControl);
+				oldControl.destroy();
+			});
+		}
+		if(this._controlsLoaded===true) {
+			Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'optionControls');
+		}
+		this._controlsLoaded=true;
 	}),
 	
-	optionControls : Ember.computed('_optionControls.[],sortProperties.[]',{
+	optionControls : Ember.computed('sortProperties.[]',{
 		get : function() {
 			if(!this._controlsLoaded) {
-				this._controlsLoaded=true;
 				this._loadOptionControls();
 			}
 			

@@ -78,16 +78,13 @@ export default Control.extend(CheckedSupport,{
 	}),
 	
 	click : function(event) {
-		var target=event.toElement || event.target;
-		target=target.control || target;
+		var target= event.target;
 		if(target.id===this.get('inputId') && this.get('isEnabled')) {
 			if(this.get('value')===this.get('checkedValue')) {
 				this.set('value',this.get('uncheckedValue'));
 			} else {
 				this.set('value',this.get('checkedValue'));
 			}
-			event.preventDefault();
-			return false;
 		}
 	},
 });

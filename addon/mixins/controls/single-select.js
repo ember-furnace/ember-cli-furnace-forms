@@ -130,8 +130,7 @@ export default Ember.Mixin.create({
 		}
 	}),
 	
-	_optionsObserver: Ember.observer('_options,_options.[]',function() {
-//		this._valueObserver();
+	_optionsChangeObserver: Ember.observer('_options,_options.[]',function() {
 		this._selectedIndexObserver();
 	}),
 	
