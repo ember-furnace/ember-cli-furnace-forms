@@ -193,7 +193,14 @@ test('MultiplePromiseOptionsForm renders', function(assert) {
 	assert.ok(this.$('form[type=MultiplePromiseOptions] > controls > control.friends').length===1,'List renders');
 
 	return wait().then(()=>{
-		assert.ok(this.$('form[type=MultiplePromiseOptions] > controls > control.friends > options > control').length===3,'List contains 3 controls');
+		Ember.run(() => {
+			assert.ok(this.$('form[type=MultiplePromiseOptions] > controls > control.friends > options > control').length===3,'List contains 3 controls');
+		});
+		return wait().then(()=>{
+			Ember.run(() => {
+				assert.ok(this.$('form[type=MultiplePromiseOptions] > controls > control.friends > options > control').length===3,'List contains 3 controls');
+			});
+		});
 	});
 });
 
