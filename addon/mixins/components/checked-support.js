@@ -39,8 +39,7 @@ export default Ember.Mixin.create({
 	},
 	
 	click : function(event) {
-		var target=event.toElement || event.target;
-		target=target.control || target;
+		var target=event.target;
 		if(target.id===this.get('inputId')) {
 			this.control.select();
 		}
