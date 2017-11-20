@@ -42,9 +42,23 @@ export default function(object,defaults,options) {
 	var args=[];
 	args.push(owner.ownerInjection());
 	args.push(_options);
-	var proxy = Class.create.apply(Class,args); 
+	var proxy = Class.create.apply(Class,args);
 	if(defaults) {
-		proxy.setProperties(defaults);
+		let keys=Object.keys(defaults);
+		for(let i=0; i<keys.length;i++) {
+			let key=keys[i];
+			let defaultValue=defaults[key];
+			if(defaultValue instanceof Array) {
+				let currentValue=proxy.get(key);
+				if(currentValue instanceof Array) {
+					currentValue.setObjects(defaultValue);
+				} else {
+					proxy.set(key,defaultValue);
+				}
+			} else {
+				proxy.set(key,defaultValue);
+			}
+		}
 	}
 	return proxy;
 }
