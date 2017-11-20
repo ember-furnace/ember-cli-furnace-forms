@@ -209,7 +209,7 @@ export default Ember.Mixin.create({
 					if(control.get('value')!==property) {
 						control._setupValue(property,true);
 					} else {
-						this._didSetupValue=true;
+						control._didSetupValue=true;
 						control._updateDirty();
 					}
 					_super.apply(control,arguments);
