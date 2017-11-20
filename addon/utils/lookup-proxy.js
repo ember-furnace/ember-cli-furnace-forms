@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import getName from './get-name';
+import DS from 'ember-data';
 import { ProxyMixin } from 'furnace-forms/proxy';
+
 export default function(object,defaults,options) {
 	options=options || {};
 	var name=null;	
@@ -48,7 +50,7 @@ export default function(object,defaults,options) {
 		for(let i=0; i<keys.length;i++) {
 			let key=keys[i];
 			let defaultValue=defaults[key];
-			if(defaultValue instanceof Array) {
+			if(defaultValue instanceof Array || defaultValue instanceof DS.ManyArray) {
 				let currentValue=proxy.get(key);
 				if(currentValue instanceof Array) {
 					currentValue.setObjects(defaultValue);
