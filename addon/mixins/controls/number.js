@@ -28,8 +28,9 @@ export default Ember.Mixin.create({
 	
 	init : function() {
 		this._super();
-		this._checkValue(true);
-		this._valueObserver();			
+		// Do not trigger a value update during initialization but schedule instead
+		// Otherwise several observers will not trigger .eg dirty observers
+		Ember.run.schedule('sync',this,this._checkValue,true);
 	},
 	
 	_checkValue: function(fix) {
