@@ -69,8 +69,10 @@ export default Ember.Component.extend({
 	},
 	
 	setFocus: function(focus) {
-		if(focus!==this._focus) {
-			this.set('_focus',focus);
+		if(focus!==this.hasFocus) {
+			// If we don't schedule this, our focusClass computed property my trigger a rerender 
+			// if another classNameBinding already changed
+			Ember.run.scheduleOnce('sync',this,this.set,'_focus',focus);
 			this.set('hasFocus',focus);
 		}
 		
