@@ -82,6 +82,7 @@ export default Ember.Component.extend({
 	
 	destroy() {
 		this.sendAction('controlDestroyed',this._control);
+		this._super();
 	},
 	
 	send: function() {
