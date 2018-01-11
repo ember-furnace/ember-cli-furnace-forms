@@ -20,6 +20,9 @@ Router.map(function() {
 		this.route('lists', {path:'/lists'}, function() {
 			this.route('embedded-updates', {path:'/embedded-updates'});
 		});
+		this.route('options', function() {
+			this.route('double-refresh');
+		});
 	});
 	this.route('integration', {path:'/integration'},function() {
 		this.route('basics', {path:'/basics'},function() {

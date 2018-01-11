@@ -17,4 +17,10 @@ export default I18n.Translation.extend({
 	
 	name: 'Name',
 	namePlaceholder: 'Enter name',
+	
+	test: 'Test',
+	testPlaceholder: 'Test placeholder',
+	
+	test2: 'Test-2',
+	test2Placeholder: 'Test-2 placeholder'
 });
