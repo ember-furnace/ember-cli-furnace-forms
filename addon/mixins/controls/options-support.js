@@ -223,10 +223,14 @@ export default Ember.Mixin.create({
 			});
 		}
 		if(this._controlsLoaded===true) {
-			this.notifyPropertyChange('optionControls');
+			Ember.run.scheduleOnce('sync',this,this._updateOptionControls);
 		}
 		this._controlsLoaded=true;
 	}),
+	
+	_updateOptionControls() {
+		this.notifyPropertyChange('optionControls');
+	},
 	
 	optionControls : Ember.computed('sortProperties.[]',{
 		get : function() {
