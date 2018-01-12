@@ -10,7 +10,6 @@ moduleForComponent('checked-support', 'Integration | Component | checked-support
 		owner.factoryFor('initializer:furnace-forms').class.initialize(owner);
 		owner.factoryFor('initializer:furnace-i18n').class.initialize(owner);
 		owner.factoryFor('initializer:furnace-validation').class.initialize(owner);
-		owner.factoryFor('instance-initializer:furnace-i18n').class.initialize(owner);
 		this.register('component:checkbox-test',Ember.Component.extend(CheckedSupportMixin,{
 			caption:'test',
 			layoutName:'forms/checkbox',

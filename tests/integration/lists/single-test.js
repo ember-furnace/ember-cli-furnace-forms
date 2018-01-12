@@ -13,7 +13,6 @@ moduleForComponent('furnace-form', 'Integration | Lists | Single', {
 		owner.factoryFor('initializer:furnace-forms').class.initialize(owner);
 		owner.factoryFor('initializer:furnace-i18n').class.initialize(owner);
 		owner.factoryFor('initializer:furnace-validation').class.initialize(owner);
-		owner.factoryFor('instance-initializer:furnace-i18n').class.initialize(owner);
 		this.inject.service('store');
 	},
 	testModel() {

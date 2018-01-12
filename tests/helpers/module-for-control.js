@@ -5,14 +5,12 @@ export default function(control,name, options = {}) {
 		needs:[
 			'initializer:furnace-forms',
 			'initializer:furnace-i18n',
-			'instance-initializer:furnace-i18n',
 			'model:test'
 		],
 		beforeEach() {
 			var owner=Ember.getOwner(this);
 			owner.factoryFor('initializer:furnace-forms').class.initialize(owner);
 			owner.factoryFor('initializer:furnace-i18n').class.initialize(owner);
-			owner.factoryFor('instance-initializer:furnace-i18n').class.initialize(owner);
 			if (options.beforeEach) {
 				return options.beforeEach.apply(this, arguments);
 			}

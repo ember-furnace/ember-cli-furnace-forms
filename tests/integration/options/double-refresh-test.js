@@ -60,7 +60,6 @@ moduleForComponent('furnace-form', 'Integration | Options | Render double option
 		owner.factoryFor('initializer:furnace-forms').class.initialize(owner);
 		owner.factoryFor('initializer:furnace-i18n').class.initialize(owner);
 		owner.factoryFor('initializer:furnace-validation').class.initialize(owner);
-		owner.factoryFor('instance-initializer:furnace-i18n').class.initialize(owner);
 		this.register('form:multiple-dynamic-options',MultipleAttributeDynamicOptionsForm)
 		this.register('input:trigger-input',TriggerInput)
 		this.inject.service('store');
