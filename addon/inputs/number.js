@@ -33,6 +33,8 @@ export default Text.extend({
 	
 	precision : Ember.computed.alias('control.precision'),
 	
+	canBeNull : Ember.computed.alias('control.canBeNull'),
+	
 	_value: null,
 	
 	actions: {
@@ -53,7 +55,10 @@ export default Text.extend({
 			}
 		},
 		set(key,value) {
-			if(value==='') {				
+			if(value==='') {
+				if(this.get('canBeNull')) {
+					value=null;
+				}
 				this.set('_value',value);
 			} else if(typeof value==='string') {
 				this.set('_value',this.get('i18nService').numberFromLocale(value));
