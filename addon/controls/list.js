@@ -91,7 +91,7 @@ export default Control.extend(ControlSupport,{
 		var itemControls=this._itemControls;
 		var oldControls=itemControls.toArray();
 		
-		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControl || this._itemControlFn);
+		Ember.assert('List control '+this+' doest not have its itemControl property set. Did you forget to call .item() in your form?',this._itemControlMeta || this._itemControlFn);
 		if(this.isDestroying) {
 			return;
 		}
@@ -118,8 +118,11 @@ export default Control.extend(ControlSupport,{
 			// Reuse existing controls or create new control
 			values.toArray().forEach(function(value) {
 				var index=_value.indexOf(value);
-				var _itemControlDef = control._itemControl || control._itemControlFn.call(this,value);
-				var meta=_itemControlDef._meta;
+				var meta = control._itemControlMeta || control._itemControlFn.call(this,value);
+				if(meta instanceof Ember.ComputedProperty) {
+					Ember.deprecate('furnace-forms: list item control can no longer be a computed property, please only return meta',undefined,{id:'furnace-forms:computed-item-control',until:'3.0.0'});
+					meta=meta._meta;
+				}
 				if(oldControls.length) {
 					let _control=oldControls.shiftObject();
 					_control.set('for',value);

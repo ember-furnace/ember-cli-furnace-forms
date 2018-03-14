@@ -5,7 +5,7 @@ export default function itemControl() {
 		this._meta.options._itemControlFn=arguments[0];
 	} else {
 		arguments[0]._meta.type='form-item-control';
-		this._meta.options._itemControl=arguments[0];
+		this._meta.options._itemControlMeta=arguments[0]._meta;
 	}
 	return this;
 }
