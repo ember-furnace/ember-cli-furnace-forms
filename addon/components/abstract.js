@@ -260,7 +260,9 @@ export default Ember.Component.extend({
 		
 		if( this.caption instanceof Ember.ComputedProperty  && this.get('caption')===null) {
 			if(typeof this.control.caption ==='object') {
-				this.caption=Ember.computed.alias('control.caption');
+				this.reopen({
+					caption: Ember.computed.alias('control.caption')
+				});
 			} else if(this.get('control.caption')!==undefined) {
 				this.set('caption',this.get('control.caption'));
 			}
