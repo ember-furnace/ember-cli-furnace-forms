@@ -34,7 +34,7 @@ export default Panel.extend({
 		if(this.get('control._modelName')) {
 			this._updateModelName();
 		} else {
-			Ember.run.scheduleOnce('sync',this,this._updateModelName);
+			Ember.run.scheduleOnce('actions',this,this._updateModelName);
 		}
 	}),
 	

@@ -96,7 +96,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	
 	setValid : function(valid) {
-		Ember.run.scheduleOnce('sync',this,function() {
+		Ember.run.scheduleOnce('actions',this,function() {
 			if(this.isDestroyed) {
 				Ember.warn('Attempting to change validity of destroyed object '+this.toString());
 				return;

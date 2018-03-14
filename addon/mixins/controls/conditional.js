@@ -17,7 +17,7 @@ export default Ember.Mixin.create({
 			fn.call(this);
 		}
 		// We should schedule updateEnabled to make sure it not runs before hasPrerequisites may have updated in the current runloop
-		Ember.run.scheduleOnce('sync',this,this._updateEnabled);
+		Ember.run.scheduleOnce('actions',this,this._updateEnabled);
 	},
 	
 	hasPrerequisites : Ember.computed.alias('_condition'),

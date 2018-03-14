@@ -100,7 +100,7 @@ export default Ember.Mixin.create({
 //		}
 		
 		// Only run this once. Ember-data relationships may have notified a change, but the changed relationship is not available.
-		this._propertyObserverUpdate=Ember.run.scheduleOnce('sync',this,this._setupValue);
+		this._propertyObserverUpdate=Ember.run.scheduleOnce('actions',this,this._setupValue);
 //		this._propertyObserverUpdate();
 		//this.setDirty(this.get('value')!==this.get('_orgValue'));
 	},

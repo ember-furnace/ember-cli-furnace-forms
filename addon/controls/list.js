@@ -41,7 +41,7 @@ export default Control.extend(ControlSupport,{
 		this._super();
 		if(this.filterBy) {
 			this.addObserver('value.[].'+this.filterBy.key,this,function(){
-				Ember.run.scheduleOnce('sync',this,this._loadItemControls);
+				Ember.run.scheduleOnce('actions',this,this._loadItemControls);
 			});
 		}
 		this._loadItemControls();
@@ -81,7 +81,7 @@ export default Control.extend(ControlSupport,{
 	}),
 	
 	_notifySortChanged() {
-		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
+		Ember.run.scheduleOnce('actions',this,this.notifyPropertyChange,'itemControls');
 	},
 	
 	_loadItemControls : function() {
@@ -134,13 +134,13 @@ export default Control.extend(ControlSupport,{
 				oldControl.destroy();
 			});
 		}
-		Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
+		Ember.run.scheduleOnce('actions',this,this.notifyPropertyChange,'itemControls');
 	},
 
 	_valueObserver:function() {
 		this._cleanControls();
 		this._super(...arguments);
-		Ember.run.scheduleOnce('sync',this,this._loadItemControls);
+		Ember.run.scheduleOnce('actions',this,this._loadItemControls);
 	},
 	
 	_reset: function(modelChanged) {
@@ -171,7 +171,7 @@ export default Control.extend(ControlSupport,{
 		if(toRemove.length) {
 			toRemove.invoke('destroy');
 			this._itemControls.removeObjects(toRemove);
-			Ember.run.scheduleOnce('sync',this,this.notifyPropertyChange,'itemControls');
+			Ember.run.scheduleOnce('actions',this,this.notifyPropertyChange,'itemControls');
 		}
 	},
 	

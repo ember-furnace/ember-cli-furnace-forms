@@ -101,7 +101,7 @@ export default Ember.Mixin.create({
 //	isDirty : false,
 	
 	setDirty : function(dirty) {
-		Ember.run.scheduleOnce('sync',this,this._syncDirty,dirty);
+		Ember.run.scheduleOnce('actions',this,this._syncDirty,dirty);
 	},
 	
 	_syncDirty : function(dirty) {
@@ -124,7 +124,7 @@ export default Ember.Mixin.create({
 	
 	setValid : function(valid) {
 		this._syncValid(valid);
-		//Ember.run.scheduleOnce('sync',this,this._syncValid,valid);
+		//Ember.run.scheduleOnce('actions',this,this._syncValid,valid);
 	},
 	
 	_syncValid : function(valid) {

@@ -121,7 +121,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 		if(this.get(property)!==value) {
 			this.set(property,value);			
 			this._flags[property]=value;
-			Ember.run.scheduleOnce('sync',this,this._updateFlags);
+			Ember.run.scheduleOnce('actions',this,this._updateFlags);
 		}
 	},
 	
@@ -174,7 +174,7 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	notifyChange: function() {
 		if(this._panel) {
-			Ember.run.scheduleOnce('sync',this,this._notifyPanel);
+			Ember.run.scheduleOnce('actions',this,this._notifyPanel);
 		}
 	},
 	

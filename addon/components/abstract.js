@@ -38,7 +38,7 @@ export default Ember.Component.extend({
 	_controlNameObserver: Ember.observer('control._name',function() {
 		var name=getControlNameClass.apply(this);
 		if(name!==this.get('_nameClass')) {
-			Ember.run.schedule('sync',this,this.set,'_nameClass',name);
+			Ember.run.schedule('actions',this,this.set,'_nameClass',name);
 		}
 	}),
 	
@@ -72,7 +72,7 @@ export default Ember.Component.extend({
 		if(focus!==this.hasFocus) {
 			// If we don't schedule this, our focusClass computed property my trigger a rerender 
 			// if another classNameBinding already changed
-			Ember.run.scheduleOnce('sync',this,this.set,'_focus',focus);
+			Ember.run.scheduleOnce('actions',this,this.set,'_focus',focus);
 			this.set('hasFocus',focus);
 		}
 		

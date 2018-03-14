@@ -190,7 +190,7 @@ export default Ember.Mixin.create({
 	
 //	_initOptions : Ember.on('init',function() {
 //		if(this.hasModel()) {			
-//			Ember.run.scheduleOnce('sync',this,this._getOptions);
+//			Ember.run.scheduleOnce('actions',this,this._getOptions);
 //		} 
 //	}),
 	
@@ -223,7 +223,7 @@ export default Ember.Mixin.create({
 			});
 		}
 		if(this._controlsLoaded===true) {
-			Ember.run.scheduleOnce('sync',this,this._updateOptionControls);
+			Ember.run.scheduleOnce('actions',this,this._updateOptionControls);
 		}
 		this._controlsLoaded=true;
 	}),
