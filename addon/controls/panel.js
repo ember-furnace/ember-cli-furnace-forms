@@ -81,10 +81,10 @@ export default Control.extend(ControlSupport,{
 		}
 	}),
 	
-	_targetName : Ember.computed('targetObject',{
+	_targetName : Ember.computed('target',{
 		get : function() {
-			if(this.get('targetObject')) {
-				return getName(this.get('targetObject'));
+			if(this.get('target')) {
+				return getName(this.get('target'));
 			}
 			else {
 				return null;

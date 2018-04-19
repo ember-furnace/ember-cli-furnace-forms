@@ -246,9 +246,9 @@ export default Ember.Object.extend(Ember.ActionHandler,{
 	
 	getTarget : function() {
 		if(this._form) {
-			return this.getForm().get('targetObject');
+			return this.getForm().get('target');
 		}
-		return this.get('targetObject');
+		return this.get('target');
 	},
 	
 	getPanel : function() {

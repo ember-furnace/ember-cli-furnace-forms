@@ -13,16 +13,10 @@ export default Ember.Component.extend({
 
 	notices : Ember.computed.filterBy('messages','type','notice'),
 	
-	targetObject: null,
-	
 	init : function() {
 		this._super();
-		if(!this.get('targetObject')) {
-			if(this.get('target')) {
-				this.set('targetObject',this.get('target'));
-			} else {
-				this.set('targetObject',this.get('_targetObject'));
-			}
+		if(!this.get('target')) {
+			this.set('target',this.get('_targetObject'));
 		}
 		this.messages=Ember.A();
 	},
@@ -78,15 +72,15 @@ export default Ember.Component.extend({
 	},
 	
 	didInsertElement: function() {
-		this.get('targetObject').addObserver('_showMessages',this,this._showObserver);
-		this.get('targetObject').addObserver('_controlMessages',this,this._messagesObserver);
-		this._messagesObserver(this.get('targetObject'),'_controlMessages');
-		this._showObserver(this.get('targetObject'),'_showMessages');
+		this.get('target').addObserver('_showMessages',this,this._showObserver);
+		this.get('target').addObserver('_controlMessages',this,this._messagesObserver);
+		this._messagesObserver(this.get('target'),'_controlMessages');
+		this._showObserver(this.get('target'),'_showMessages');
 	},
 	
 	willClearRender : function() {
-		this.get('targetObject').removeObserver('_showMessages',this,this._showObserver);
-		this.get('targetObject').removeObserver('_controlMessages',this,this._messagesObserver);
+		this.get('target').removeObserver('_showMessages',this,this._showObserver);
+		this.get('target').removeObserver('_controlMessages',this,this._messagesObserver);
 	}
 	
 });

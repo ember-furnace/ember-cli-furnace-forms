@@ -95,7 +95,7 @@ export default Ember.Component.extend({
 			this._super(...arguments);			
 		} else {
 			if(action!=='controlCreated' && action!=='controlDestroyed') {
-				var targetObject=this.get('_targetObject') || this.get('targetObject');
+				var targetObject=this.get('_targetObject') || this.get('target');
 				if(targetObject) {
 					targetObject.send.apply(targetObject,arguments);
 				}
