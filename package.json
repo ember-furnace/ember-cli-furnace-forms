@@ -22,7 +22,7 @@
   },
   "peerDependencies": {
     "ember-cli-furnace-i18n": "^0.4.11",
-    "ember-cli-furnace-validation": "^0.3.8"
+    "ember-cli-furnace-validation": "^0.3.12"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
@@ -45,7 +45,7 @@
     "ember-factory-for-polyfill": "^1.1.1",
     "loader.js": "^4.2.3",
     "ember-cli-furnace-i18n": "^0.4.11",
-    "ember-cli-furnace-validation": "^0.3.8"
+    "ember-cli-furnace-validation": "^0.3.12"
   },
   "keywords": [
     "ember-addon"
