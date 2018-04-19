@@ -207,6 +207,11 @@ var ProxyMixin=Ember.Mixin.create({
 
 	setUnknownProperty : function(key,value) {
 		var keys=key.split('.');
+		// If we haven't initialized yet, just set the value
+		if(this._proxies===null) {
+			this[key]=value;
+			return value;
+		}
 		if(!this._content && this._syncToSource) {
 			Ember.assert('Can\'t set proxy property when syncing to source with no content set',true);
 		}
