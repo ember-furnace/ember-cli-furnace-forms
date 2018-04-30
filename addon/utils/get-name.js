@@ -25,7 +25,7 @@ export default function(object,silent) {
 		objectName=object.routeName;
 	}
 	else if(Ember.ControllerMixin.detect(object)) {
-		var tmpName = object.constructor.toString();
+		var tmpName = object.toString();
 		var index=tmpName.indexOf(':');
 		objectName=tmpName.substring(index+1,tmpName.indexOf(':',index+1)).replace(/\//g,'.');	
 	} else if(object instanceof Panel) {
