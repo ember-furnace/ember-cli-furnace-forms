@@ -101,13 +101,14 @@ export default Ember.Mixin.create({
 //	isDirty : false,
 	
 	setDirty : function(dirty) {
-		Ember.run.scheduleOnce('actions',this,this._syncDirty,dirty);
-	},
-	
-	_syncDirty : function(dirty) {
 		if(this._dirty!==dirty) {
 			this.set('_dirty',dirty);
 		}
+		Ember.run.scheduleOnce('actions',this,this._syncDirty);
+	},
+	
+	_syncDirty : function() {
+		var dirty=this._dirty;
 		dirty=dirty || this.get('controls').filterBy('isDirty', true).get('length')>0;
 		if(this.isDirty!==dirty) {
 			this.setFlag('isDirty',dirty);
