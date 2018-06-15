@@ -466,7 +466,7 @@ var Form = Panel.extend({
 		this.reopen({
 			_syncFromSource : options ? options.fromSource || false : false,
 			
-			_syncToSource : options ? options.toSource || false : false,
+			_syncToSource : options && options.toSource === true ? true : false,
 			
 			_asyncObserver : Ember.observer('for',function() {
 				if(this._syncFromSource && this._syncToSource) { 
