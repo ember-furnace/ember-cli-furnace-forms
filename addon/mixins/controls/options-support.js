@@ -230,6 +230,7 @@ export default Ember.Mixin.create({
 	
 	_updateOptionControls() {
 		this.notifyPropertyChange('optionControls');
+		this.notifyPropertyChange('_optionControls');
 	},
 	
 	optionControls : Ember.computed('sortProperties.[]',{
