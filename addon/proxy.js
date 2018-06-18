@@ -467,13 +467,14 @@ var ProxyMixin=Ember.Mixin.create({
 	
 	destroy: function() {
 		this._super();
-		if(this._refs) {
+		if(this._refs && !this._top) {
 			this._refs.forEach(function(obj) {
 				if(!obj.proxy.isDestroying) {
 					obj.proxy.destroy();
 				}
 			});
 		}
+		this._unregisterProxy(this);
 	},
 	
 	toString : function() {
@@ -550,7 +551,10 @@ var ProxyArrayMixin = Ember.Mixin.create({
 			if(ProxyMixin.detect(item)) {
 				item._apply(refs);
 				item=item._content;
-			} 
+				if(this instanceof DS.ManyArray && item instanceof DS.Model && item.get('isDeleted') && item.get('currentState.stateName')==='root.deleted.saved') {
+					return;
+				}
+			}
 			values.pushObject(item);
 		},this._content);		
 		values.forEach(function(item,index) {
@@ -602,8 +606,16 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		}	
 		this._contentDidChange();		
 		this.addObserver('_content',this,this._contentDidChange);
+		this._content.addArrayObserver(this,{willChange:function() {},didChange:this._contentArrayDidChange});
+	},
+	
+	_contentArrayDidChange(arr) {
+		if(arr===this._content) {
+			this._contentDidChange();
+		} else {
+			arr.removeArrayObserver(this);
+		}
 	}
-		
 });
 
 
