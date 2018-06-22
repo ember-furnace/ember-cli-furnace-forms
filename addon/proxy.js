@@ -518,9 +518,22 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		this._isApplying=false;
 	},
 	
+	_observedContent: null,
+	
 	_contentDidChange: function() {		
 		if(this._content && !this._isApplying) {
 			this.setObjects(this._content.toArray());
+			if(this._content!==this._observedContent) {
+				if(this._observedContent) {
+					this._observedContent.removeArrayObserver(this);
+				}
+				this._observedContent=this._content.addArrayObserver(this,{willChange:function() {},didChange:this._contentArrayDidChange});				
+			}
+		} else {
+			if(this._observedContent) {
+				this._observedContent.removeArrayObserver(this);
+				this._observedContent=null;
+			}
 		}
 	},
 	
@@ -606,15 +619,10 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		}	
 		this._contentDidChange();		
 		this.addObserver('_content',this,this._contentDidChange);
-		this._content.addArrayObserver(this,{willChange:function() {},didChange:this._contentArrayDidChange});
 	},
 	
 	_contentArrayDidChange(arr) {
-		if(arr===this._content) {
-			this._contentDidChange();
-		} else {
-			arr.removeArrayObserver(this);
-		}
+		this._contentDidChange();
 	}
 });
 
