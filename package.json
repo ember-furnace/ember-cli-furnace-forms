@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-furnace-forms",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "description": "The default blueprint for ember-cli addons.",
   "directories": {
     "doc": "doc",
