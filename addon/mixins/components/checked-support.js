@@ -8,22 +8,6 @@ export default Ember.Mixin.create({
 
 	inputId:null,
 	
-	init: function() {
-		this._super();
-		
-		this.on('change', this, this._updateElementValue);
-	},
-
-	_updateElementValue: function() {
-		Ember.run.next(this,this._syncWithDom);
-	},
-	
-	_syncWithDom : function() {
-		if(this.$('#'+get(this,'inputId'))) {
-			set(this, 'checked', this.$('#'+get(this,'inputId')).prop('checked'));
-		}
-	},
-	
 	_checkedObserver: Ember.observer('checked',function() {		
 		this.$('#'+Ember.get(this,'inputId')).prop('checked',this.get('checked'));
 	}),
