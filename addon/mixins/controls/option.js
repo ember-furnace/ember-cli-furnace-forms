@@ -27,9 +27,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	select : function() {
 		var selected=!this.get('selected');
-		Ember.run.later(this,function() {
-			this._panel.select(this._option.index,selected);
-		});
+		this._panel.select(this._option.index,selected);
 	},
 	
 	_name : 'option',
