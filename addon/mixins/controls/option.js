@@ -58,7 +58,7 @@ export default Ember.Mixin.create(ControlSupport,{
 	
 	caption : Ember.computed.alias('_option.caption'),
 	
-	showOptionControl : Ember.computed('optionControl,selected', {
+	showOptionControl : Ember.computed('optionControl','selected', {
 		get : function() {
 			this._controlValidObserver();
 			var optionControl=this.get('optionControl');
