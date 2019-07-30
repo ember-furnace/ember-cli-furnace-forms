@@ -559,6 +559,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 	
 	_apply: function (refs) {		
 		Ember.assert(this+' can not apply without its _content property set',this._content!==null);
+		this._isApplying=true;
 		var values=Ember.A();
 		this.forEach(function(item){
 			if(ProxyMixin.detect(item)) {
@@ -578,7 +579,9 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		if(values.length<this._content.length) {
 			this._content.removeAt(values.length,this._content.length-values.length);
 		}
-		return this._super.apply(this,arguments);
+		let ret = this._super.apply(this,arguments);
+		this._isApplying=false;
+		return ret;
 	},
 	
 	unknownProperty : function(key) {
@@ -621,8 +624,10 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		this.addObserver('_content',this,this._contentDidChange);
 	},
 	
-	_contentArrayDidChange(arr) {
-		this._contentDidChange();
+	_contentArrayDidChange() {
+		if(!this._isApplying) {
+			this._contentDidChange();
+		}
 	}
 });
 
