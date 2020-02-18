@@ -136,7 +136,11 @@ export default Ember.Mixin.create({
 		if(this._valid!==valid) {				
 			this.set('_valid',valid);
 		}
-		valid= valid!==false && this.get('controls').filterBy('isValid',false ).get('length')===0;
+		if(this.get('controls').filter((item) => {
+			return item.get('isValid') === false && item.get('validationDetached') !== true;
+		}).get('length')> 0) {
+			valid=false;
+		}
 		if(valid!==this.get('isValid')) {
 			this.setFlag('isValid',valid);
 			this.notifyChange();
