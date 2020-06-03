@@ -21,7 +21,13 @@ export default Input.extend({
 			this.control.dispatch();
 		}
 	},
-	
+
+	title: Ember.computed('control.title', {
+		get() {
+			return this.get('control.title');
+		}
+	}),
+
 	tabindex: Ember.computed({
 		get() {
 			return this.get('control.tabindex');

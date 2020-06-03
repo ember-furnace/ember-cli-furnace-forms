@@ -15,12 +15,18 @@ import Ember from 'ember';
  * @extends Furnace.Forms.Components.Abstract
  */
 export default Input.extend({
-	
+
 	actions : {
 		click:function() {
 			this.control.submit();
 		}
 	},
+
+	title: Ember.computed('control.title', {
+		get() {
+			return this.get('control.title');
+		}
+	}),
 	
 	tabindex: Ember.computed({
 		get() {
