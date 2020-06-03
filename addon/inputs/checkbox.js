@@ -17,7 +17,15 @@ import CheckedSupport from 'furnace-forms/mixins/components/checked-support';
  */
 export default Control.extend(CheckedSupport,{
 	type : 'checkbox',
-	
+
+	actions: {
+		toggle() {
+			if(this.get('isEnabled')) {
+				this.toggleProperty('checked');
+			}
+		}
+	},
+
 	checkedValue:Ember.computed({
 		get: function() {
 			if(this.control && this.control.hasOwnProperty('_checkedValue')) {
@@ -76,10 +84,10 @@ export default Control.extend(CheckedSupport,{
 		}
 		this.$('#'+Ember.get(this,'inputId')).prop('checked',this.get('checked'));
 	}),
-	
+
 	click : function(event) {
 		var target= event.target;
-		if(target.id===this.get('inputId') && this.get('isEnabled')) {
+		if(target.tagName==='INPUT' && target.id===this.get('inputId') && this.get('isEnabled')) {
 			if(this.get('value')===this.get('checkedValue')) {
 				this.set('value',this.get('uncheckedValue'));
 			} else {
@@ -87,4 +95,16 @@ export default Control.extend(CheckedSupport,{
 			}
 		}
 	},
+
+	keyPress:function(event) {
+		var target= event.target;
+		if(event.which===32) {
+			if(target.tagName!=='INPUT' || target.id!==this.get('inputId') ) {
+				this.send('toggle');
+				event.preventDefault();
+				return false;
+			}
+		}
+	},
+
 });
