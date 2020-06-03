@@ -19,7 +19,7 @@ export default Control.extend({
 	
 	_decoratorName : 'button',
 	
-	tabindex: 0,
+	tabindex: null,
 	
 	dispatch : function() {
 		if(!this.get('isEnabled')) {
