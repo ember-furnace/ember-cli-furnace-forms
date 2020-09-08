@@ -622,6 +622,7 @@ var ProxyArrayMixin = Ember.Mixin.create({
 		}	
 		this._contentDidChange();		
 		this.addObserver('_content',this,this._contentDidChange);
+		this._super(...arguments);
 	},
 	
 	_contentArrayDidChange() {
