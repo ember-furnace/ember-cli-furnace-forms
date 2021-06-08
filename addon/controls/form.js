@@ -426,10 +426,11 @@ var Form = Panel.extend({
 	},
 	
 	_currentModel : undefined,
-	
-	_modelObserver : Ember.observer('_model',function(){
+
+	// For some reason _model will stop triggering events, also watching 'for' is a workaround
+	_modelObserver : Ember.observer('_model,for',function(){
 		// Only reset if 'for' actually changed
-		if(this.get('_model')!==this._currentModel) {		
+		if(this.get('_model')!==this._currentModel) {
 			this._reset(true);
 			this._currentModel=this.get('_model');
 		}
