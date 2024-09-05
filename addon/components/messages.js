@@ -2,17 +2,17 @@ import Ember from 'ember';
 export default Ember.Component.extend({
 	tagName : 'messages',
 	layoutName: 'forms/messages',
-		
+
 	classNameBindings: ['showClass'],
-	
+
 	messages : null,
-	
+
 	errors : Ember.computed.filterBy('messages','type','error'),
-	
+
 	warnings : Ember.computed.filterBy('messages','type','warning'),
 
 	notices : Ember.computed.filterBy('messages','type','notice'),
-	
+
 	init : function() {
 		this._super();
 		if(!this.get('target')) {
@@ -22,9 +22,9 @@ export default Ember.Component.extend({
 	},
 
 	show: false,
-	
-	
-	
+
+
+
 	showClass : Ember.computed('show',{
 		get : function() {
 			if(this.show) {
@@ -33,17 +33,17 @@ export default Ember.Component.extend({
 			return 'hidden';
 		}
 	}).readOnly(),
-	
+
 	_showObserver : function(sender) {
 		this.set('show',sender.get('_showMessages'));
 	},
-	
-	
+
+
 	_messagesObserver : function(sender) {
 		var source=sender.get('_controlMessages');
 		this._updateMessages(source,this.messages);
 	},
-	
+
 	_updateMessages: function(source,target) {
 		target.forEach(function(item) {
 			if(!source) {
@@ -65,22 +65,23 @@ export default Ember.Component.extend({
 			source.forEach(function(message) {
 				target.pushObject(message);
 				Ember.run.later(function(){
-					Ember.set(message,'visible',true);				
+					Ember.set(message,'visible',true);
 				});
 			});
 		}
 	},
-	
+
 	didInsertElement: function() {
 		this.get('target').addObserver('_showMessages',this,this._showObserver);
 		this.get('target').addObserver('_controlMessages',this,this._messagesObserver);
 		this._messagesObserver(this.get('target'),'_controlMessages');
 		this._showObserver(this.get('target'),'_showMessages');
+		this.send("setMessagesId", this.get("elementId"));
 	},
-	
+
 	willClearRender : function() {
 		this.get('target').removeObserver('_showMessages',this,this._showObserver);
 		this.get('target').removeObserver('_controlMessages',this,this._messagesObserver);
 	}
-	
+
 });
